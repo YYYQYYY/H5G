@@ -2,22 +2,35 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title>统计在线人数</title>
-    <script src="http://fs.chinacloudsites.cn/socket.io/socket.io.js"></script>
-    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <title>扫雷吧</title>
+    <link rel="stylesheet" href="static/css/mine.css"/>
     <script type="text/javascript">
         // 创建websocket连接
-        var socket = io.connect('http://fs.chinacloudsites.cn');
+        //        var socket = io.connect('http://fs.chinacloudsites.cn');
         // 把信息显示到div上
-        socket.on('onlinenums', function (data) {
-            $("#nums").html(data.nums);
-        });
+        //        socket.on('onlinenums', function (data) {
+        //            $("#nums").html(data.nums);
+        //        });
     </script>
 </head>
 <body>
-
-当前在线人数:<span style="color: red;" id="nums">0</span>
-
-
+<section id="page">
+    <header>
+        <h1>扫雷</h1>
+    </header>
+    <section id="layers">
+        <canvas id="bg" width="400" height="400">
+            你的浏览器不支持HTML5。
+        </canvas>
+        <canvas id="guide" width="400" height="400"></canvas>
+        <canvas id="game" width="400" height="400"></canvas>
+        <canvas id="ui" width="400" height="400"></canvas>
+    </section>
+    <footer>
+        <p>扫雷游戏练习。</p>
+    </footer>
+</section>
+<script src="http://fs.chinacloudsites.cn/socket.io/socket.io.js"></script>
+<script src="http://code.jquery.com/jquery-latest.min.js"></script>
 </body>
 </html>

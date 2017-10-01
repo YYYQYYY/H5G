@@ -1,0 +1,10 @@
+#layers {
+    width: 400px;
+    height: 400px;
+    position: relative;
+    margin: 0 auto;
+}
+
+#layers canvas {
+    position: absolute;
+}
