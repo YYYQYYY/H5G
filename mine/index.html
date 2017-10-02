@@ -9,6 +9,11 @@
 <section id="page">
     <header>
         <h1>扫雷</h1>
+        <p>使用时间：<span id="elapsed_time" style="display: inline-block; width: 30px;text-align: right">0</span>
+            剩余雷数：<span id="residual_mines" style="display: inline-block;width: 30px;text-align: right">0</span>
+            得分：<span id="score" style="display: inline-block;width: 30px;text-align: right">0</span>
+        </p>
+        <button onclick="initGame();startGame();">开始游戏</button>
     </header>
     <section id="layers">
         <canvas id="bg" width="400" height="400">
@@ -31,7 +36,7 @@
     //        socket.on('onlinenums', function (data) {
     //            $("#nums").html(data.nums);
     //        });
-//    console.log(mineGame.dataMap);
+    //    console.log(mineGame.dataMap);
 </script>
 </body>
 </html>

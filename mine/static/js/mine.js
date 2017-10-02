@@ -1,11 +1,17 @@
 /**
  * Created by yuqy on 2017/9/29.
  */
+var timeout = 0;
 var mineGame = {
     layers: [],
     dataMap: [],
-    currentLevel: 0
+    currentLevel: 0,
+    residualMines: 20,
+    elapsedTime: 0,
+    timer: 0,
+    score: 0
 };
+
 mineGame.levels = [
     {
         level: 0,
@@ -117,6 +123,83 @@ function initLayers() {
             //}
         }
     );
+
+    $("#elapsed_time").text(mineGame.elapsedTime);
+    mineGame.timer = setInterval(function () {
+        mineGame.elapsedTime++;
+        $("#elapsed_time").text(mineGame.elapsedTime);
+    }, 1000);
+    $("#residual_mines").text(mineGame.residualMines);
+}
+
+function bindEvent() {
+    var layers = $("#layers");
+    layers.oncontextmenu = disableRightClick;
+    layers.mousedown(function (e) {
+        var canvasPosition = $(this).offset();
+        var mouseX = (e.pageX - canvasPosition.left) || 0;
+        var mouseY = (e.pageY - canvasPosition.top) || 0;
+        var currentGame = mineGame.levels[mineGame.currentLevel];
+        var ri = Math.floor(mouseX / currentGame.cellWidth);
+        var ci = Math.floor(mouseY / currentGame.cellWidth);
+        //var isLeftButtonClicked = event.button == 0;
+
+        timeout = setTimeout(function (e) {
+            drawFlag(ri, ci);
+            //if (isLeftButtonClicked) {
+            //    openCell(mouseX, mouseY);
+            //} else {
+            //    drawFlag(mouseX, mouseY);
+            //}
+            timeout = 0;
+        }, 1000);
+    });
+    layers.mousemove(function (e) {
+        clearTimeout(timeout);
+        timeout = 0;
+    });
+    layers.mouseup(function (e) {
+        clearTimeout(timeout);
+        if (timeout != 0) {
+            var canvasPosition = $(this).offset();
+            var mouseX = (e.pageX - canvasPosition.left) || 0;
+            var mouseY = (e.pageY - canvasPosition.top) || 0;
+            var currentGame = mineGame.levels[mineGame.currentLevel];
+            var ri = Math.floor(mouseX / currentGame.cellWidth);
+            var ci = Math.floor(mouseY / currentGame.cellWidth);
+            openCell(ri, ci);
+        }
+    });
+}
+
+/**
+ * 判断是否是雷区
+ * @param ri
+ * @param ci
+ * @param isFlag
+ */
+function checkMine(ri, ci, isFlag) {
+    if (isFlag) {
+        // 正确标旗
+        if (mineGame.dataMap[ri][ci].isFlag) {
+            addScore();
+        }
+    } else {
+        // 正确打开格子
+        if (mineGame.dataMap[ri][ci].data > -1) {
+            addScore();
+        } else {
+            drawBoomCell(ri, ci);
+            stopGame(false);
+        }
+    }
+}
+
+function addScore() {
+    mineGame.residualMines--;
+    $("#residual_mines").text(mineGame.residualMines);
+    mineGame.score++;
+    $("#score").text(mineGame.score);
 }
 
 /**
@@ -149,8 +232,6 @@ function drawGridCells() {
         ctx.lineTo(ci * cellWidth, currentGame.range.rows * cellWidth);
         ctx.stroke();
     }
-
-    drawDataMap();
 }
 
 function drawDataMap() {
@@ -197,29 +278,48 @@ function drawMask() {
     }
 }
 
-function openCell(x, y) {
+function drawBoomCell(ri, ci) {
     var currentGame = mineGame.levels[mineGame.currentLevel];
     var cellWidth = currentGame.cellWidth;
-    var ri = Math.floor(x / cellWidth);
-    var ci = Math.floor(y / cellWidth);
+    var ctx = mineGame.layers[0];
+    ctx.fillStyle = "red";
+    ctx.fillRect(ri * cellWidth + 1, ci * cellWidth + 1, cellWidth - 1, cellWidth - 1);
+}
 
-    if (!mineGame.dataMap[ri][ci].isOpened && !mineGame.dataMap[ri][ci].isFlag) {
-        var ctx = mineGame.layers[1];
-        ctx.clearRect(ri * cellWidth + 1, ci * cellWidth + 1, cellWidth - 1, cellWidth - 1);
-        mineGame.dataMap[ri][ci].isOpened = true;
+function openAllCell() {
+    var currentGame = mineGame.levels[mineGame.currentLevel];
+    var cellWidth = currentGame.cellWidth;
+    var rows = currentGame.range.rows;
+    var columns = currentGame.range.columns;
+    var ctx = mineGame.layers[1];
+
+    for (var ri = 0; ri < rows; ri++) {
+        for (var ci = 0; ci < columns; ci++) {
+            ctx.clearRect(ri * cellWidth + 1, ci * cellWidth + 1, cellWidth - 1, cellWidth - 1);
+        }
     }
 }
 
-function drawFlag(x, y) {
-    var currentGame = mineGame.levels[mineGame.currentLevel];
-    var cellWidth = currentGame.cellWidth;
-    var ri = Math.floor(x / cellWidth);
-    var ci = Math.floor(y / cellWidth);
+function openCell(ri, ci) {
+    if (!mineGame.dataMap[ri][ci].isOpened && !mineGame.dataMap[ri][ci].isFlag) {
+        var currentGame = mineGame.levels[mineGame.currentLevel];
+        var cellWidth = currentGame.cellWidth;
+        var ctx = mineGame.layers[1];
+        ctx.clearRect(ri * cellWidth + 1, ci * cellWidth + 1, cellWidth - 1, cellWidth - 1);
+        mineGame.dataMap[ri][ci].isOpened = true;
+        checkMine(ri, ci, false);
+    }
+}
+
+function drawFlag(ri, ci) {
     var ctx = mineGame.layers[1];
 
     if (mineGame.dataMap[ri][ci].isOpened) {
         return;
     }
+
+    var currentGame = mineGame.levels[mineGame.currentLevel];
+    var cellWidth = currentGame.cellWidth;
 
     if (!mineGame.dataMap[ri][ci].isFlag) {
         ctx.fillStyle = "#abc";
@@ -230,9 +330,7 @@ function drawFlag(x, y) {
         ctx.fillRect(ri * cellWidth + cellWidth / 4 - 1, ci * cellWidth + cellWidth / 4 - 1, cellWidth / 2, cellWidth / 2 + 1);
     }
     mineGame.dataMap[ri][ci].isFlag = !mineGame.dataMap[ri][ci].isFlag;
-}
-
-function gameLoop() {
+    checkMine(ri, ci, true);
 }
 
 function disableRightClick(e) {
@@ -243,7 +341,9 @@ function disableRightClick(e) {
     }
 }
 
-$(function () {
+function initGame() {
+    timeout = 0;
+    mineGame.layers = [];
     var canvas_bg = document.getElementById("bg");
     mineGame.layers[0] = canvas_bg.getContext("2d");
     canvas_bg.oncontextmenu = disableRightClick;
@@ -251,50 +351,53 @@ $(function () {
     mineGame.layers[1] = canvas_game.getContext("2d");
     canvas_game.oncontextmenu = disableRightClick;
 
-    createGameData();
+    mineGame.dataMap = [];
+    mineGame.currentLevel = 0;
+    mineGame.residualMines = 20;
+    mineGame.score = 0;
 
+    $("#residual_mines").text(0);
+    $("#score").text(mineGame.score);
+    stopInterval();
+    drawGridCells();
+    drawMask();
+}
+
+function startGame() {
     initLayers();
+    bindEvent();
+    createGameData();
+    drawDataMap();
+}
 
-    var timeout = 0;
-    var layers = $("#layers");
+function stopInterval() {
+    clearInterval(mineGame.timer);
+    mineGame.timer = 0;
+    mineGame.elapsedTime = 0;
+    $("#elapsed_time").text(mineGame.elapsedTime);
+}
 
-    layers.oncontextmenu = disableRightClick;
+function stopGame(isWon) {
+    var msg = "";
+    if (isWon) {
+        msg = "你赢了";
+    } else {
+        msg = "你输了";
+    }
+    if (confirm(msg)) {
+        stopInterval();
+        openAllCell();
+    }
+}
 
-    layers.mousedown(function (e) {
-        var canvasPosition = $(this).offset();
-        var mouseX = (e.pageX - canvasPosition.left) || 0;
-        var mouseY = (e.pageY - canvasPosition.top) || 0;
-        var isLeftButtonClicked = event.button == 0;
-
-        timeout = setTimeout(function (e) {
-            if (isLeftButtonClicked) {
-                openCell(mouseX, mouseY);
-            } else {
-                drawFlag(mouseX, mouseY);
-            }
-            timeout = 0;
-        }, 1000);
-    });
-
-    layers.mousemove(function (e) {
-        clearTimeout(timeout);
-        timeout = 0;
-    });
-
-    layers.mouseup(function (e) {
-        clearTimeout(timeout);
-        if (timeout != 0) {
-            alert(999);
-        }
-    });
+$(function () {
+    initGame();
 
     //setupCurrentLevel();
 
     //mineGame.background = new Image();
     //mineGame.background.onload = function () {
-    drawGridCells();
-    drawMask();
-    setInterval(gameLoop, 30);
+    //setInterval(gameLoop, 30);
     //};
     //mineGame.background.onerror = function () {
     //    console.log("Error loading the image.");
