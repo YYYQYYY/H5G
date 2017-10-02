@@ -26,6 +26,10 @@ mineGame.levels = [
     }
 ];
 
+/**
+ * 格子
+ * @constructor
+ */
 function Cell() {
     this.data = 0;
     this.isOpened = false;
@@ -33,7 +37,7 @@ function Cell() {
 }
 
 /**
- * 随机生成地址
+ * 随机生成格子地址
  * @returns {*[]}
  */
 function getRandomPosition() {
@@ -132,6 +136,9 @@ function initLayers() {
     $("#residual_mines").text(mineGame.residualMines);
 }
 
+/**
+ * 绑定事件
+ */
 function bindEvent() {
     var layers = $("#layers");
     layers.oncontextmenu = disableRightClick;
@@ -195,6 +202,9 @@ function checkMine(ri, ci, isFlag) {
     }
 }
 
+/**
+ * 计算分数
+ */
 function addScore() {
     mineGame.residualMines--;
     $("#residual_mines").text(mineGame.residualMines);
@@ -211,7 +221,7 @@ function clear(ctx) {
 }
 
 /**
- * 绘制格子
+ * 绘制格子线
  */
 function drawGridCells() {
     var currentGame = mineGame.levels[mineGame.currentLevel];
@@ -234,6 +244,9 @@ function drawGridCells() {
     }
 }
 
+/**
+ * 绘制格子
+ */
 function drawDataMap() {
     var currentGame = mineGame.levels[mineGame.currentLevel];
     var cellWidth = currentGame.cellWidth;
@@ -263,6 +276,9 @@ function drawDataMap() {
     }
 }
 
+/**
+ * 绘制遮罩
+ */
 function drawMask() {
     var currentGame = mineGame.levels[mineGame.currentLevel];
     var cellWidth = currentGame.cellWidth;
@@ -278,6 +294,11 @@ function drawMask() {
     }
 }
 
+/**
+ * 绘制爆炸格子
+ * @param ri
+ * @param ci
+ */
 function drawBoomCell(ri, ci) {
     var currentGame = mineGame.levels[mineGame.currentLevel];
     var cellWidth = currentGame.cellWidth;
@@ -286,6 +307,9 @@ function drawBoomCell(ri, ci) {
     ctx.fillRect(ri * cellWidth + 1, ci * cellWidth + 1, cellWidth - 1, cellWidth - 1);
 }
 
+/**
+ * 打开所有格子
+ */
 function openAllCell() {
     var currentGame = mineGame.levels[mineGame.currentLevel];
     var cellWidth = currentGame.cellWidth;
@@ -300,6 +324,11 @@ function openAllCell() {
     }
 }
 
+/**
+ * 打开格子
+ * @param ri
+ * @param ci
+ */
 function openCell(ri, ci) {
     if (!mineGame.dataMap[ri][ci].isOpened && !mineGame.dataMap[ri][ci].isFlag) {
         var currentGame = mineGame.levels[mineGame.currentLevel];
@@ -311,6 +340,11 @@ function openCell(ri, ci) {
     }
 }
 
+/**
+ * 标记旗子
+ * @param ri
+ * @param ci
+ */
 function drawFlag(ri, ci) {
     var ctx = mineGame.layers[1];
 
@@ -333,6 +367,10 @@ function drawFlag(ri, ci) {
     checkMine(ri, ci, true);
 }
 
+/**
+ * 屏蔽右键事件
+ * @param e
+ */
 function disableRightClick(e) {
     if (document.all) {
         window.event.returnValue = false;
@@ -341,6 +379,9 @@ function disableRightClick(e) {
     }
 }
 
+/**
+ * 初始化游戏
+ */
 function initGame() {
     timeout = 0;
     mineGame.layers = [];
@@ -363,6 +404,9 @@ function initGame() {
     drawMask();
 }
 
+/**
+ * 开始游戏
+ */
 function startGame() {
     initLayers();
     bindEvent();
@@ -370,6 +414,9 @@ function startGame() {
     drawDataMap();
 }
 
+/**
+ * 停止计时器
+ */
 function stopInterval() {
     clearInterval(mineGame.timer);
     mineGame.timer = 0;
@@ -377,6 +424,10 @@ function stopInterval() {
     $("#elapsed_time").text(mineGame.elapsedTime);
 }
 
+/**
+ * 结束游戏
+ * @param isWon
+ */
 function stopGame(isWon) {
     var msg = "";
     if (isWon) {
@@ -390,17 +441,9 @@ function stopGame(isWon) {
     }
 }
 
+/**
+ * 游戏入口
+ */
 $(function () {
     initGame();
-
-    //setupCurrentLevel();
-
-    //mineGame.background = new Image();
-    //mineGame.background.onload = function () {
-    //setInterval(gameLoop, 30);
-    //};
-    //mineGame.background.onerror = function () {
-    //    console.log("Error loading the image.");
-    //};
-    //mineGame.background.src = "images/board.png";
 });
