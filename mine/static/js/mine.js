@@ -255,36 +255,37 @@ $(function () {
 
     initLayers();
 
+    var timeout = 0;
     var layers = $("#layers");
+
     layers.oncontextmenu = disableRightClick;
 
     layers.mousedown(function (e) {
         var canvasPosition = $(this).offset();
         var mouseX = (e.pageX - canvasPosition.left) || 0;
         var mouseY = (e.pageY - canvasPosition.top) || 0;
+        var isLeftButtonClicked = event.button == 0;
 
-        if (event.button == 0) {
-            openCell(mouseX, mouseY);
-        } else {
-            drawFlag(mouseX, mouseY);
-        }
+        timeout = setTimeout(function (e) {
+            if (isLeftButtonClicked) {
+                openCell(mouseX, mouseY);
+            } else {
+                drawFlag(mouseX, mouseY);
+            }
+            timeout = 0;
+        }, 1000);
     });
 
-    //layers.mousemove(function (e) {
-    //    if (mineGame.targetCircle != undefined) {
-    //        var canvasPosition = $(this).offset();
-    //        var mouseX = (e.pageX - canvasPosition.left) || 0;
-    //        var mouseY = (e.pageY - canvasPosition.top) || 0;
-    //        var radius = mineGame.circles[mineGame.targetCircle].radius;
-    //        mineGame.circles[mineGame.targetCircle] = new Circle(mouseX, mouseY, radius);
-    //    }
-    //    connectCircles();
-    //    updateLineIntersection();
-    //    updateLevelProgress();
-    //});
+    layers.mousemove(function (e) {
+        clearTimeout(timeout);
+        timeout = 0;
+    });
 
     layers.mouseup(function (e) {
-        //checkLevelCompleteness();
+        clearTimeout(timeout);
+        if (timeout != 0) {
+            alert(999);
+        }
     });
 
     //setupCurrentLevel();
