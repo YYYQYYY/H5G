@@ -8,3 +8,7 @@
 #layers canvas {
     position: absolute;
 }
+
+#bg {
+    border: 1px solid black;
+}
