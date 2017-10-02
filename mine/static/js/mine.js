@@ -22,15 +22,6 @@ mineGame.levels = [
 ];
 
 /**
- * 获取随机下标，从0开始
- * @param seed
- * @returns {number}
- */
-function getRandom(seed) {
-    return Math.floor(Math.random() * seed);
-}
-
-/**
  * 随机生成地址
  * @returns {*[]}
  */
