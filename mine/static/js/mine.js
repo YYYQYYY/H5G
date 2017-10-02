@@ -33,12 +33,18 @@ function getRandomPosition() {
     };
 }
 
+/**
+ * 生成雷区地图
+ */
 function createGameData() {
     initDataMap();
     createMines();
-    scanAroundCells();
+    //scanAroundCells();
 }
 
+/**
+ * 生成空白地图
+ */
 function initDataMap() {
     var currentGame = mineGame.levels[mineGame.currentLevel];
     for (var r = 0; r < currentGame.range.rows; r++) {
@@ -48,6 +54,10 @@ function initDataMap() {
     }
 }
 
+/**
+ * 生成地雷
+ * 扫描地雷周围，生成格子周围地雷数
+ */
 function createMines() {
     var currentGame = mineGame.levels[mineGame.currentLevel];
     var mineCount = currentGame.mineCount;
@@ -58,34 +68,26 @@ function createMines() {
         if (!tempArr[key]) {
             tempArr[key] = 1;
             mineGame.dataMap[pos.x][pos.y] = -1;
+            scanAroundCell(pos);
             mineCount--;
         }
     }
 }
 
-function scanAroundCells() {
-    var currentGame = mineGame.levels[mineGame.currentLevel];
-    var rows = currentGame.range.rows;
-    var columns = currentGame.range.columns;
-    for (var x = 0; x < rows; x++) {
-        for (var y = 0; y < columns; y++) {
-            if (mineGame.dataMap[x][y] < 0) {
-                scanAroundCell(x, y);
-            }
-        }
-    }
-}
-
-function scanAroundCell(x, y) {
+/**
+ * 扫描当前格子周围8格，更新地雷数
+ * @param pos
+ */
+function scanAroundCell(pos) {
     var currentGame = mineGame.levels[mineGame.currentLevel];
     var rows = currentGame.range.rows;
     var columns = currentGame.range.columns;
     for (var ri = -1; ri < 2; ri++) {
-        var r = x + ri;
+        var r = pos.x + ri;
         if (r > -1 && r < rows) {
             for (var ci = -1; ci < 2; ci++) {
-                var c = y + ci;
-                if (c > -1 && c < columns && !(r == x && c == y) && mineGame.dataMap[r][c] > -1) {
+                var c = pos.y + ci;
+                if (c > -1 && c < columns && !(r == pos.x && c == pos.y) && mineGame.dataMap[r][c] > -1) {
                     mineGame.dataMap[r][c]++;
                 }
             }
