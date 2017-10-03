@@ -331,7 +331,11 @@ function drawMask() {
     for (var ri = 0; ri < rows; ri++) {
         for (var ci = 0; ci < columns; ci++) {
             ctx.fillStyle = "lightblue";
-            ctx.fillRect(ri * cellWidth + 1, ci * cellWidth + 1, cellWidth - 1, cellWidth - 1);
+            ctx.fillRect(ri * cellWidth + 1, ci * cellWidth + 1, cellWidth - 2, cellWidth - 2);
+            ctx.fillStyle = "darkblue";
+            ctx.fillRect(ri * cellWidth + 2, ci * cellWidth + 2, cellWidth - 1, cellWidth - 1);
+            ctx.fillStyle = "#ccf";
+            ctx.fillRect(ri * cellWidth + 2, ci * cellWidth + 2, cellWidth - 2, cellWidth - 2);
         }
     }
 }
@@ -372,7 +376,7 @@ function drawBoomCell(ri, ci) {
     var cellWidth = MG.cellWidth;
     var ctx = MG.layers[0];
     ctx.textAlign = "center";
-    ctx.font = "30px Arial";
+    ctx.font = MG.cellWidth / 2 + "px Arial";
     var msg = "";
 
     if (MG.dataMap[ri][ci].data < 0) {
@@ -485,7 +489,7 @@ function initGame() {
 
     setCurrentGame();
     drawGridCells();
-    //drawMask();
+    drawMask();
 }
 
 function setCurrentGame() {
