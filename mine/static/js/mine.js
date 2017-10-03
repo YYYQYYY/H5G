@@ -22,10 +22,10 @@ var MG = {
 MG.levels = [
     {
         level: 0,
-        mineCount: 10,
+        mineCount: 50,
         range: {
-            rows: 5,
-            columns: 6
+            rows: 10,
+            columns: 20
         }
     }
 ];
@@ -345,7 +345,7 @@ function drawCell(ri, ci) {
     var cellWidth = MG.cellWidth;
     var ctx = MG.layers[0];
     ctx.textAlign = "center";
-    ctx.font = "30px Arial";
+    ctx.font = MG.cellWidth / 2 + "px Arial";
     var msg = "";
 
     if (MG.dataMap[ri][ci].data < 0) {
@@ -485,7 +485,7 @@ function initGame() {
 
     setCurrentGame();
     drawGridCells();
-    drawMask();
+    //drawMask();
 }
 
 function setCurrentGame() {
