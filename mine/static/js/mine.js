@@ -135,6 +135,7 @@ function initLayers() {
     }, 1000);
     $("#residual_mines").text(MG.residualMines);
 }
+
 var dX = 0, dY = 0;
 /**
  * 绑定事件
@@ -461,14 +462,6 @@ function disableRightClick(e) {
  */
 function initGame() {
     MG.timeout = 0;
-    MG.layers = [];
-    var canvas_bg = document.getElementById("bg");
-    MG.layers[0] = canvas_bg.getContext("2d");
-    canvas_bg.oncontextmenu = disableRightClick;
-    var canvas_game = document.getElementById("game");
-    MG.layers[1] = canvas_game.getContext("2d");
-    canvas_game.oncontextmenu = disableRightClick;
-
     MG.dataMap = [];
     MG.currentLevel = 0;
     MG.residualMines = 0;
@@ -551,16 +544,36 @@ function setConfig() {
         msg = ("正在通过安卓移动端访问");
     }
 
-    var gw = (Math.floor((dw < dh ? dw : dh) / 100) * 100);
-    CONFIG.cellWidth = Math.floor(gw / MG.levels[MG.currentLevel].range.rows / 10) * 10;
+    var dh = WH - parseInt($("header").css("height")) - parseInt($("footer").css("height")) - 100;
+    var gw = (Math.floor((WW < dh ? WW : dh) / 100) * 100);
+    var cw = Math.floor(gw / MG.levels[MG.currentLevel].range.rows / 10) * 10;
+    var ch = Math.floor(gw / MG.levels[MG.currentLevel].range.columns / 10) * 10;
+    CONFIG.cellWidth = cw < ch ? cw : ch;
     CONFIG.width = CONFIG.cellWidth * MG.levels[MG.currentLevel].range.rows;
     CONFIG.height = CONFIG.cellWidth * MG.levels[MG.currentLevel].range.columns;
 
     alert(
-        msg + "\n\n屏幕宽度：" + dw + "\t屏幕高度：" + dh
-        + "\n\n游戏区域宽度：" + gw + "\t格子宽度：" + CONFIG.cellWidth
-        + "\n\n屏幕宽度：" + CONFIG.width + "\t屏幕高度：" + CONFIG.height
+        msg + "\n\n浏览器屏幕宽度：" + WW + "\t浏览器屏幕高度：" + WH
+        + "\n\ndh:" + dh
+        + "\n\n游戏区域宽度：" + gw + "\t\t游戏格子宽度：" + CONFIG.cellWidth
+        + "\n\n游戏屏幕宽度：" + CONFIG.width + "\t\t游戏屏幕高度：" + CONFIG.height
     );
+
+    var layers = $("#layers");
+    layers.css("width", CONFIG.width);
+    layers.css("height", CONFIG.height);
+
+    MG.layers = [];
+    var canvas_bg = document.getElementById("bg");
+    canvas_bg.width = CONFIG.width;
+    canvas_bg.height = CONFIG.height;
+    MG.layers[0] = canvas_bg.getContext("2d");
+    canvas_bg.oncontextmenu = disableRightClick;
+    var canvas_game = document.getElementById("game");
+    canvas_game.width = CONFIG.width;
+    canvas_game.height = CONFIG.height;
+    MG.layers[1] = canvas_game.getContext("2d");
+    canvas_game.oncontextmenu = disableRightClick;
 }
 
 /**

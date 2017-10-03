@@ -5,7 +5,7 @@ var CONST = {};
 CONST.A = 1;
 Object.freeze(CONST);
 
-var isPC, isWeixin, isAndroid, isIos, dw, dh;
+var isPC, isWeixin, isAndroid, isIos, WW, WH;
 
 $(function () {
     isPC = !navigator.userAgent.match(/mobile/i);
@@ -14,11 +14,11 @@ $(function () {
     isAndroid = ua.indexOf('android') != -1;
     isIos = (ua.indexOf('iphone') != -1) || (ua.indexOf('ipad') != -1);
 
-    dw = window.innerWidth
+    WW = window.innerWidth
         || document.documentElement.clientWidth
         || document.body.clientWidth;
 
-    dh = window.innerHeight
+    WH = window.innerHeight
         || document.documentElement.clientHeight
         || document.body.clientHeight;
 });
