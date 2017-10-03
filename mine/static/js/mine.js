@@ -529,12 +529,19 @@ function stopGame(isWon) {
     }
 }
 
+function setConfig() {
+    var dw = window.innerWidth;
+    var dh = window.innerHeight;
+    alert(dw + "|" + dh);
+}
+
 /**
  * 游戏入口
  */
 $(function () {
     // TODO:需要根据行数、列数和格子宽度计算游戏外框大小
     // TODO:或者根据屏幕宽度，行数、列数计算游戏外框大小与格子宽度
+    setConfig();
 
     initGame();
 });
