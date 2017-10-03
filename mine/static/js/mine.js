@@ -603,6 +603,7 @@ function setConfig() {
  * 游戏入口
  */
 $(function () {
+    // TODO:长按功能计时器有BUG
     setConfig();
 
     initGame();
