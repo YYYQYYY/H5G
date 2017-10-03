@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>扫雷吧</title>
+    <style>
+        #layers {
+            width: auto;
+            height: auto;
+            position: relative;
+            margin: 0 auto;
+        }
+
+        #layers canvas {
+            position: absolute;
+        }
+
+        #bg {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+<section id="page">
+    <header>
+        <h1>扫雷</h1>
+        <p>使用时间：<span id="elapsed_time" style="display: inline-block; width: 30px;text-align: right">0</span>
+            剩余雷数：<span id="residual_mines" style="display: inline-block;width: 30px;text-align: right">0</span>
+            得分：<span id="score" style="display: inline-block;width: 30px;text-align: right">0</span>
+        </p>
+        <button onclick="initGame();startGame();">开始游戏</button>
+    </header>
+    <section id="layers">
+        <canvas id="game"></canvas>
+    </section>
+    <footer>
+        <p>扫雷游戏练习。</p>
+    </footer>
+</section>
+<script type="text/javascript" src="http://fs.chinacloudsites.cn/socket.io/socket.io.js"></script>
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+<script type="text/javascript">
+    $(window).resize(resizeCanvas);
+    var canvasggg = document.getElementById("game");
+    var layers = document.getElementById("layers");
+    var context = canvasggg.getContext("2d");
+    function resizeCanvas() {
+        var abc = window.innerWidth;
+        if (window.innerHeight < abc) {
+            abc = window.innerHeight;
+        }
+        layers.clientWidth = abc;
+        layers.clientHeight = abc;
+        canvasggg.width = abc;
+        canvasggg.height = abc;
+        context.fillRect(0, 0, canvasggg.width, canvasggg.height);
+    }
+    resizeCanvas();
+</script>
+</body>
+</html>
