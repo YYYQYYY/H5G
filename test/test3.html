@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>图片缩放</title>
+</head>
+
+<body style="background: black;">
+<input type="file" id="uploadFile"></input>
+<img src="" id='image' style="display: none;">
+<canvas id="canvas" style="display: block;margin: 0 auto;border: 1px solid #aaa;">
+    你的浏览器不支持canvas。
+</canvas>
+<input type="range" id="slider" min="0.5" max="3.0" step="0.01" value="1.0"
+       style="display: block;margin: 20px auto;width: 800px;"/>
+<button id='submit' value="上传">上传</button>
+</body>
+
+<script>
+    var uploadbtn = document.getElementById('uploadFile');
+    var image = '';
+    var canvas = document.getElementById("canvas");
+    var context = canvas.getContext("2d");
+
+    var slider = document.getElementById("slider");
+    var imageObj = new Image(); //定义一个Image对象
+    canvas.width = 640;
+    canvas.height = 360;
+
+    uploadbtn.onchange = function () {
+        var reader = new FileReader();
+        reader.onload = function (evt) {
+            document.getElementById('image').src = evt.target.result;
+            image = evt.target.result;
+
+            imageObj.src = evt.target.result; //加载图片
+
+            //需要等image load完再把它画到canvas中，不然的话可能有不良后果
+            imageObj.onload = function () {
+                drawImageByScale(slider.value);
+
+                slider.onmousemove = function () {
+                    drawImageByScale(slider.value);
+                };
+            };
+
+        }
+        reader.readAsDataURL(arguments[0].target.files[0]);
+    }
+
+    document.getElementById('submit').onclick = function () {
+        var dataurl = canvas.toDataURL('image/png');
+        var blob = dataURLtoBlob(dataurl);
+        //使用ajax发送
+        var fd = new FormData();
+        fd.append("file", blob, "image.png");
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'url', true);
+        xhr.send(fd);
+    }
+
+
+    function drawImageByScale(scale) {
+        var x_ = document.getElementById("image").width;
+        var y_ = document.getElementById("image").height;
+        if ((x_ / y_) > (16 / 9)) {
+            var imageWidth = 640 * scale;
+            var imageHeight = 640 * y_ / x_ * scale;
+        } else {
+            var imageHeight = 360 * scale;
+            var imageWidth = 360 * x_ / y_ * scale;
+        }
+
+
+        //画布上的起始点：画布的大小一半减去图像大小的一半。可以为负数，表示在左上角的外面。
+        var dx = canvas.width / 2 - imageWidth / 2;
+        var dy = canvas.height / 2 - imageHeight / 2;
+        //清空画布
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        //把image画到canvas中，dx、dy表示起始点坐标
+        context.drawImage(imageObj, dx, dy, imageWidth, imageHeight);
+    }
+
+    function dataURLtoBlob(dataurl) {
+        var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+                bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+        while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new Blob([u8arr], {type: mime});
+    }
+
+</script>
+</html>

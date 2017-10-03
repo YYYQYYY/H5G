@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>扫雷吧</title>
+    <link rel="stylesheet" href="../mine/static/css/mine.css"/>
+</head>
+<body>
+<canvas id="game" width="50" height="50"></canvas>
+<script type="text/javascript">
+    var ctx = document.getElementById("game").getContext("2d");
+    var x = 0;
+    var y = 0;
+    ctx.beginPath();
+    ctx.strokeStyle = "red";
+    ctx.fillStyle = "red";
+//    ctx.lineJoin = 'round';
+//    ctx.lineCap = 'round';
+    ctx.lineTo(x + 20, y + 10);
+    ctx.lineTo(x + 40, y + 20);
+    ctx.lineTo(x + 20, y + 30);
+    ctx.fill();
+    ctx.moveTo(x + 21, y + 40);
+    ctx.lineTo(x + 21, y + 30);
+    ctx.stroke();
+    ctx.closePath();
+</script>
+</body>
+</html>

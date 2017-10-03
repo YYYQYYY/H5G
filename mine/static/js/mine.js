@@ -132,7 +132,7 @@ function initLayers() {
     }, 1000);
     $("#residual_mines").text(MG.residualMines);
 }
-
+var dX = 0, dY = 0;
 /**
  * 绑定事件
  */
@@ -141,10 +141,10 @@ function bindEvent() {
     layers.oncontextmenu = disableRightClick;
     layers.mousedown(function (e) {
         var canvasPosition = $(this).offset();
-        var mouseX = (e.pageX - canvasPosition.left) || 0;
-        var mouseY = (e.pageY - canvasPosition.top) || 0;
-        var ri = Math.floor(mouseX / MG.cg.cellWidth);
-        var ci = Math.floor(mouseY / MG.cg.cellWidth);
+        dX = (e.pageX - canvasPosition.left) || 0;
+        dY = (e.pageY - canvasPosition.top) || 0;
+        var ri = Math.floor(dX / MG.cg.cellWidth);
+        var ci = Math.floor(dY / MG.cg.cellWidth);
         ri = ri >= MG.cg.range.rows ? MG.cg.range.rows - 1 : ri;
         ci = ci >= MG.cg.range.columns ? MG.cg.range.columns - 1 : ci;
 
@@ -154,17 +154,24 @@ function bindEvent() {
         }, 1000);
     });
     layers.mousemove(function (e) {
-        clearTimeout(MG.timeout);
-        MG.timeout = 0;
+        var canvasPosition = $(this).offset();
+        var mX = (e.pageX - canvasPosition.left) || 0;
+        var mY = (e.pageY - canvasPosition.top) || 0;
+
+        if ((Math.abs(dX - mX) > MG.cg.cellWidth / 2) ||
+            (Math.abs(dY - mY) > MG.cg.cellWidth / 2)) {
+            clearTimeout(MG.timeout);
+            MG.timeout = 0;
+        }
     });
     layers.mouseup(function (e) {
         clearTimeout(MG.timeout);
         if (MG.timeout != 0) {
             var canvasPosition = $(this).offset();
-            var mouseX = (e.pageX - canvasPosition.left) || 0;
-            var mouseY = (e.pageY - canvasPosition.top) || 0;
-            var ri = Math.floor(mouseX / MG.cg.cellWidth);
-            var ci = Math.floor(mouseY / MG.cg.cellWidth);
+            var uX = (e.pageX - canvasPosition.left) || 0;
+            var uY = (e.pageY - canvasPosition.top) || 0;
+            var ri = Math.floor(uX / MG.cg.cellWidth);
+            var ci = Math.floor(uY / MG.cg.cellWidth);
             ri = ri >= MG.cg.range.rows ? MG.cg.range.rows - 1 : ri;
             ci = ci >= MG.cg.range.columns ? MG.cg.range.columns - 1 : ci;
 
@@ -216,10 +223,12 @@ function checkMine(ri, ci, isFlag) {
 
     // 雷区全部清除后，停止计时
     if (MG.residualMines == 0) {
-        stopInterval();
-        if (confirm("你的得分：" + MG.score)) {
-            resetGame();
-        }
+        setTimeout(function () {
+            stopInterval();
+            if (confirm("你的得分：" + MG.score)) {
+                resetGame();
+            }
+        }, 500);
     }
 }
 
@@ -406,15 +415,30 @@ function drawFlag(ri, ci) {
 
     var cellWidth = MG.cg.cellWidth;
 
-    MG.dataMap[ri][ci].isFlag = !MG.dataMap[ri][ci].isFlag;
-    if (MG.dataMap[ri][ci].isFlag) {
-        ctx.fillStyle = "#abc";
-        ctx.fillRect(ri * cellWidth + cellWidth / 4, ci * cellWidth + cellWidth / 4, cellWidth / 2 - 1, cellWidth / 2 - 1);
-    } else {
-        ctx.clearRect(ri * cellWidth + cellWidth / 4, ci * cellWidth + cellWidth / 4, cellWidth / 2 - 1, cellWidth / 2 - 1);
-        ctx.fillStyle = "lightblue";
-        ctx.fillRect(ri * cellWidth + cellWidth / 4 - 1, ci * cellWidth + cellWidth / 4 - 1, cellWidth / 2, cellWidth / 2 + 1);
-    }
+    MG.dataMap[ri][ci].isFlag = true;//!MG.dataMap[ri][ci].isFlag;
+    //if (MG.dataMap[ri][ci].isFlag) {
+    //    ctx.fillStyle = "#abc";
+    //    ctx.fillRect(ri * cellWidth + cellWidth / 4, ci * cellWidth + cellWidth / 4, cellWidth / 2 - 1, cellWidth / 2 - 1);
+    //} else {
+    //    ctx.clearRect(ri * cellWidth + cellWidth / 4, ci * cellWidth + cellWidth / 4, cellWidth / 2 - 1, cellWidth / 2 - 1);
+    //    ctx.fillStyle = "lightblue";
+    //    ctx.fillRect(ri * cellWidth + cellWidth / 4 - 1, ci * cellWidth + cellWidth / 4 - 1, cellWidth / 2, cellWidth / 2 + 1);
+    //}
+    var x = ri * cellWidth;
+    var y = ci * cellWidth;
+    ctx.beginPath();
+    ctx.strokeStyle = "red";
+    ctx.fillStyle = "red";
+    //ctx.lineJoin = 'round';
+    //ctx.lineCap = 'round';
+    ctx.lineTo(x + 20, y + 10);
+    ctx.lineTo(x + 40, y + 20);
+    ctx.lineTo(x + 20, y + 30);
+    ctx.fill();
+    ctx.moveTo(x + 21, y + 40);
+    ctx.lineTo(x + 21, y + 30);
+    ctx.stroke();
+    ctx.closePath();
 }
 
 /**
@@ -510,5 +534,7 @@ function stopGame(isWon) {
  */
 $(function () {
     // TODO:需要根据行数、列数和格子宽度计算游戏外框大小
+    // TODO:或者根据屏幕宽度，行数、列数计算游戏外框大小与格子宽度
+
     initGame();
 });
