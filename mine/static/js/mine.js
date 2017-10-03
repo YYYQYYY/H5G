@@ -145,15 +145,11 @@ function bindEvent() {
         var mouseY = (e.pageY - canvasPosition.top) || 0;
         var ri = Math.floor(mouseX / MG.cg.cellWidth);
         var ci = Math.floor(mouseY / MG.cg.cellWidth);
-        //var isLeftButtonClicked = event.button == 0;
+        ri = ri >= MG.cg.range.rows ? MG.cg.range.rows - 1 : ri;
+        ci = ci >= MG.cg.range.columns ? MG.cg.range.columns - 1 : ci;
 
         MG.timeout = setTimeout(function (e) {
-            drawFlag(ri, ci);
-            //if (isLeftButtonClicked) {
-            //    openCell(mouseX, mouseY);
-            //} else {
-            //    drawFlag(mouseX, mouseY);
-            //}
+            checkMine(ri, ci, true);
             MG.timeout = 0;
         }, 1000);
     });
@@ -169,9 +165,18 @@ function bindEvent() {
             var mouseY = (e.pageY - canvasPosition.top) || 0;
             var ri = Math.floor(mouseX / MG.cg.cellWidth);
             var ci = Math.floor(mouseY / MG.cg.cellWidth);
-            openCell(ri, ci);
+            ri = ri >= MG.cg.range.rows ? MG.cg.range.rows - 1 : ri;
+            ci = ci >= MG.cg.range.columns ? MG.cg.range.columns - 1 : ci;
+
+            checkMine(ri, ci, false);
         }
     });
+}
+
+/**
+ * 判断输赢
+ */
+function checkWin() {
 }
 
 /**
@@ -181,27 +186,46 @@ function bindEvent() {
  * @param isFlag
  */
 function checkMine(ri, ci, isFlag) {
+    if (MG.dataMap[ri][ci].isFlag || MG.dataMap[ri][ci].isOpened) {
+        return;
+    }
+
+    // 判断是否是标旗动作
     if (isFlag) {
         // 正确标旗
         if (MG.dataMap[ri][ci].data < 0) {
+            drawFlag(ri, ci);
             addScore(true);
         } else {
+            openCell(ri, ci);
             drawBoomCell(ri, ci);
-            stopGame(false);
+            //stopGame(true);
+            subtractScore(true);
         }
     } else {
+        openCell(ri, ci);
         // 正确打开格子
         if (MG.dataMap[ri][ci].data > -1) {
             addScore(false);
         } else {
             drawBoomCell(ri, ci);
-            stopGame(false);
+            //stopGame(false);
+            subtractScore(false);
+        }
+    }
+
+    // 雷区全部清除后，停止计时
+    if (MG.residualMines == 0) {
+        stopInterval();
+        if (confirm("你的得分：" + MG.score)) {
+            resetGame();
         }
     }
 }
 
 /**
- * 计算分数
+ * 加分数
+ * @param isFlag
  */
 function addScore(isFlag) {
     if (isFlag) {
@@ -209,6 +233,19 @@ function addScore(isFlag) {
         $("#residual_mines").text(MG.residualMines);
     }
     MG.score++;
+    $("#score").text(MG.score);
+}
+
+/**
+ * 减分数
+ * @param isFlag
+ */
+function subtractScore(isFlag) {
+    if (!isFlag) {
+        MG.residualMines--;
+        $("#residual_mines").text(MG.residualMines);
+    }
+    MG.score--;
     $("#score").text(MG.score);
 }
 
@@ -352,7 +389,6 @@ function openCell(ri, ci) {
         var ctx = MG.layers[1];
         ctx.clearRect(ri * cellWidth + 1, ci * cellWidth + 1, cellWidth - 1, cellWidth - 1);
         MG.dataMap[ri][ci].isOpened = true;
-        checkMine(ri, ci, false);
     }
 }
 
@@ -374,7 +410,6 @@ function drawFlag(ri, ci) {
     if (MG.dataMap[ri][ci].isFlag) {
         ctx.fillStyle = "#abc";
         ctx.fillRect(ri * cellWidth + cellWidth / 4, ci * cellWidth + cellWidth / 4, cellWidth / 2 - 1, cellWidth / 2 - 1);
-        checkMine(ri, ci, true);
     } else {
         ctx.clearRect(ri * cellWidth + cellWidth / 4, ci * cellWidth + cellWidth / 4, cellWidth / 2 - 1, cellWidth / 2 - 1);
         ctx.fillStyle = "lightblue";
@@ -433,6 +468,14 @@ function startGame() {
     bindEvent();
     createGameData();
     drawDataMap();
+}
+
+/**
+ * 重置游戏
+ */
+function resetGame() {
+    initGame();
+    startGame();
 }
 
 /**
