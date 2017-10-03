@@ -499,7 +499,7 @@ function initGame() {
 
 function setCurrentGame() {
     MG.cg = MG.levels[MG.currentLevel];
-    MG.cg.mineCount = Math.ceil(Math.random() * 5 + 30);
+    MG.cg.mineCount = Math.ceil(Math.random() * 15 + 20);
     MG.residualMines = MG.cg.mineCount;
     MG.cellWidth = CONFIG.cellWidth;
 }
@@ -603,7 +603,6 @@ function setConfig() {
  * 游戏入口
  */
 $(function () {
-    // TODO:浏览器缩放是坐标不对
     setConfig();
 
     initGame();
