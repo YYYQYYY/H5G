@@ -281,15 +281,27 @@ function drawGridCells() {
 
     clear(ctx);
 
-    for (var ri = 0; ri < rows; ri++) {
+    //ctx.beginPath();
+    //ctx.moveTo(0, 0);
+    //ctx.lineTo(0, CONFIG.width);
+    //ctx.lineTo(CONFIG.width, CONFIG.height);
+    //ctx.lineTo(0, CONFIG.height);
+    //ctx.lineTo(0, 0);
+    //ctx.closePath();
+
+    for (var ri = 0; ri < columns; ri++) {
+        ctx.beginPath();
         ctx.moveTo(0, ri * cellWidth);
-        ctx.lineTo(MG.cg.range.columns * cellWidth, ri * cellWidth);
+        ctx.lineTo(CONFIG.width, ri * cellWidth);
         ctx.stroke();
+        ctx.closePath();
     }
-    for (var ci = 0; ci < columns; ci++) {
+    for (var ci = 0; ci < rows; ci++) {
+        ctx.beginPath();
         ctx.moveTo(ci * cellWidth, 0);
-        ctx.lineTo(ci * cellWidth, MG.cg.range.rows * cellWidth);
+        ctx.lineTo(ci * cellWidth, CONFIG.height);
         ctx.stroke();
+        ctx.closePath();
     }
 }
 
@@ -552,7 +564,7 @@ function setConfig() {
     CONFIG.width = CONFIG.cellWidth * MG.levels[MG.currentLevel].range.rows;
     CONFIG.height = CONFIG.cellWidth * MG.levels[MG.currentLevel].range.columns;
 
-    alert(
+    console.log(
         msg + "\n\n浏览器屏幕宽度：" + WW + "\t浏览器屏幕高度：" + WH
         + "\n\ndh:" + dh
         + "\n\n游戏区域宽度：" + gw + "\t\t游戏格子宽度：" + CONFIG.cellWidth
@@ -565,6 +577,7 @@ function setConfig() {
 
     MG.layers = [];
     var canvas_bg = document.getElementById("bg");
+    canvas_bg.style.border = "1px solid black";
     canvas_bg.width = CONFIG.width;
     canvas_bg.height = CONFIG.height;
     MG.layers[0] = canvas_bg.getContext("2d");
