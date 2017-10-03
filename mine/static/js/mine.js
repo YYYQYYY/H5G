@@ -22,10 +22,10 @@ var MG = {
 MG.levels = [
     {
         level: 0,
-        mineCount: 50,
+        mineCount: 49,
         range: {
-            rows: 10,
-            columns: 20
+            rows: 9,
+            columns: 9
         }
     }
 ];
@@ -259,6 +259,7 @@ function subtractScore(isFlag) {
         $("#residual_mines").text(MG.residualMines);
     }
     MG.score--;
+    MG.score = MG.score < 0 ? 0 : MG.score;
     $("#score").text(MG.score);
 }
 
@@ -334,7 +335,12 @@ function drawMask() {
             ctx.fillRect(ri * cellWidth + 1, ci * cellWidth + 1, cellWidth - 2, cellWidth - 2);
             ctx.fillStyle = "darkblue";
             ctx.fillRect(ri * cellWidth + 2, ci * cellWidth + 2, cellWidth - 1, cellWidth - 1);
-            ctx.fillStyle = "#ccf";
+
+            if ((!(ri % 2 && ci % 2))) {
+                ctx.fillStyle = "#ccf";
+            } else {
+                ctx.fillStyle = "#cff";
+            }
             ctx.fillRect(ri * cellWidth + 2, ci * cellWidth + 2, cellWidth - 2, cellWidth - 2);
         }
     }
@@ -380,12 +386,11 @@ function drawBoomCell(ri, ci) {
     var msg = "";
 
     if (MG.dataMap[ri][ci].data < 0) {
-        ctx.fillStyle = "red";
         msg = "M";
     } else if (MG.dataMap[ri][ci].data > 0) {
-        ctx.fillStyle = "red";
         msg = MG.dataMap[ri][ci].data;
     }
+    ctx.fillStyle = "red";
     ctx.fillRect(ri * cellWidth + 1, ci * cellWidth + 1, cellWidth - 2, cellWidth - 2);
     ctx.fillStyle = "darkgray";
     ctx.fillText(msg, ri * cellWidth + cellWidth / 2, ci * cellWidth + (cellWidth / 1.4));
@@ -451,12 +456,12 @@ function drawFlag(ri, ci) {
     ctx.fillStyle = "red";
     //ctx.lineJoin = 'round';
     //ctx.lineCap = 'round';
-    ctx.lineTo(x + 20, y + 10);
-    ctx.lineTo(x + 40, y + 20);
-    ctx.lineTo(x + 20, y + 30);
+    ctx.lineTo(x + MG.cellWidth * 0.4, y + MG.cellWidth * 0.2);
+    ctx.lineTo(x + MG.cellWidth * 0.8, y + MG.cellWidth * 0.4);
+    ctx.lineTo(x + MG.cellWidth * 0.4, y + MG.cellWidth * 0.6);
     ctx.fill();
-    ctx.moveTo(x + 21, y + 40);
-    ctx.lineTo(x + 21, y + 30);
+    ctx.moveTo(x + MG.cellWidth * 0.4 + 1, y + MG.cellWidth * 0.8);
+    ctx.lineTo(x + MG.cellWidth * 0.4 + 1, y + MG.cellWidth * 0.6);
     ctx.stroke();
     ctx.closePath();
 }
@@ -597,8 +602,7 @@ function setConfig() {
  * 游戏入口
  */
 $(function () {
-    // TODO:需要根据行数、列数和格子宽度计算游戏外框大小
-    // TODO:或者根据屏幕宽度，行数、列数计算游戏外框大小与格子宽度
+    // TODO:浏览器缩放是坐标不对
     setConfig();
 
     initGame();
