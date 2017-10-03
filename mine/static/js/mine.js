@@ -183,8 +183,11 @@ function bindEvent() {
 function checkMine(ri, ci, isFlag) {
     if (isFlag) {
         // 正确标旗
-        if (MG.dataMap[ri][ci].isFlag) {
+        if (MG.dataMap[ri][ci].data < 0) {
             addScore(true);
+        } else {
+            drawBoomCell(ri, ci);
+            stopGame(false);
         }
     } else {
         // 正确打开格子
@@ -244,29 +247,12 @@ function drawGridCells() {
  * 绘制格子
  */
 function drawDataMap() {
-    var cellWidth = MG.cg.cellWidth;
     var rows = MG.cg.range.rows;
     var columns = MG.cg.range.columns;
-    var ctx = MG.layers[0];
-    ctx.textAlign = "center";
-    ctx.font = "30px Arial";
 
-    var msg = "";
     for (var ri = 0; ri < rows; ri++) {
         for (var ci = 0; ci < columns; ci++) {
-            if (MG.dataMap[ri][ci].data < 0) {
-                ctx.fillStyle = "lightgray";
-                msg = "M";
-            } else if (MG.dataMap[ri][ci].data > 0) {
-                ctx.fillStyle = "blue";
-                msg = MG.dataMap[ri][ci].data;
-            } else {
-                ctx.fillStyle = "green";
-                msg = "";
-            }
-            ctx.fillRect(ri * cellWidth + 1, ci * cellWidth + 1, cellWidth - 2, cellWidth - 2);
-            ctx.fillStyle = "#f00";
-            ctx.fillText(msg, ri * cellWidth + cellWidth / 2, ci * cellWidth + (cellWidth / 1.4));
+            drawCell(ri, ci);
         }
     }
 }
@@ -289,6 +275,33 @@ function drawMask() {
 }
 
 /**
+ * 绘制格子
+ * @param ri
+ * @param ci
+ */
+function drawCell(ri, ci) {
+    var cellWidth = MG.cg.cellWidth;
+    var ctx = MG.layers[0];
+    ctx.textAlign = "center";
+    ctx.font = "30px Arial";
+    var msg = "";
+
+    if (MG.dataMap[ri][ci].data < 0) {
+        ctx.fillStyle = "lightgray";
+        msg = "M";
+    } else if (MG.dataMap[ri][ci].data > 0) {
+        ctx.fillStyle = "blue";
+        msg = MG.dataMap[ri][ci].data;
+    } else {
+        ctx.fillStyle = "green";
+        msg = "";
+    }
+    ctx.fillRect(ri * cellWidth + 1, ci * cellWidth + 1, cellWidth - 2, cellWidth - 2);
+    ctx.fillStyle = "#f00";
+    ctx.fillText(msg, ri * cellWidth + cellWidth / 2, ci * cellWidth + (cellWidth / 1.4));
+}
+
+/**
  * 绘制爆炸格子
  * @param ri
  * @param ci
@@ -296,8 +309,20 @@ function drawMask() {
 function drawBoomCell(ri, ci) {
     var cellWidth = MG.cg.cellWidth;
     var ctx = MG.layers[0];
-    ctx.fillStyle = "red";
-    ctx.fillRect(ri * cellWidth + 1, ci * cellWidth + 1, cellWidth - 1, cellWidth - 1);
+    ctx.textAlign = "center";
+    ctx.font = "30px Arial";
+    var msg = "";
+
+    if (MG.dataMap[ri][ci].data < 0) {
+        ctx.fillStyle = "red";
+        msg = "M";
+    } else if (MG.dataMap[ri][ci].data > 0) {
+        ctx.fillStyle = "red";
+        msg = MG.dataMap[ri][ci].data;
+    }
+    ctx.fillRect(ri * cellWidth + 1, ci * cellWidth + 1, cellWidth - 2, cellWidth - 2);
+    ctx.fillStyle = "darkgray";
+    ctx.fillText(msg, ri * cellWidth + cellWidth / 2, ci * cellWidth + (cellWidth / 1.4));
 }
 
 /**
