@@ -1,18 +1,19 @@
 /**
  * Created by yuqy on 2017/9/29.
  */
-var timeout = 0;
-var mineGame = {
-    layers: [],
-    dataMap: [],
-    currentLevel: 0,
-    residualMines: 20,
-    elapsedTime: 0,
-    timer: 0,
-    score: 0
+var MG = {
+    layers: [], /* 画布层 */
+    dataMap: [], /* 雷区地图 */
+    currentLevel: 0, /* 当前游戏级别 */
+    cg: null, /* 当前游戏 */
+    residualMines: 20, /* 剩余雷数 */
+    elapsedTime: 0, /* 经过时间 */
+    timer: 0, /* 计时器 */
+    timeout: 0, /* 计时器句柄 */
+    score: 0 /* 得分 */
 };
 
-mineGame.levels = [
+MG.levels = [
     {
         level: 0,
         width: 400,
@@ -41,10 +42,9 @@ function Cell() {
  * @returns {*[]}
  */
 function getRandomPosition() {
-    var currentGame = mineGame.levels[mineGame.currentLevel];
     return {
-        x: getRandom(currentGame.range.rows),
-        y: getRandom(currentGame.range.columns)
+        x: getRandom(MG.cg.range.rows),
+        y: getRandom(MG.cg.range.columns)
     };
 }
 
@@ -60,9 +60,8 @@ function createGameData() {
  * 生成空白地图
  */
 function initDataMap() {
-    var currentGame = mineGame.levels[mineGame.currentLevel];
-    for (var r = 0; r < currentGame.range.rows; r++) {
-        mineGame.dataMap[r] = Array.apply(null, Array(currentGame.range.columns)).map(function (i) {
+    for (var r = 0; r < MG.cg.range.rows; r++) {
+        MG.dataMap[r] = Array.apply(null, Array(MG.cg.range.columns)).map(function (i) {
             return new Cell();
         });
     }
@@ -73,15 +72,14 @@ function initDataMap() {
  * 扫描地雷周围，生成格子周围地雷数
  */
 function createMines() {
-    var currentGame = mineGame.levels[mineGame.currentLevel];
-    var mineCount = currentGame.mineCount;
+    var mineCount = MG.cg.mineCount;
     var tempArr = {};
     while (mineCount > 0) {
         var pos = getRandomPosition();
         var key = pos.x + "=" + pos.y;
         if (!tempArr[key]) {
             tempArr[key] = 1;
-            mineGame.dataMap[pos.x][pos.y].data = -1;
+            MG.dataMap[pos.x][pos.y].data = -1;
             scanAroundCell(pos);
             mineCount--;
         }
@@ -94,16 +92,15 @@ function createMines() {
  * @param pos
  */
 function scanAroundCell(pos) {
-    var currentGame = mineGame.levels[mineGame.currentLevel];
-    var rows = currentGame.range.rows;
-    var columns = currentGame.range.columns;
+    var rows = MG.cg.range.rows;
+    var columns = MG.cg.range.columns;
     for (var ri = -1; ri < 2; ri++) {
         var r = pos.x + ri;
         if (r > -1 && r < rows) {
             for (var ci = -1; ci < 2; ci++) {
                 var c = pos.y + ci;
-                if (c > -1 && c < columns && !(r == pos.x && c == pos.y) && mineGame.dataMap[r][c].data > -1) {
-                    mineGame.dataMap[r][c].data++;
+                if (c > -1 && c < columns && !(r == pos.x && c == pos.y) && MG.dataMap[r][c].data > -1) {
+                    MG.dataMap[r][c].data++;
                 }
             }
         }
@@ -117,8 +114,8 @@ function scanAroundCell(pos) {
  * 初始化游戏画布
  */
 function initLayers() {
-    mineGame.layers.forEach(function (i) {
-            //mineGame.layers[i].canvas.oncontextmenu = function (e) {
+    MG.layers.forEach(function (i) {
+            //MG.layers[i].canvas.oncontextmenu = function (e) {
             //    if (document.all) {
             //        window.event.returnValue = false;
             //    } else {
@@ -128,12 +125,12 @@ function initLayers() {
         }
     );
 
-    $("#elapsed_time").text(mineGame.elapsedTime);
-    mineGame.timer = setInterval(function () {
-        mineGame.elapsedTime++;
-        $("#elapsed_time").text(mineGame.elapsedTime);
+    $("#elapsed_time").text(MG.elapsedTime);
+    MG.timer = setInterval(function () {
+        MG.elapsedTime++;
+        $("#elapsed_time").text(MG.elapsedTime);
     }, 1000);
-    $("#residual_mines").text(mineGame.residualMines);
+    $("#residual_mines").text(MG.residualMines);
 }
 
 /**
@@ -146,34 +143,32 @@ function bindEvent() {
         var canvasPosition = $(this).offset();
         var mouseX = (e.pageX - canvasPosition.left) || 0;
         var mouseY = (e.pageY - canvasPosition.top) || 0;
-        var currentGame = mineGame.levels[mineGame.currentLevel];
-        var ri = Math.floor(mouseX / currentGame.cellWidth);
-        var ci = Math.floor(mouseY / currentGame.cellWidth);
+        var ri = Math.floor(mouseX / MG.cg.cellWidth);
+        var ci = Math.floor(mouseY / MG.cg.cellWidth);
         //var isLeftButtonClicked = event.button == 0;
 
-        timeout = setTimeout(function (e) {
+        MG.timeout = setTimeout(function (e) {
             drawFlag(ri, ci);
             //if (isLeftButtonClicked) {
             //    openCell(mouseX, mouseY);
             //} else {
             //    drawFlag(mouseX, mouseY);
             //}
-            timeout = 0;
+            MG.timeout = 0;
         }, 1000);
     });
     layers.mousemove(function (e) {
-        clearTimeout(timeout);
-        timeout = 0;
+        clearTimeout(MG.timeout);
+        MG.timeout = 0;
     });
     layers.mouseup(function (e) {
-        clearTimeout(timeout);
-        if (timeout != 0) {
+        clearTimeout(MG.timeout);
+        if (MG.timeout != 0) {
             var canvasPosition = $(this).offset();
             var mouseX = (e.pageX - canvasPosition.left) || 0;
             var mouseY = (e.pageY - canvasPosition.top) || 0;
-            var currentGame = mineGame.levels[mineGame.currentLevel];
-            var ri = Math.floor(mouseX / currentGame.cellWidth);
-            var ci = Math.floor(mouseY / currentGame.cellWidth);
+            var ri = Math.floor(mouseX / MG.cg.cellWidth);
+            var ci = Math.floor(mouseY / MG.cg.cellWidth);
             openCell(ri, ci);
         }
     });
@@ -188,13 +183,13 @@ function bindEvent() {
 function checkMine(ri, ci, isFlag) {
     if (isFlag) {
         // 正确标旗
-        if (mineGame.dataMap[ri][ci].isFlag) {
-            addScore();
+        if (MG.dataMap[ri][ci].isFlag) {
+            addScore(true);
         }
     } else {
         // 正确打开格子
-        if (mineGame.dataMap[ri][ci].data > -1) {
-            addScore();
+        if (MG.dataMap[ri][ci].data > -1) {
+            addScore(false);
         } else {
             drawBoomCell(ri, ci);
             stopGame(false);
@@ -205,11 +200,13 @@ function checkMine(ri, ci, isFlag) {
 /**
  * 计算分数
  */
-function addScore() {
-    mineGame.residualMines--;
-    $("#residual_mines").text(mineGame.residualMines);
-    mineGame.score++;
-    $("#score").text(mineGame.score);
+function addScore(isFlag) {
+    if (isFlag) {
+        MG.residualMines--;
+        $("#residual_mines").text(MG.residualMines);
+    }
+    MG.score++;
+    $("#score").text(MG.score);
 }
 
 /**
@@ -224,22 +221,21 @@ function clear(ctx) {
  * 绘制格子线
  */
 function drawGridCells() {
-    var currentGame = mineGame.levels[mineGame.currentLevel];
-    var cellWidth = currentGame.cellWidth;
-    var rows = currentGame.range.rows + 1;
-    var columns = currentGame.range.columns + 1;
-    var ctx = mineGame.layers[0];
+    var cellWidth = MG.cg.cellWidth;
+    var rows = MG.cg.range.rows + 1;
+    var columns = MG.cg.range.columns + 1;
+    var ctx = MG.layers[0];
 
     clear(ctx);
 
     for (var ri = 0; ri < rows; ri++) {
         ctx.moveTo(0, ri * cellWidth);
-        ctx.lineTo(currentGame.range.columns * cellWidth, ri * cellWidth);
+        ctx.lineTo(MG.cg.range.columns * cellWidth, ri * cellWidth);
         ctx.stroke();
     }
     for (var ci = 0; ci < columns; ci++) {
         ctx.moveTo(ci * cellWidth, 0);
-        ctx.lineTo(ci * cellWidth, currentGame.range.rows * cellWidth);
+        ctx.lineTo(ci * cellWidth, MG.cg.range.rows * cellWidth);
         ctx.stroke();
     }
 }
@@ -248,23 +244,22 @@ function drawGridCells() {
  * 绘制格子
  */
 function drawDataMap() {
-    var currentGame = mineGame.levels[mineGame.currentLevel];
-    var cellWidth = currentGame.cellWidth;
-    var rows = currentGame.range.rows;
-    var columns = currentGame.range.columns;
-    var ctx = mineGame.layers[0];
+    var cellWidth = MG.cg.cellWidth;
+    var rows = MG.cg.range.rows;
+    var columns = MG.cg.range.columns;
+    var ctx = MG.layers[0];
     ctx.textAlign = "center";
     ctx.font = "30px Arial";
 
     var msg = "";
     for (var ri = 0; ri < rows; ri++) {
         for (var ci = 0; ci < columns; ci++) {
-            if (mineGame.dataMap[ri][ci].data < 0) {
+            if (MG.dataMap[ri][ci].data < 0) {
                 ctx.fillStyle = "lightgray";
                 msg = "M";
-            } else if (mineGame.dataMap[ri][ci].data > 0) {
+            } else if (MG.dataMap[ri][ci].data > 0) {
                 ctx.fillStyle = "blue";
-                msg = mineGame.dataMap[ri][ci].data;
+                msg = MG.dataMap[ri][ci].data;
             } else {
                 ctx.fillStyle = "green";
                 msg = "";
@@ -280,11 +275,10 @@ function drawDataMap() {
  * 绘制遮罩
  */
 function drawMask() {
-    var currentGame = mineGame.levels[mineGame.currentLevel];
-    var cellWidth = currentGame.cellWidth;
-    var rows = currentGame.range.rows;
-    var columns = currentGame.range.columns;
-    var ctx = mineGame.layers[1];
+    var cellWidth = MG.cg.cellWidth;
+    var rows = MG.cg.range.rows;
+    var columns = MG.cg.range.columns;
+    var ctx = MG.layers[1];
 
     for (var ri = 0; ri < rows; ri++) {
         for (var ci = 0; ci < columns; ci++) {
@@ -300,9 +294,8 @@ function drawMask() {
  * @param ci
  */
 function drawBoomCell(ri, ci) {
-    var currentGame = mineGame.levels[mineGame.currentLevel];
-    var cellWidth = currentGame.cellWidth;
-    var ctx = mineGame.layers[0];
+    var cellWidth = MG.cg.cellWidth;
+    var ctx = MG.layers[0];
     ctx.fillStyle = "red";
     ctx.fillRect(ri * cellWidth + 1, ci * cellWidth + 1, cellWidth - 1, cellWidth - 1);
 }
@@ -311,11 +304,10 @@ function drawBoomCell(ri, ci) {
  * 打开所有格子
  */
 function openAllCell() {
-    var currentGame = mineGame.levels[mineGame.currentLevel];
-    var cellWidth = currentGame.cellWidth;
-    var rows = currentGame.range.rows;
-    var columns = currentGame.range.columns;
-    var ctx = mineGame.layers[1];
+    var cellWidth = MG.cg.cellWidth;
+    var rows = MG.cg.range.rows;
+    var columns = MG.cg.range.columns;
+    var ctx = MG.layers[1];
 
     for (var ri = 0; ri < rows; ri++) {
         for (var ci = 0; ci < columns; ci++) {
@@ -330,12 +322,11 @@ function openAllCell() {
  * @param ci
  */
 function openCell(ri, ci) {
-    if (!mineGame.dataMap[ri][ci].isOpened && !mineGame.dataMap[ri][ci].isFlag) {
-        var currentGame = mineGame.levels[mineGame.currentLevel];
-        var cellWidth = currentGame.cellWidth;
-        var ctx = mineGame.layers[1];
+    if (!MG.dataMap[ri][ci].isOpened && !MG.dataMap[ri][ci].isFlag) {
+        var cellWidth = MG.cg.cellWidth;
+        var ctx = MG.layers[1];
         ctx.clearRect(ri * cellWidth + 1, ci * cellWidth + 1, cellWidth - 1, cellWidth - 1);
-        mineGame.dataMap[ri][ci].isOpened = true;
+        MG.dataMap[ri][ci].isOpened = true;
         checkMine(ri, ci, false);
     }
 }
@@ -346,25 +337,24 @@ function openCell(ri, ci) {
  * @param ci
  */
 function drawFlag(ri, ci) {
-    var ctx = mineGame.layers[1];
+    var ctx = MG.layers[1];
 
-    if (mineGame.dataMap[ri][ci].isOpened) {
+    if (MG.dataMap[ri][ci].isOpened) {
         return;
     }
 
-    var currentGame = mineGame.levels[mineGame.currentLevel];
-    var cellWidth = currentGame.cellWidth;
+    var cellWidth = MG.cg.cellWidth;
 
-    if (!mineGame.dataMap[ri][ci].isFlag) {
+    MG.dataMap[ri][ci].isFlag = !MG.dataMap[ri][ci].isFlag;
+    if (MG.dataMap[ri][ci].isFlag) {
         ctx.fillStyle = "#abc";
         ctx.fillRect(ri * cellWidth + cellWidth / 4, ci * cellWidth + cellWidth / 4, cellWidth / 2 - 1, cellWidth / 2 - 1);
+        checkMine(ri, ci, true);
     } else {
         ctx.clearRect(ri * cellWidth + cellWidth / 4, ci * cellWidth + cellWidth / 4, cellWidth / 2 - 1, cellWidth / 2 - 1);
         ctx.fillStyle = "lightblue";
         ctx.fillRect(ri * cellWidth + cellWidth / 4 - 1, ci * cellWidth + cellWidth / 4 - 1, cellWidth / 2, cellWidth / 2 + 1);
     }
-    mineGame.dataMap[ri][ci].isFlag = !mineGame.dataMap[ri][ci].isFlag;
-    checkMine(ri, ci, true);
 }
 
 /**
@@ -383,25 +373,31 @@ function disableRightClick(e) {
  * 初始化游戏
  */
 function initGame() {
-    timeout = 0;
-    mineGame.layers = [];
+    MG.timeout = 0;
+    MG.layers = [];
     var canvas_bg = document.getElementById("bg");
-    mineGame.layers[0] = canvas_bg.getContext("2d");
+    MG.layers[0] = canvas_bg.getContext("2d");
     canvas_bg.oncontextmenu = disableRightClick;
     var canvas_game = document.getElementById("game");
-    mineGame.layers[1] = canvas_game.getContext("2d");
+    MG.layers[1] = canvas_game.getContext("2d");
     canvas_game.oncontextmenu = disableRightClick;
 
-    mineGame.dataMap = [];
-    mineGame.currentLevel = 0;
-    mineGame.residualMines = 20;
-    mineGame.score = 0;
+    MG.dataMap = [];
+    MG.currentLevel = 0;
+    MG.residualMines = 20;
+    MG.score = 0;
 
     $("#residual_mines").text(0);
-    $("#score").text(mineGame.score);
+    $("#score").text(MG.score);
     stopInterval();
+
+    setCurrentGame();
     drawGridCells();
     drawMask();
+}
+
+function setCurrentGame() {
+    MG.cg = MG.levels[MG.currentLevel];
 }
 
 /**
@@ -418,10 +414,10 @@ function startGame() {
  * 停止计时器
  */
 function stopInterval() {
-    clearInterval(mineGame.timer);
-    mineGame.timer = 0;
-    mineGame.elapsedTime = 0;
-    $("#elapsed_time").text(mineGame.elapsedTime);
+    clearInterval(MG.timer);
+    MG.timer = 0;
+    MG.elapsedTime = 0;
+    $("#elapsed_time").text(MG.elapsedTime);
 }
 
 /**
