@@ -1,28 +1,31 @@
 /**
  * Created by yuqy on 2017/9/29.
  */
+var CONFIG = {
+    width: 0,
+    height: 0,
+    cellWidth: 0
+};
 var MG = {
     layers: [], /* 画布层 */
     dataMap: [], /* 雷区地图 */
     currentLevel: 0, /* 当前游戏级别 */
     cg: null, /* 当前游戏 */
-    residualMines: 20, /* 剩余雷数 */
+    residualMines: 0, /* 剩余雷数 */
     elapsedTime: 0, /* 经过时间 */
     timer: 0, /* 计时器 */
     timeout: 0, /* 计时器句柄 */
-    score: 0 /* 得分 */
+    score: 0, /* 得分 */
+    cellWidth: 0
 };
 
 MG.levels = [
     {
         level: 0,
-        width: 400,
-        height: 400,
-        cellWidth: 50,
-        mineCount: 20,
+        mineCount: 10,
         range: {
-            rows: 8,
-            columns: 8
+            rows: 5,
+            columns: 6
         }
     }
 ];
@@ -143,8 +146,8 @@ function bindEvent() {
         var canvasPosition = $(this).offset();
         dX = (e.pageX - canvasPosition.left) || 0;
         dY = (e.pageY - canvasPosition.top) || 0;
-        var ri = Math.floor(dX / MG.cg.cellWidth);
-        var ci = Math.floor(dY / MG.cg.cellWidth);
+        var ri = Math.floor(dX / MG.cellWidth);
+        var ci = Math.floor(dY / MG.cellWidth);
         ri = ri >= MG.cg.range.rows ? MG.cg.range.rows - 1 : ri;
         ci = ci >= MG.cg.range.columns ? MG.cg.range.columns - 1 : ci;
 
@@ -158,8 +161,8 @@ function bindEvent() {
         var mX = (e.pageX - canvasPosition.left) || 0;
         var mY = (e.pageY - canvasPosition.top) || 0;
 
-        if ((Math.abs(dX - mX) > MG.cg.cellWidth / 2) ||
-            (Math.abs(dY - mY) > MG.cg.cellWidth / 2)) {
+        if ((Math.abs(dX - mX) > MG.cellWidth / 2) ||
+            (Math.abs(dY - mY) > MG.cellWidth / 2)) {
             clearTimeout(MG.timeout);
             MG.timeout = 0;
         }
@@ -170,8 +173,8 @@ function bindEvent() {
             var canvasPosition = $(this).offset();
             var uX = (e.pageX - canvasPosition.left) || 0;
             var uY = (e.pageY - canvasPosition.top) || 0;
-            var ri = Math.floor(uX / MG.cg.cellWidth);
-            var ci = Math.floor(uY / MG.cg.cellWidth);
+            var ri = Math.floor(uX / MG.cellWidth);
+            var ci = Math.floor(uY / MG.cellWidth);
             ri = ri >= MG.cg.range.rows ? MG.cg.range.rows - 1 : ri;
             ci = ci >= MG.cg.range.columns ? MG.cg.range.columns - 1 : ci;
 
@@ -225,7 +228,7 @@ function checkMine(ri, ci, isFlag) {
     if (MG.residualMines == 0) {
         setTimeout(function () {
             stopInterval();
-            if (confirm("你的得分：" + MG.score)) {
+            if (confirm("你的得分：" + MG.score + "\n还要继续吗？")) {
                 resetGame();
             }
         }, 500);
@@ -270,7 +273,7 @@ function clear(ctx) {
  * 绘制格子线
  */
 function drawGridCells() {
-    var cellWidth = MG.cg.cellWidth;
+    var cellWidth = MG.cellWidth;
     var rows = MG.cg.range.rows + 1;
     var columns = MG.cg.range.columns + 1;
     var ctx = MG.layers[0];
@@ -307,7 +310,7 @@ function drawDataMap() {
  * 绘制遮罩
  */
 function drawMask() {
-    var cellWidth = MG.cg.cellWidth;
+    var cellWidth = MG.cellWidth;
     var rows = MG.cg.range.rows;
     var columns = MG.cg.range.columns;
     var ctx = MG.layers[1];
@@ -326,7 +329,7 @@ function drawMask() {
  * @param ci
  */
 function drawCell(ri, ci) {
-    var cellWidth = MG.cg.cellWidth;
+    var cellWidth = MG.cellWidth;
     var ctx = MG.layers[0];
     ctx.textAlign = "center";
     ctx.font = "30px Arial";
@@ -353,7 +356,7 @@ function drawCell(ri, ci) {
  * @param ci
  */
 function drawBoomCell(ri, ci) {
-    var cellWidth = MG.cg.cellWidth;
+    var cellWidth = MG.cellWidth;
     var ctx = MG.layers[0];
     ctx.textAlign = "center";
     ctx.font = "30px Arial";
@@ -375,7 +378,7 @@ function drawBoomCell(ri, ci) {
  * 打开所有格子
  */
 function openAllCell() {
-    var cellWidth = MG.cg.cellWidth;
+    var cellWidth = MG.cellWidth;
     var rows = MG.cg.range.rows;
     var columns = MG.cg.range.columns;
     var ctx = MG.layers[1];
@@ -394,7 +397,7 @@ function openAllCell() {
  */
 function openCell(ri, ci) {
     if (!MG.dataMap[ri][ci].isOpened && !MG.dataMap[ri][ci].isFlag) {
-        var cellWidth = MG.cg.cellWidth;
+        var cellWidth = MG.cellWidth;
         var ctx = MG.layers[1];
         ctx.clearRect(ri * cellWidth + 1, ci * cellWidth + 1, cellWidth - 1, cellWidth - 1);
         MG.dataMap[ri][ci].isOpened = true;
@@ -413,7 +416,7 @@ function drawFlag(ri, ci) {
         return;
     }
 
-    var cellWidth = MG.cg.cellWidth;
+    var cellWidth = MG.cellWidth;
 
     MG.dataMap[ri][ci].isFlag = true;//!MG.dataMap[ri][ci].isFlag;
     //if (MG.dataMap[ri][ci].isFlag) {
@@ -468,7 +471,7 @@ function initGame() {
 
     MG.dataMap = [];
     MG.currentLevel = 0;
-    MG.residualMines = 20;
+    MG.residualMines = 0;
     MG.score = 0;
 
     $("#residual_mines").text(0);
@@ -482,6 +485,8 @@ function initGame() {
 
 function setCurrentGame() {
     MG.cg = MG.levels[MG.currentLevel];
+    MG.residualMines = MG.cg.mineCount;
+    MG.cellWidth = CONFIG.cellWidth;
 }
 
 /**
@@ -546,9 +551,16 @@ function setConfig() {
         msg = ("正在通过安卓移动端访问");
     }
 
-    var dw = window.innerWidth;
-    var dh = window.innerHeight;
-    alert(msg + "\n屏幕宽度：" + dw + "\t屏幕高度：" + dh);
+    var gw = (Math.floor((dw < dh ? dw : dh) / 100) * 100);
+    CONFIG.cellWidth = Math.floor(gw / MG.levels[MG.currentLevel].range.rows / 10) * 10;
+    CONFIG.width = CONFIG.cellWidth * MG.levels[MG.currentLevel].range.rows;
+    CONFIG.height = CONFIG.cellWidth * MG.levels[MG.currentLevel].range.columns;
+
+    alert(
+        msg + "\n\n屏幕宽度：" + dw + "\t屏幕高度：" + dh
+        + "\n\n游戏区域宽度：" + gw + "\t格子宽度：" + CONFIG.cellWidth
+        + "\n\n屏幕宽度：" + CONFIG.width + "\t屏幕高度：" + CONFIG.height
+    );
 }
 
 /**
