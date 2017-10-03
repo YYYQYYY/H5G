@@ -530,9 +530,25 @@ function stopGame(isWon) {
 }
 
 function setConfig() {
+    var msg = "";
+    if (isPC) {
+        msg = ("正在通过PC端访问");
+    } else {
+        msg = ("正在通过移动端访问");
+    }
+    if (isWeixin) {
+        msg = ("正在通过微信移动端访问");
+    }
+    if (isIos) {
+        msg = ("正在通过苹果移动端访问");
+    }
+    if (isAndroid) {
+        msg = ("正在通过安卓移动端访问");
+    }
+
     var dw = window.innerWidth;
     var dh = window.innerHeight;
-    alert(dw + "|" + dh);
+    alert(msg + "\n屏幕宽度：" + dw + "\t屏幕高度：" + dh);
 }
 
 /**
