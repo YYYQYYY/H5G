@@ -509,5 +509,6 @@ function stopGame(isWon) {
  * 游戏入口
  */
 $(function () {
+    // TODO:需要根据行数、列数和格子宽度计算游戏外框大小
     initGame();
 });
