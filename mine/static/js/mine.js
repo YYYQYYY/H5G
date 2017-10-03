@@ -22,7 +22,7 @@ var MG = {
 MG.levels = [
     {
         level: 0,
-        mineCount: 49,
+        mineCount: 20,
         range: {
             rows: 9,
             columns: 9
@@ -499,6 +499,7 @@ function initGame() {
 
 function setCurrentGame() {
     MG.cg = MG.levels[MG.currentLevel];
+    MG.cg.mineCount = Math.ceil(Math.random() * 5 + 30);
     MG.residualMines = MG.cg.mineCount;
     MG.cellWidth = CONFIG.cellWidth;
 }
