@@ -9,6 +9,7 @@ var CONFIG = {
 var MG = {
     layers: [], /* 画布层 */
     dataMap: [], /* 雷区地图 */
+    masks: [], /* 蒙板地图 */
     currentLevel: 0, /* 当前游戏级别 */
     cg: null, /* 当前游戏 */
     residualMines: 0, /* 剩余雷数 */
@@ -22,10 +23,10 @@ var MG = {
 MG.levels = [
     {
         level: 0,
-        mineCount: 20,
+        mineCount: 30,
         range: {
-            rows: 9,
-            columns: 9
+            rows: 10,
+            columns: 10
         }
     }
 ];
@@ -336,7 +337,7 @@ function drawMask() {
             ctx.fillStyle = "darkblue";
             ctx.fillRect(ri * cellWidth + 2, ci * cellWidth + 2, cellWidth - 1, cellWidth - 1);
 
-            if ((!(ri % 2 && ci % 2))) {
+            if (MG.masks[ri][ci]) {
                 ctx.fillStyle = "#ccf";
             } else {
                 ctx.fillStyle = "#cff";
@@ -494,7 +495,30 @@ function initGame() {
 
     setCurrentGame();
     drawGridCells();
+    initMask();
     drawMask();
+}
+
+/**
+ * 生成空白地图
+ */
+function initMask() {
+    for (var r = 0; r < MG.cg.range.rows; r++) {
+        MG.masks[r] = Array.apply(null, Array(MG.cg.range.columns)).map(function (i) {
+            return new Cell();
+        });
+    }
+    for (var ri = 0; ri < MG.cg.range.rows; ri++) {
+        drawBlock(ri, ri, ri % 2);
+    }
+}
+
+function drawBlock(ridx, cidx, num) {
+    for (var ri = ridx; ri < MG.cg.range.rows - ridx; ri++) {
+        for (var ci = cidx; ci < MG.cg.range.columns - cidx; ci++) {
+            MG.masks[ri][ci] = num;
+        }
+    }
 }
 
 function setCurrentGame() {
