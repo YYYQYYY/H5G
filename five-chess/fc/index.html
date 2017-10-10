@@ -45,10 +45,10 @@ li{list-style:none}
 .room_user p{line-height:22px}
 .room_user .u1{margin-top:65px;}
 .room_user .u2{margin-top:40px}
-.room_chess{margin-top:5px;width:535px;height:535px;float:left;background:url('bg.jpg');position:relative;cursor:no-drop}
-.room_chess .black{background:url('b.png') center center no-repeat;width:35px;height:33px;position:absolute;z-index:888}
-.room_chess .white{background:url('w.png') center center no-repeat;width:35px;height:33px;position:absolute;z-index:888}
-.room_chess .cur{background:url('cur.png') center center no-repeat;width:35px;height:33px;position:absolute;z-index:999}
+.room_cell {margin-top:5px;width:535px;height:535px;float:left;background:url('bg.jpg');position:relative;cursor:no-drop}
+.room_cell .black{background:url('b.png') center center no-repeat;width:35px;height:33px;position:absolute;z-index:888}
+.room_cell .white{background:url('w.png') center center no-repeat;width:35px;height:33px;position:absolute;z-index:888}
+.room_cell .cur{background:url('cur.png') center center no-repeat;width:35px;height:33px;position:absolute;z-index:999}
 .room_message{margin:5px;width:255px;float:left;}
 .room_message .room_button{height:50px;background:#FFF;text-align:center;line-height:50px}
 .room_message .room_button .btn{width:98px;height:36px;background:url('btn.gif');border:0;color:#FFF}
@@ -205,7 +205,7 @@ $(function(){
 		}else if(data.type == MSG_ROOM){
 			$("#room-msg-content").append("<p>" + data.nickname + ": " + data.body + "</p>");
 		}
-	}).on("drawChess", function(data){//落子
+	}).on("drawCell", function(data){//落子
 		var left = data.x * 35 + 5;
 		var top  = data.y * 35 + 5;
 		var css  = (data.color == COLOR_BLACK ? "black" : "white");
@@ -339,7 +339,7 @@ $(function(){
 			return;
 		}
 		
-		app.drawChess(g_Info.color, x, y);
+		app.drawCell(g_Info.color, x, y);
 	});
 	
 	//准备
@@ -488,7 +488,7 @@ $(function(){
 				<p id="room-p2-img"><img src="no_player.gif"></p>	
 			</div>
 		</div>
-		<div class="room_chess">
+		<div class="room_cell">
 		</div>
 		<div class="room_message">
 			<div class="room_button">

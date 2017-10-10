@@ -1,8 +1,7 @@
 ﻿/*
- * 五子棋核心消息处理
- * http://www.cxphp.com
+ * 核心消息处理
  */
-function FiveChess(host, port) {
+function MineClient(host, port) {
     var m_Host = host;
     var m_Port = port;
     var m_Events = [];
@@ -15,16 +14,16 @@ function FiveChess(host, port) {
         for (var e in m_Events) {
             socket.on(e, m_Events[e]);
         }
-    }
+    };
 
     //设置错误
     var setError = function (err) {
         m_Error = err;
-    }
+    };
 
     this.getError = function () {
         return m_Error;
-    }
+    };
 
     //链接服务器
     this.connect = function () {
@@ -42,19 +41,19 @@ function FiveChess(host, port) {
         bindEvent();
 
         return true;
-    }
+    };
 
     //登陆
     this.login = function (nickname) {
         socket.emit("login", {
             "nickname": nickname
         });
-    }
+    };
 
     //加入房间
     this.joinRoom = function (roomIdx, posIdx) {
         socket.emit("joinRoom", {"roomIdx": roomIdx, "posIdx": posIdx});
-    }
+    };
 
     //向所有人发送消息
     this.sendAllMsg = function (body) {
@@ -62,7 +61,7 @@ function FiveChess(host, port) {
             "type": 0,
             "body": body
         });
-    }
+    };
 
     //向指定用户发送消息
     this.sendToMsg = function (to, body) {
@@ -71,7 +70,7 @@ function FiveChess(host, port) {
             "to": to,
             "body": body
         });
-    }
+    };
 
     //向房间内发送消息
     this.sendRoomMsg = function (body) {
@@ -79,28 +78,28 @@ function FiveChess(host, port) {
             "type": 2,
             "body": body
         });
-    }
+    };
 
     //离开房间
     this.leaveRoom = function (roomIdx) {
         socket.emit("leaveRoom", {
             "roomIdx": roomIdx
         });
-    }
+    };
 
     //准备
     this.ready = function () {
         socket.emit("ready", "");
-    }
+    };
 
-    //落子
-    this.drawChess = function (color, x, y) {
-        socket.emit("drawChess", {
+    //点击格子
+    this.drawCell = function (color, x, y) {
+        socket.emit("drawCell", {
             "color": color,
             "x": x,
             "y": y
         });
-    }
+    };
 
     //事件设置
     this.on = function (event, callback) {

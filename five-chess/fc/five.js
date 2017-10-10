@@ -94,8 +94,8 @@ function FiveChess(host, port) {
     }
 
     //落子
-    this.drawChess = function (color, x, y) {
-        socket.emit("drawChess", {
+    this.drawCell = function (color, x, y) {
+        socket.emit("drawCell", {
             "color": color,
             "x": x,
             "y": y

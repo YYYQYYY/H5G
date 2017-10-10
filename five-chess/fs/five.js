@@ -79,7 +79,7 @@
             socket.on('message', OnMessage);
 
             //落子
-            socket.on("drawChess", OnDrawChess);
+            socket.on("drawCell", OnDrawChess);
         });
         console.log('server is started, port: ' + m_Config.ListenPort);
     };
@@ -317,7 +317,7 @@
             m_RoomData[roomIdx][data.x][data.y] = data.color;
 
             for (var i = 0; i < 2; i++) {//向房间内所有成员发送落子信息
-                m_Connections[m_Rooms[roomIdx][i]].socket.emit("drawChess", data);
+                m_Connections[m_Rooms[roomIdx][i]].socket.emit("drawCell", data);
             }
 
             //结束游戏?
