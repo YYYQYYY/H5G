@@ -1,0 +1,8 @@
+#layers {
+    position: relative;
+    margin: 0 auto;
+}
+
+#layers canvas {
+    position: absolute;
+}
