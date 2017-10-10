@@ -7,12 +7,12 @@ var port = process.env.PORT || 1337;
 // ms s
 var module = require("./mines");
 var mineServer = new module.MineServer();
-mineServer.SetConfig({
+mineServer.setConfig({
     "ListenPort": port,
     "RoomTotal": 100,
     "MaxClientNum": 300
 });
-mineServer.Startup(io);
+mineServer.startup(io);
 // ms e
 
 server.listen(port);

@@ -23,14 +23,14 @@
     var io;//socket.io
 
     //设置配置文件
-    this.SetConfig = function (cfg) {
+    this.setConfig = function (cfg) {
         for (var x in cfg) {
             m_Config[x] = cfg[x];
         }
     };
 
     //初始化游戏数据
-    var InitGameData = function (roomIdx) {
+    var initGameData = function (roomIdx) {
         m_RoomData[roomIdx] = [];
         for (var i = 0; i < 15; i++) {
             m_RoomData[roomIdx][i] = [];
@@ -41,7 +41,7 @@
     };
 
     //重置游戏数据
-    var ResetGameData = function (roomIdx) {
+    var resetGameData = function (roomIdx) {
         for (var i = 0; i < 15; i++) {
             for (var j = 0; j < 15; j++) {
                 m_RoomData[roomIdx][i][j] = 0;
@@ -50,42 +50,42 @@
     };
 
     //启动服务
-    this.Startup = function (_io) {
+    this.startup = function (_io) {
         //初始化房间
         for (var i = 0; i < m_Config.RoomTotal; i++) {
             m_Rooms[i] = [0, 0];
-            InitGameData(i);
+            initGameData(i);
         }
 
         //网络服务
         io = _io;//require('socket.io').listen(m_Config.ListenPort);
         io.sockets.on('connection', function (socket) {
             //断开
-            socket.on("disconnect", OnClose);
+            socket.on("disconnect", onClose);
 
             //登陆
-            socket.on("login", OnLogin);
+            socket.on("login", onLogin);
 
             //加入房间
-            socket.on("joinRoom", OnJoinRoom);
+            socket.on("joinRoom", onJoinRoom);
 
             //离开房间
-            socket.on("leaveRoom", OnLeaveRoom);
+            socket.on("leaveRoom", onLeaveRoom);
 
             //准备
-            socket.on("ready", OnReady);
+            socket.on("ready", onReady);
 
             //消息
-            socket.on('message', OnMessage);
+            socket.on('message', onMessage);
 
             //点击格子
-            socket.on("drawCell", OnDrawCell);
+            socket.on("drawCell", onDrawCell);
         });
         console.log('server is started, port: ' + m_Config.ListenPort);
     };
 
     //获取房间列表
-    var GetRoomList = function () {
+    var getRoomList = function () {
         var data = [];
         for (var idx in m_Rooms) {
             var room = [0, 0];
@@ -107,16 +107,16 @@
     };
 
     //获取用户列表
-    var GetUserList = function () {
+    var getUserList = function () {
         var list = [];
         for (var sid in m_Connections) {
-            list.push(GetUserInfo(sid));
+            list.push(getUserInfo(sid));
         }
         return list;
     };
 
     //获取用户信息
-    var GetUserInfo = function (sid) {
+    var getUserInfo = function (sid) {
         return {
             "id": m_Connections[sid].socket.id,
             "nickname": m_Connections[sid].nickname,
@@ -125,7 +125,7 @@
     };
 
     //关闭链接
-    var OnClose = function () {
+    var onClose = function () {
         var sid = this.id;
 
         if (!m_Connections[sid]) return;
@@ -162,7 +162,7 @@
     };
 
     //用户登陆
-    var OnLogin = function (data) {
+    var onLogin = function (data) {
         var ret = 0;
         var sid = this.id;
         var client = {};
@@ -183,13 +183,13 @@
             //登陆成功
             this.emit("login", {
                 "ret": ret,
-                "info": GetUserInfo(sid),
-                "list": GetUserList(),
-                "room": GetRoomList()
+                "info": getUserInfo(sid),
+                "list": getUserList(),
+                "room": getRoomList()
             });
 
             //发送用户加入大厅
-            io.sockets.emit("join", GetUserInfo(sid));
+            io.sockets.emit("join", getUserInfo(sid));
         } else {
             //登陆失败
             this.emit("login", {"ret": ret});
@@ -197,7 +197,7 @@
     };
 
     //加入房间
-    var OnJoinRoom = function (data) {
+    var onJoinRoom = function (data) {
         var sid = this.id;
         if (data.roomIdx > -1 && data.roomIdx < m_Config.RoomTotal &&
             (data.posIdx == 0 || data.posIdx == 1) &&
@@ -230,8 +230,8 @@
 
             //发送房间内信息
             var info = [0, 0];
-            if (m_Rooms[data.roomIdx][0]) info[0] = GetUserInfo(m_Rooms[data.roomIdx][0]);
-            if (m_Rooms[data.roomIdx][1]) info[1] = GetUserInfo(m_Rooms[data.roomIdx][1]);
+            if (m_Rooms[data.roomIdx][0]) info[0] = getUserInfo(m_Rooms[data.roomIdx][0]);
+            if (m_Rooms[data.roomIdx][1]) info[1] = getUserInfo(m_Rooms[data.roomIdx][1]);
             this.emit("roomInfo", info);
         } else {
             this.emit("joinRoomError", '');
@@ -239,7 +239,7 @@
     };
 
     //离开房间
-    var OnLeaveRoom = function (data) {
+    var onLeaveRoom = function (data) {
         var sid = this.id;
         if (m_Connections[sid] && m_Connections[sid].roomIdx != -1 &&
             m_Connections[sid].roomIdx == data.roomIdx) {
@@ -260,7 +260,7 @@
     };
 
     //准备
-    var OnReady = function () {
+    var onReady = function () {
         var sid = this.id;
         if (m_Connections[sid] && m_Connections[sid].roomIdx != -1 &&
             m_Connections[sid].status != STAT_START) {
@@ -306,7 +306,7 @@
     };
 
     //点击格子
-    var OnDrawCell = function (data) {
+    var onDrawCell = function (data) {
         var sid = this.id;
         var roomIdx = m_Connections[sid].roomIdx;
         if (m_Rooms[roomIdx][0] && m_Rooms[roomIdx][1] &&
@@ -330,7 +330,7 @@
                 var loser = (sid == second ? first : second);
                 m_Connections[first].status = STAT_NORMAL;
                 m_Connections[second].status = STAT_NORMAL;
-                ResetGameData(roomIdx);
+                resetGameData(roomIdx);
                 m_Connections[winer].socket.emit("winer", "");
                 m_Connections[loser].socket.emit("loser", "");
 
@@ -420,7 +420,7 @@
     };
 
     //发送消息
-    var OnMessage = function (data) {
+    var onMessage = function (data) {
         var sid = this.id;
         if (!m_Connections[sid]) return;
 
