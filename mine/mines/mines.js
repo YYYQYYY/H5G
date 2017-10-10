@@ -78,7 +78,7 @@
             //消息
             socket.on('message', OnMessage);
 
-            //落子
+            //点击格子
             socket.on("drawCell", OnDrawCell);
         });
         console.log('server is started, port: ' + m_Config.ListenPort);
@@ -305,7 +305,7 @@
         }
     };
 
-    //落子
+    //点击格子
     var OnDrawCell = function (data) {
         var sid = this.id;
         var roomIdx = m_Connections[sid].roomIdx;

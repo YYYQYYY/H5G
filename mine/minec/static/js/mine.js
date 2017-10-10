@@ -21,7 +21,7 @@ $(function () {
         "posIdx": -1
     };
     var app = new MineClient(g_Host, g_Port);
-    var defaultNickname = "请输入昵称";
+    //var defaultNickname = "请输入昵称";
 
     app.on("login", function (data) {//登录返回
         if (data.ret == 1) {
@@ -174,14 +174,15 @@ $(function () {
         top: 100
     });
 
-    //昵称输入框事件
-    $('#nickname').click(function () {
-        $(this).val('');
-    }).blur(function () {
-        if ($(this).val() == '') {
-            $(this).val(defaultNickname);
-        }
-    }).val(defaultNickname);
+    ////昵称输入框事件
+    //$('#nickname').click(function () {
+    //    $(this).val('');
+    //}).blur(function () {
+    //    if ($(this).val() == '') {
+    //        $(this).val(defaultNickname);
+    //    }
+    //}).val(defaultNickname);
+    $('#nickname').val("abc").focus();
 
     //登录
     $("#loginBtn").click(function () {
@@ -193,7 +194,7 @@ $(function () {
 
         //登录
         var nickname = $("#nickname").val();
-        if (!nickname || nickname == defaultNickname) {
+        if (!nickname) {
             alert("请输入昵称");
             $("#nickname").val('').focus();
             return;
@@ -377,4 +378,6 @@ $(function () {
         $("#room-p" + p + "-status").html("&nbsp;");
         $("#room-p" + p + "-img").html('<img src="static/images/room/no_player.gif">');
     }
+
+    $("#loginBtn").click();
 });

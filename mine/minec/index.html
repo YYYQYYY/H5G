@@ -10,7 +10,7 @@
 <div id="login">
     <h1>登陆</h1>
     <div class="box">
-        <input type="text" id="nickname" maxlength="10" class="in">
+        <input type="text" id="nickname" maxlength="10" class="in" placeholder="请输入昵称">
         <input type="button" id="loginBtn" class="go" value="加入游戏">
     </div>
 </div>
@@ -33,6 +33,30 @@
             </div>
         </div>
         <div class="room_cell">
+            <section id="page">
+                <header>
+                    <p>使用时间：<span id="elapsed_time"
+                                  style="display: inline-block; width: 30px;text-align: right">0</span>
+                        剩余雷数：<span id="residual_mines"
+                                   style="display: inline-block;width: 30px;text-align: right">0</span>
+                        得分：<span id="score" style="display: inline-block;width: 30px;text-align: right">0</span>
+                    </p>
+                    <div style="text-align: center;width: 100%">
+                        <button onclick="resetGame();">开始游戏</button>
+                    </div>
+                </header>
+                <hr/>
+                <section id="layers">
+                    <canvas id="bg" width="400" height="400">
+                        你的浏览器不支持HTML5。
+                    </canvas>
+                    <canvas id="game" width="400" height="400"></canvas>
+                </section>
+                <hr/>
+                <footer>
+                    <p>扫雷游戏练习。</p>
+                </footer>
+            </section>
         </div>
         <div class="room_message">
             <div class="room_button">
@@ -41,7 +65,7 @@
             </div>
             <div id="room-msg-content" class="content"></div>
             <div class="input">
-                <input id="room-msg-input" style="width:175px;margin:5px 0 0 8px" type="text" id="input">
+                <input id="room-msg-input" style="width:175px;margin:5px 0 0 8px" type="text" placeholder="点击这里输入消息">
                 <input id="room-msg-button" style="width:50px;margin:5px 0 0 0" type="button" value="发送">
             </div>
         </div>
@@ -55,10 +79,11 @@
             <div class="message">
                 <div id="msg-content" class="content"></div>
                 <div class="input">
-                    <select style="width:50px;margin:5px 0 0 8px">
+                    <label for="send_range"></label>
+                    <select style="width:50px;margin:5px 0 0 8px" id="send_range">
                         <option value="">所有人</option>
                     </select>
-                    <input id="msg-input" style="width:125px;margin:5px 0 0 0" type="text" id="input">
+                    <input id="msg-input" style="width:125px;margin:5px 0 0 0" type="text" placeholder="点击这里输入消息">
                     <input id="msg-button" style="width:50px;margin:5px 0 0 0" type="button" value="发送">
                 </div>
             </div>
