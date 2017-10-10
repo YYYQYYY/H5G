@@ -23,7 +23,7 @@ $(function () {
     var app = new MineClient(g_Host, g_Port);
     var defaultNickname = "请输入昵称";
 
-    app.on("login", function (data) {//登陆返回
+    app.on("login", function (data) {//登录返回
         if (data.ret == 1) {
             $("#dlgBg").remove();
             $("#login").remove();
@@ -33,7 +33,7 @@ $(function () {
             initRoomList(data.room);
             initUserList(data.list);
         } else {
-            alert("登陆失败");
+            alert("登录失败");
         }
     }).on("close", function (data) {//退出程序
         $("#user-" + data.id).remove();
@@ -132,7 +132,7 @@ $(function () {
         } else if (data.type == MSG_ROOM) {
             $("#room-msg-content").append("<p>" + data.nickname + ": " + data.body + "</p>");
         }
-    }).on("drawCell", function (data) {//落子
+    }).on("drawCell", function (data) {//点击格子
         var left = data.x * 35 + 5;
         var top = data.y * 35 + 5;
         var css = (data.color == COLOR_BLACK ? "black" : "white");
@@ -164,7 +164,7 @@ $(function () {
         alert("你太菜了，连这家伙都搞不定，回去养猪吧！");
     });
 
-    //初始化登陆框
+    //初始化登录框
     $("#dlgBg").css({
         width: $(document).width(),
         height: $(document).height()
@@ -183,7 +183,7 @@ $(function () {
         }
     }).val(defaultNickname);
 
-    //登陆
+    //登录
     $("#loginBtn").click(function () {
         //链接服务器
         if (app.connect() == false) {
@@ -191,7 +191,7 @@ $(function () {
             return false;
         }
 
-        //登陆
+        //登录
         var nickname = $("#nickname").val();
         if (!nickname || nickname == defaultNickname) {
             alert("请输入昵称");
@@ -254,7 +254,7 @@ $(function () {
         return false;
     });
 
-    //落子
+    //点击格子
     $("div.room_cell").click(function (ev) {
         var pageX = ev.pageX;
         var pageY = ev.pageY;
