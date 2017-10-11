@@ -10,6 +10,18 @@
     var COLOR_BLACK = 1;//黑色
     var COLOR_WHITE = 2;//白色
 
+    /* 游戏级别 */
+    var LEVELS = [
+        {
+            level: 0,
+            mineCount: 30,
+            range: {
+                rows: 10,
+                columns: 10
+            }
+        }
+    ];
+
     var m_Config = {
         "ListenPort": 8080,
         "RoomTotal": 100,
@@ -22,6 +34,35 @@
     var self = this;
     var io;//socket.io
 
+    var MG = function () {
+        /* 画布层 */
+        this.layers = [];
+        /* 雷区地图 */
+        this.dataMap = [];
+        /* 蒙板地图 */
+        this.masks = [];
+        /* 当前游戏级别 */
+        this.currentLevel = 0;
+        /* 当前游戏 */
+        this.cg = null;
+        /* 剩余雷数 */
+        this.residualMines = 0;
+        /* 经过时间 */
+        this.elapsedTime = 0;
+        /* 计时器 */
+        this.timer = 0;
+        /* 计时器句柄 */
+        this.timeout = 0;
+        /* 得分 */
+        this.score = 0;
+    };
+
+    var Cell = function () {
+        this.data = 0;
+        this.isOpened = false;
+        this.isFlag = false;
+    };
+
     //设置配置文件
     this.setConfig = function (cfg) {
         for (var x in cfg) {
@@ -31,21 +72,30 @@
 
     //初始化游戏数据
     var initGameData = function (roomIdx) {
-        m_RoomData[roomIdx] = [];
-        for (var i = 0; i < 15; i++) {
-            m_RoomData[roomIdx][i] = [];
-            for (var j = 0; j < 15; j++) {
-                m_RoomData[roomIdx][i][j] = 0;
-            }
-        }
+        m_RoomData[roomIdx] = new MG();
+        resetGameData(roomIdx);
     };
 
     //重置游戏数据
     var resetGameData = function (roomIdx) {
-        for (var i = 0; i < 15; i++) {
-            for (var j = 0; j < 15; j++) {
-                m_RoomData[roomIdx][i][j] = 0;
-            }
+        var MG = m_RoomData[roomIdx];
+        MG.timeout = 0;
+        MG.dataMap = [];
+        MG.currentLevel = 0;
+        MG.residualMines = 0;
+        MG.score = 0;
+
+        MG.timer = 0;
+        MG.elapsedTime = 0;
+
+        MG.cg = LEVELS[MG.currentLevel];
+        MG.cg.mineCount = Math.ceil(Math.random() * 15 + 20);
+        MG.residualMines = MG.cg.mineCount;
+
+        for (var r = 0; r < MG.cg.range.rows; r++) {
+            MG.dataMap[r] = Array.apply(null, Array(MG.cg.range.columns)).map(function (i) {
+                return new Cell();
+            });
         }
     };
 
@@ -324,12 +374,10 @@
 
             //结束游戏判断
             if (checkGameOver(roomIdx, data.x, data.y) == true) {
-                var first = m_Rooms[roomIdx][0];
-                var second = m_Rooms[roomIdx][1];
-                var winer = (sid == first ? first : second);
-                var loser = (sid == second ? first : second);
-                m_Connections[first].status = STAT_NORMAL;
-                m_Connections[second].status = STAT_NORMAL;
+                var winer = (sid == m_Rooms[roomIdx][0] ? m_Rooms[roomIdx][0] : m_Rooms[roomIdx][1]);
+                var loser = (sid == m_Rooms[roomIdx][1] ? m_Rooms[roomIdx][0] : m_Rooms[roomIdx][1]);
+                m_Connections[m_Rooms[roomIdx][0]].status = STAT_NORMAL;
+                m_Connections[m_Rooms[roomIdx][1]].status = STAT_NORMAL;
                 resetGameData(roomIdx);
                 m_Connections[winer].socket.emit("winer", "");
                 m_Connections[loser].socket.emit("loser", "");
@@ -337,8 +385,8 @@
                 //通知大厅的成员有游戏结束了
                 io.sockets.emit("overInfo", {
                     "roomIdx": roomIdx,
-                    "player1": first,
-                    "player2": second
+                    "player1": m_Rooms[roomIdx][0],
+                    "player2": m_Rooms[roomIdx][1]
                 });
             }
         }
@@ -454,5 +502,14 @@
             default:
                 break;
         }
+    };
+
+    /**
+     * 获取随机数，下标从0开始
+     * @param seed
+     * @returns {number}
+     */
+    var getRandom = function (seed) {
+        return Math.floor(Math.random() * seed);
     }
 };
