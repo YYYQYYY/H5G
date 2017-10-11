@@ -10,18 +10,6 @@
     var COLOR_BLACK = 1;//黑色
     var COLOR_WHITE = 2;//白色
 
-    /* 游戏级别 */
-    var LEVELS = [
-        {
-            level: 0,
-            mineCount: 20,
-            range: {
-                rows: 10,
-                columns: 10
-            }
-        }
-    ];
-
     var m_Config = {
         "ListenPort": 8080,
         "RoomTotal": 100,
@@ -35,12 +23,12 @@
     var io;//socket.io
 
     var MG = function () {
-        /* 画布层 */
-        this.layers = [];
+        ///* 画布层 */
+        //this.layers = [];
         /* 雷区地图 */
         this.dataMap = [];
-        /* 蒙板地图 */
-        this.masks = [];
+        ///* 蒙板地图 */
+        //this.masks = [];
         /* 当前游戏级别 */
         this.currentLevel = 0;
         /* 当前游戏 */
@@ -49,12 +37,23 @@
         this.residualMines = 0;
         /* 经过时间 */
         this.elapsedTime = 0;
-        /* 计时器 */
-        this.timer = 0;
-        /* 计时器句柄 */
-        this.timeout = 0;
+        ///* 计时器 */
+        //this.timer = 0;
+        ///* 计时器句柄 */
+        //this.timeout = 0;
         /* 得分 */
         this.score = 0;
+        /* 游戏级别 */
+        this.levels = [
+            {
+                level: 0,
+                mineCount: 20,
+                range: {
+                    rows: 10,
+                    columns: 10
+                }
+            }
+        ];
     };
 
     var Cell = function () {
@@ -88,7 +87,7 @@
         MG.timer = 0;
         MG.elapsedTime = 0;
 
-        MG.cg = LEVELS[MG.currentLevel];
+        MG.cg = MG.levels[MG.currentLevel];
         MG.cg.mineCount = Math.ceil(Math.random() * 15 + MG.cg.mineCount);
         MG.residualMines = MG.cg.mineCount;
 

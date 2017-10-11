@@ -339,7 +339,7 @@ $(function () {
             data.status = STAT_NORMAL;
             updateRoom(data.posIdx, data);
         }
-        startGame(data.mg);
+        initGame(data.mg);
     }
 
     //准备请求回调
@@ -413,12 +413,43 @@ $(function () {
 //////////////////////////////////////////////////
 //// 画布相关
 //////////////////////////////////////////////////
+var MG = {};
 
 /**
- * 开始游戏
+ * 格子
+ * @constructor
  */
-function startGame() {
+var Cell = function () {
+    this.data = 0;
+    this.isOpened = false;
+    this.isFlag = false;
+};
+
+/**
+ * 初始化游戏
+ */
+function initGame(mg) {
     setConfig();
+
+    MG.masks = [];
+    MG.timer = 0;
+    MG.timeout = 0;
+    MG.score = mg.score;
+
+    MG.dataMap = mg.dataMap;
+    MG.cg = mg.cg;
+    MG.residualMines = mg.residualMines;
+    MG.elapsedTime = mg.elapsedTime;
+
+
+    $("#residual_mines").text(0);
+    $("#score").text(MG.score);
+    stopInterval();
+
+    //setCurrentGame();
+    drawGridCells();
+    initMask();
+    drawMask();
 
     initLayers();
     bindEvent();
@@ -426,35 +457,69 @@ function startGame() {
     drawDataMap();
 }
 
-var MG = new function () {
-    /* 画布层 */
-    this.layers = [];
-    /* 雷区地图 */
-    this.dataMap = [];
-    /* 蒙板地图 */
-    this.masks = [];
-    /* 当前游戏级别 */
-    this.currentLevel = 0;
-    /* 当前游戏 */
-    this.cg = null;
-    /* 剩余雷数 */
-    this.residualMines = 0;
-    /* 经过时间 */
-    this.elapsedTime = 0;
-    /* 计时器 */
-    this.timer = 0;
-    /* 计时器句柄 */
-    this.timeout = 0;
-    /* 得分 */
-    this.score = 0;
-};
-
 /**
  * 清除画布
  * @param ctx
  */
 function clear(ctx) {
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+}
+
+/**
+ * 绘制格子线
+ */
+function drawGridCells() {
+    var cellWidth = MG.cellWidth;
+    var rows = MG.cg.range.rows + 1;
+    var columns = MG.cg.range.columns + 1;
+    var ctx = MG.layers[0];
+
+    clear(ctx);
+
+    //ctx.beginPath();
+    //ctx.moveTo(0, 0);
+    //ctx.lineTo(0, CONFIG.width);
+    //ctx.lineTo(CONFIG.width, CONFIG.height);
+    //ctx.lineTo(0, CONFIG.height);
+    //ctx.lineTo(0, 0);
+    //ctx.closePath();
+
+    for (var ri = 0; ri < columns; ri++) {
+        ctx.beginPath();
+        ctx.moveTo(0, ri * cellWidth);
+        ctx.lineTo(CONFIG.width, ri * cellWidth);
+        ctx.stroke();
+        ctx.closePath();
+    }
+    for (var ci = 0; ci < rows; ci++) {
+        ctx.beginPath();
+        ctx.moveTo(ci * cellWidth, 0);
+        ctx.lineTo(ci * cellWidth, CONFIG.height);
+        ctx.stroke();
+        ctx.closePath();
+    }
+}
+
+/**
+ * 生成遮罩地图
+ */
+function initMask() {
+    for (var r = 0; r < MG.cg.range.rows; r++) {
+        MG.masks[r] = Array.apply(null, Array(MG.cg.range.columns)).map(function (i) {
+            return new Cell();
+        });
+    }
+    for (var ri = 0; ri < MG.cg.range.rows; ri++) {
+        drawBlock(ri, ri, ri % 2);
+    }
+}
+
+function drawBlock(ridx, cidx, num) {
+    for (var ri = ridx; ri < MG.cg.range.rows - ridx; ri++) {
+        for (var ci = cidx; ci < MG.cg.range.columns - cidx; ci++) {
+            MG.masks[ri][ci] = num;
+        }
+    }
 }
 
 /**
@@ -777,36 +842,6 @@ var CONFIG = {
 };
 
 function setConfig() {
-    //var msg = "";
-    //if (isPC) {
-    //    msg = ("正在通过PC端访问");
-    //} else {
-    //    msg = ("正在通过移动端访问");
-    //}
-    //if (isWeixin) {
-    //    msg = ("正在通过微信移动端访问");
-    //}
-    //if (isIos) {
-    //    msg = ("正在通过苹果移动端访问");
-    //}
-    //if (isAndroid) {
-    //    msg = ("正在通过安卓移动端访问");
-    //}
-    //
-    //var dh = WH - parseInt($("header").css("height")) - parseInt($("footer").css("height")) - 100;
-    //var gw = (Math.floor((WW < dh ? WW : dh) / 100) * 100);
-    //var cw = Math.floor(gw / MG.levels[MG.currentLevel].range.rows / 10) * 10;
-    //var ch = Math.floor(gw / MG.levels[MG.currentLevel].range.columns / 10) * 10;
-    //CONFIG.cellWidth = cw < ch ? cw : ch;
-    //CONFIG.width = CONFIG.cellWidth * MG.levels[MG.currentLevel].range.rows;
-    //CONFIG.height = CONFIG.cellWidth * MG.levels[MG.currentLevel].range.columns;
-    //
-    //console.log(
-    //    msg + "\n\n浏览器屏幕宽度：" + WW + "\t浏览器屏幕高度：" + WH
-    //    + "\n\ndh:" + dh
-    //    + "\n\n游戏区域宽度：" + gw + "\t\t游戏格子宽度：" + CONFIG.cellWidth
-    //    + "\n\n游戏屏幕宽度：" + CONFIG.width + "\t\t游戏屏幕高度：" + CONFIG.height
-    //);
     CONFIG.cellWidth = 40;
     CONFIG.width = 400;
     CONFIG.height = 400;
@@ -827,4 +862,32 @@ function setConfig() {
     canvas_game.height = CONFIG.height;
     MG.layers[1] = canvas_game.getContext("2d");
     canvas_game.oncontextmenu = disableRightClick;
+}
+
+/**
+ * 开始游戏
+ */
+function startGame() {
+    initLayers();
+    bindEvent();
+    createGameData();
+    drawDataMap();
+}
+
+/**
+ * 重置游戏
+ */
+function resetGame() {
+    initGame();
+    startGame();
+}
+
+/**
+ * 停止计时器
+ */
+function stopInterval() {
+    clearInterval(MG.timer);
+    MG.timer = 0;
+    MG.elapsedTime = 0;
+    $("#elapsed_time").text(MG.elapsedTime);
 }
