@@ -24,79 +24,21 @@ $(function () {
     //var defaultNickname = "请输入昵称";
 
     app.on("login", function (data) {//登录返回
-        if (data.ret == 1) {
-            $("#dlgBg").remove();
-            $("#login").remove();
-            g_Info.id = data.info.id;
-            g_Info.nickname = data.info.nickname;
-            g_Info.status = data.info.status;
-            initRoomList(data.room);
-            initUserList(data.list);
-        } else {
-            alert("登录失败");
-        }
+        onLogin(data);
     }).on("close", function (data) {//退出程序
-        $("#user-" + data.id).remove();
-
-        //本房间有人退出
-        if (data.roomIdx == g_Info.roomIdx) {
-            removeRoom(data.posIdx);
-            if (g_Info.status == STAT_START) {
-                g_Info.status = STAT_NORMAL;
-                updateRoom(g_Info.posIdx, g_Info);
-            }
-        }
-
-        //大厅有人退出
-        if (data.roomIdx != -1) {
-            var name = $('#room-' + data.roomIdx + '-name-' + data.posIdx);
-            var icon = $('#room-' + data.roomIdx + '-icon-' + data.posIdx);
-            name.html('');
-            icon.removeClass('yes').addClass('no');
-        }
+        onClose(data);
     }).on("join", function (data) {//新用户加入大厅
         if (g_Info.id != data.id) {
             $("#list-box").append(makeHtmlUserList(data));
         }
     }).on("joinRoom", function (data) {//用户加入房间
-        var name = $('#room-' + data.roomIdx + '-name-' + data.posIdx);
-        var icon = $('#room-' + data.roomIdx + '-icon-' + data.posIdx);
-        name.html(data.nickname);
-        icon.removeClass('no').addClass('yes');
-
-        //自己
-        if (data.id == g_Info.id) {
-            g_Info.roomIdx = data.roomIdx;
-            g_Info.posIdx = data.posIdx;
-            g_Info.status = STAT_NORMAL;
-        } else if (data.roomIdx == g_Info.roomIdx) {
-            //有人加入本房间
-            data.status = STAT_NORMAL;
-            updateRoom(data.posIdx, data);
-        }
+        onJoinRoom(data);
     }).on("ready", function (data) {//准备
-        //本房间有人准备
-        if (data.roomIdx == g_Info.roomIdx) {
-            updateRoom(data.posIdx, data);
-        }
-        //大厅有人准备
-        var stat = (data.status == STAT_NORMAL ?
-            "无状态" : (data.status == STAT_READY ? "已准备" : "游戏中"));
-        $("#user-" + data.id + " span").html(stat);
+        onReady(data);
     }).on("roomInfo", function (data) {//获取房间信息
         initRoom(data[0], data[1]);
     }).on("start", function (data) {//开始游戏
-        g_Info.status = STAT_START;
-        g_Info.color = data.color;
-        g_Info.allowDraw = data.allowDraw;
-        if (g_Info.allowDraw) {
-            $("div.room_cell").css("cursor", "pointer");
-        } else {
-            $("div.room_cell").css("cursor", "no-drop");
-        }
-        $("div.room_cell div").remove();//清除棋子
-        $("#game_ready").val("游戏中...");
-        alert("开始游戏啦...");
+        onStart(data);
     }).on("startInfo", function (data) {//有游戏开始了
         $("#room-" + data.roomIdx).addClass("room_item_start");
         $("#user-" + data.player1 + " span").html("游戏中");
@@ -111,17 +53,7 @@ $(function () {
             $("#room-p" + p + "-status").html("未准备");
         }
     }).on("leaveRoom", function (data) {//离开房间
-        var name = $('#room-' + data.roomIdx + '-name-' + data.posIdx);
-        var icon = $('#room-' + data.roomIdx + '-icon-' + data.posIdx);
-        name.html('');
-        icon.removeClass('yes').addClass('no');
-        if (data.id == g_Info.id) {//更新自己的信息
-            g_Info.roomIdx = -1;
-            g_Info.posIdx = -1;
-            changeTag("room_list");
-        } else if (data.roomIdx == g_Info.roomIdx) {//本房间有人退出
-            removeRoom(data.posIdx);
-        }
+        onLeaveRoom(data);
     }).on("joinRoomError", function (data) {//加入房间失败
         alert("加入房间失败");
     }).on("message", function (data) {//接受消息
@@ -133,25 +65,7 @@ $(function () {
             $("#room-msg-content").append("<p>" + data.nickname + ": " + data.body + "</p>");
         }
     }).on("drawCell", function (data) {//点击格子
-        var left = data.x * 35 + 5;
-        var top = data.y * 35 + 5;
-        var css = (data.color == COLOR_BLACK ? "black" : "white");
-        var html = '<div id="cell-' + data.x + '-' + data.y + '" style="left:' + left + 'px;top:' + top + 'px" class="' + css + '"></div>';
-        $("div.room_cell").append(html);
-        if ($("div.room_cell .cur").length == 0) {
-            $("div.room_cell").append('<div class="cur"></div>');
-        }
-        $("div.room_cell .cur").css({
-            left: left,
-            top: top
-        });
-        if (data.id == g_Info.id) {
-            g_Info.allowDraw = false;
-            $("div.room_cell").css("cursor", "no-drop");
-        } else {
-            g_Info.allowDraw = true;
-            $("div.room_cell").css("cursor", "pointer");
-        }
+        onDrawCell(data);
     }).on("winer", function (data) {//胜利
         g_Info.status = STAT_NORMAL;
         g_Info.allowDraw = false;
@@ -174,14 +88,7 @@ $(function () {
         top: 100
     });
 
-    ////昵称输入框事件
-    //$('#nickname').click(function () {
-    //    $(this).val('');
-    //}).blur(function () {
-    //    if ($(this).val() == '') {
-    //        $(this).val(defaultNickname);
-    //    }
-    //}).val(defaultNickname);
+    //昵称输入框事件
     $('#nickname').val("abc").focus();
 
     //登录
@@ -203,7 +110,6 @@ $(function () {
     });
 
     //加入房间
-    //$("#room-box .player").live("click", function () {
     $(document).on("click", "#room-box .player", function () {
         var roomIdx = $(this).closest('.room_item').attr('value');
         var posIdx = $(this).attr('value');
@@ -379,5 +285,546 @@ $(function () {
         $("#room-p" + p + "-img").html('<img src="static/images/room/no_player.gif">');
     }
 
+    //登录请求回调
+    function onLogin(data) {
+        if (data.ret == 1) {
+            $("#dlgBg").remove();
+            $("#login").remove();
+            g_Info.id = data.info.id;
+            g_Info.nickname = data.info.nickname;
+            g_Info.status = data.info.status;
+            initRoomList(data.room);
+            initUserList(data.list);
+        } else {
+            alert("登录失败");
+        }
+    }
+
+    //退出请求回调
+    function onClose(data) {
+        $("#user-" + data.id).remove();
+
+        //本房间有人退出
+        if (data.roomIdx == g_Info.roomIdx) {
+            removeRoom(data.posIdx);
+            if (g_Info.status == STAT_START) {
+                g_Info.status = STAT_NORMAL;
+                updateRoom(g_Info.posIdx, g_Info);
+            }
+        }
+
+        //大厅有人退出
+        if (data.roomIdx != -1) {
+            var name = $('#room-' + data.roomIdx + '-name-' + data.posIdx);
+            var icon = $('#room-' + data.roomIdx + '-icon-' + data.posIdx);
+            name.html('');
+            icon.removeClass('yes').addClass('no');
+        }
+    }
+
+    //加入房间请求回调
+    function onJoinRoom(data) {
+        var name = $('#room-' + data.roomIdx + '-name-' + data.posIdx);
+        var icon = $('#room-' + data.roomIdx + '-icon-' + data.posIdx);
+        name.html(data.nickname);
+        icon.removeClass('no').addClass('yes');
+
+        //自己
+        if (data.id == g_Info.id) {
+            g_Info.roomIdx = data.roomIdx;
+            g_Info.posIdx = data.posIdx;
+            g_Info.status = STAT_NORMAL;
+        } else if (data.roomIdx == g_Info.roomIdx) {
+            //有人加入本房间
+            data.status = STAT_NORMAL;
+            updateRoom(data.posIdx, data);
+        }
+        startGame(data.mg);
+    }
+
+    //准备请求回调
+    function onReady(data) {
+        //本房间有人准备
+        if (data.roomIdx == g_Info.roomIdx) {
+            updateRoom(data.posIdx, data);
+        }
+        //大厅有人准备
+        var stat = (data.status == STAT_NORMAL ?
+            "无状态" : (data.status == STAT_READY ? "已准备" : "游戏中"));
+        $("#user-" + data.id + " span").html(stat);
+    }
+
+    //开始游戏请求回调
+    function onStart(data) {
+        g_Info.status = STAT_START;
+        g_Info.color = data.color;
+        g_Info.allowDraw = data.allowDraw;
+        if (g_Info.allowDraw) {
+            $("div.room_cell").css("cursor", "pointer");
+        } else {
+            $("div.room_cell").css("cursor", "no-drop");
+        }
+        $("div.room_cell div").remove();//清除棋子
+        $("#game_ready").val("游戏中...");
+        alert("开始游戏啦...");
+    }
+
+    //离开房间请求回调
+    function onLeaveRoom(data) {
+        var name = $('#room-' + data.roomIdx + '-name-' + data.posIdx);
+        var icon = $('#room-' + data.roomIdx + '-icon-' + data.posIdx);
+        name.html('');
+        icon.removeClass('yes').addClass('no');
+        if (data.id == g_Info.id) {//更新自己的信息
+            g_Info.roomIdx = -1;
+            g_Info.posIdx = -1;
+            changeTag("room_list");
+        } else if (data.roomIdx == g_Info.roomIdx) {//本房间有人退出
+            removeRoom(data.posIdx);
+        }
+    }
+
+    //点击格子请求回调
+    function onDrawCell(data) {
+        var left = data.x * 35 + 5;
+        var top = data.y * 35 + 5;
+        var css = (data.color == COLOR_BLACK ? "black" : "white");
+        var html = '<div id="cell-' + data.x + '-' + data.y + '" style="left:' + left + 'px;top:' + top + 'px" class="' + css + '"></div>';
+        $("div.room_cell").append(html);
+        if ($("div.room_cell .cur").length == 0) {
+            $("div.room_cell").append('<div class="cur"></div>');
+        }
+        $("div.room_cell .cur").css({
+            left: left,
+            top: top
+        });
+        if (data.id == g_Info.id) {
+            g_Info.allowDraw = false;
+            $("div.room_cell").css("cursor", "no-drop");
+        } else {
+            g_Info.allowDraw = true;
+            $("div.room_cell").css("cursor", "pointer");
+        }
+    }
+
     $("#loginBtn").click();
 });
+
+//////////////////////////////////////////////////
+//// 画布相关
+//////////////////////////////////////////////////
+
+/**
+ * 开始游戏
+ */
+function startGame() {
+    setConfig();
+
+    initLayers();
+    bindEvent();
+    createGameData();
+    drawDataMap();
+}
+
+var MG = new function () {
+    /* 画布层 */
+    this.layers = [];
+    /* 雷区地图 */
+    this.dataMap = [];
+    /* 蒙板地图 */
+    this.masks = [];
+    /* 当前游戏级别 */
+    this.currentLevel = 0;
+    /* 当前游戏 */
+    this.cg = null;
+    /* 剩余雷数 */
+    this.residualMines = 0;
+    /* 经过时间 */
+    this.elapsedTime = 0;
+    /* 计时器 */
+    this.timer = 0;
+    /* 计时器句柄 */
+    this.timeout = 0;
+    /* 得分 */
+    this.score = 0;
+};
+
+/**
+ * 清除画布
+ * @param ctx
+ */
+function clear(ctx) {
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+}
+
+/**
+ * 初始化游戏画布
+ */
+function initLayers() {
+    //MG.layers.forEach(function (i) {
+    //        //MG.layers[i].canvas.oncontextmenu = function (e) {
+    //        //    if (document.all) {
+    //        //        window.event.returnValue = false;
+    //        //    } else {
+    //        //        event.preventDefault();
+    //        //    }
+    //        //}
+    //    }
+    //);
+
+    $("#elapsed_time").text(MG.elapsedTime);
+    MG.timer = setInterval(function () {
+        MG.elapsedTime++;
+        $("#elapsed_time").text(MG.elapsedTime);
+    }, 1000);
+    $("#residual_mines").text(MG.residualMines);
+}
+
+var dX = 0, dY = 0;
+/**
+ * 绑定事件
+ */
+function bindEvent() {
+    var layers = $("#layers");
+    layers.oncontextmenu = disableRightClick;
+    layers.mousedown(function (e) {
+        var canvasPosition = $(this).offset();
+        dX = (e.pageX - canvasPosition.left) || 0;
+        dY = (e.pageY - canvasPosition.top) || 0;
+        var ri = Math.floor(dX / MG.cellWidth);
+        var ci = Math.floor(dY / MG.cellWidth);
+        ri = ri >= MG.cg.range.rows ? MG.cg.range.rows - 1 : ri;
+        ci = ci >= MG.cg.range.columns ? MG.cg.range.columns - 1 : ci;
+
+        MG.timeout = setTimeout(function (e) {
+            checkMine(ri, ci, true);
+            MG.timeout = 0;
+        }, 1000);
+    });
+    layers.mousemove(function (e) {
+        var canvasPosition = $(this).offset();
+        var mX = (e.pageX - canvasPosition.left) || 0;
+        var mY = (e.pageY - canvasPosition.top) || 0;
+
+        if ((Math.abs(dX - mX) > MG.cellWidth / 2) ||
+            (Math.abs(dY - mY) > MG.cellWidth / 2)) {
+            clearTimeout(MG.timeout);
+            MG.timeout = 0;
+        }
+    });
+    layers.mouseup(function (e) {
+        clearTimeout(MG.timeout);
+        if (MG.timeout != 0) {
+            var canvasPosition = $(this).offset();
+            var uX = (e.pageX - canvasPosition.left) || 0;
+            var uY = (e.pageY - canvasPosition.top) || 0;
+            var ri = Math.floor(uX / MG.cellWidth);
+            var ci = Math.floor(uY / MG.cellWidth);
+            ri = ri >= MG.cg.range.rows ? MG.cg.range.rows - 1 : ri;
+            ci = ci >= MG.cg.range.columns ? MG.cg.range.columns - 1 : ci;
+
+            checkMine(ri, ci, false);
+        }
+    });
+}
+
+/**
+ * 生成雷区地图
+ */
+function createGameData() {
+    initDataMap();
+    createMines();
+}
+
+/**
+ * 生成空白地图
+ */
+function initDataMap() {
+    for (var r = 0; r < MG.cg.range.rows; r++) {
+        MG.dataMap[r] = Array.apply(null, Array(MG.cg.range.columns)).map(function (i) {
+            return new Cell();
+        });
+    }
+}
+
+/**
+ * 生成地雷
+ * 扫描地雷周围，生成格子周围地雷数
+ */
+function createMines() {
+    var mineCount = MG.cg.mineCount;
+    var tempArr = {};
+    while (mineCount > 0) {
+        var pos = getRandomPosition();
+        var key = pos.x + "=" + pos.y;
+        if (!tempArr[key]) {
+            tempArr[key] = 1;
+            MG.dataMap[pos.x][pos.y].data = -1;
+            scanAroundCell(pos);
+            mineCount--;
+        }
+    }
+    tempArr = null;
+}
+
+/**
+ * 扫描当前格子周围8格，更新地雷数
+ * @param pos
+ */
+function scanAroundCell(pos) {
+    var rows = MG.cg.range.rows;
+    var columns = MG.cg.range.columns;
+    for (var ri = -1; ri < 2; ri++) {
+        var r = pos.x + ri;
+        if (r > -1 && r < rows) {
+            for (var ci = -1; ci < 2; ci++) {
+                var c = pos.y + ci;
+                if (c > -1 && c < columns && !(r == pos.x && c == pos.y) && MG.dataMap[r][c].data > -1) {
+                    MG.dataMap[r][c].data++;
+                }
+            }
+        }
+    }
+}
+
+/**
+ * 随机生成格子地址
+ * @returns {*[]}
+ */
+function getRandomPosition() {
+    return {
+        x: getRandom(MG.cg.range.rows),
+        y: getRandom(MG.cg.range.columns)
+    };
+}
+
+/**
+ * 绘制格子
+ */
+function drawDataMap() {
+    var rows = MG.cg.range.rows;
+    var columns = MG.cg.range.columns;
+
+    for (var ri = 0; ri < rows; ri++) {
+        for (var ci = 0; ci < columns; ci++) {
+            drawCell(ri, ci);
+        }
+    }
+}
+
+/**
+ * 绘制遮罩
+ */
+function drawMask() {
+    var cellWidth = MG.cellWidth;
+    var rows = MG.cg.range.rows;
+    var columns = MG.cg.range.columns;
+    var ctx = MG.layers[1];
+
+    for (var ri = 0; ri < rows; ri++) {
+        for (var ci = 0; ci < columns; ci++) {
+            ctx.fillStyle = "lightblue";
+            ctx.fillRect(ri * cellWidth + 1, ci * cellWidth + 1, cellWidth - 2, cellWidth - 2);
+            ctx.fillStyle = "darkblue";
+            ctx.fillRect(ri * cellWidth + 2, ci * cellWidth + 2, cellWidth - 1, cellWidth - 1);
+
+            if (MG.masks[ri][ci]) {
+                ctx.fillStyle = "#ccf";
+            } else {
+                ctx.fillStyle = "#cff";
+            }
+            ctx.fillRect(ri * cellWidth + 2, ci * cellWidth + 2, cellWidth - 2, cellWidth - 2);
+        }
+    }
+}
+
+/**
+ * 绘制格子
+ * @param ri
+ * @param ci
+ */
+function drawCell(ri, ci) {
+    var cellWidth = MG.cellWidth;
+    var ctx = MG.layers[0];
+    ctx.textAlign = "center";
+    ctx.font = MG.cellWidth / 2 + "px Arial";
+    var msg = "";
+
+    if (MG.dataMap[ri][ci].data < 0) {
+        ctx.fillStyle = "lightgray";
+        msg = "M";
+    } else if (MG.dataMap[ri][ci].data > 0) {
+        ctx.fillStyle = "blue";
+        msg = MG.dataMap[ri][ci].data;
+    } else {
+        ctx.fillStyle = "green";
+        msg = "";
+    }
+    ctx.fillRect(ri * cellWidth + 1, ci * cellWidth + 1, cellWidth - 2, cellWidth - 2);
+    ctx.fillStyle = "#f00";
+    ctx.fillText(msg, ri * cellWidth + cellWidth / 2, ci * cellWidth + (cellWidth / 1.4));
+}
+
+/**
+ * 绘制爆炸格子
+ * @param ri
+ * @param ci
+ */
+function drawBoomCell(ri, ci) {
+    var cellWidth = MG.cellWidth;
+    var ctx = MG.layers[0];
+    ctx.textAlign = "center";
+    ctx.font = MG.cellWidth / 2 + "px Arial";
+    var msg = "";
+
+    if (MG.dataMap[ri][ci].data < 0) {
+        msg = "M";
+    } else if (MG.dataMap[ri][ci].data > 0) {
+        msg = MG.dataMap[ri][ci].data;
+    }
+    ctx.fillStyle = "red";
+    ctx.fillRect(ri * cellWidth + 1, ci * cellWidth + 1, cellWidth - 2, cellWidth - 2);
+    ctx.fillStyle = "darkgray";
+    ctx.fillText(msg, ri * cellWidth + cellWidth / 2, ci * cellWidth + (cellWidth / 1.4));
+}
+
+/**
+ * 打开所有格子
+ */
+function openAllCell() {
+    var cellWidth = MG.cellWidth;
+    var rows = MG.cg.range.rows;
+    var columns = MG.cg.range.columns;
+    var ctx = MG.layers[1];
+
+    for (var ri = 0; ri < rows; ri++) {
+        for (var ci = 0; ci < columns; ci++) {
+            ctx.clearRect(ri * cellWidth + 1, ci * cellWidth + 1, cellWidth - 1, cellWidth - 1);
+        }
+    }
+}
+
+/**
+ * 打开格子
+ * @param ri
+ * @param ci
+ */
+function openCell(ri, ci) {
+    if (!MG.dataMap[ri][ci].isOpened && !MG.dataMap[ri][ci].isFlag) {
+        var cellWidth = MG.cellWidth;
+        var ctx = MG.layers[1];
+        ctx.clearRect(ri * cellWidth + 1, ci * cellWidth + 1, cellWidth - 1, cellWidth - 1);
+        MG.dataMap[ri][ci].isOpened = true;
+    }
+}
+
+/**
+ * 标记旗子
+ * @param ri
+ * @param ci
+ */
+function drawFlag(ri, ci) {
+    var ctx = MG.layers[1];
+
+    if (MG.dataMap[ri][ci].isOpened) {
+        return;
+    }
+
+    var cellWidth = MG.cellWidth;
+
+    MG.dataMap[ri][ci].isFlag = true;//!MG.dataMap[ri][ci].isFlag;
+    //if (MG.dataMap[ri][ci].isFlag) {
+    //    ctx.fillStyle = "#abc";
+    //    ctx.fillRect(ri * cellWidth + cellWidth / 4, ci * cellWidth + cellWidth / 4, cellWidth / 2 - 1, cellWidth / 2 - 1);
+    //} else {
+    //    ctx.clearRect(ri * cellWidth + cellWidth / 4, ci * cellWidth + cellWidth / 4, cellWidth / 2 - 1, cellWidth / 2 - 1);
+    //    ctx.fillStyle = "lightblue";
+    //    ctx.fillRect(ri * cellWidth + cellWidth / 4 - 1, ci * cellWidth + cellWidth / 4 - 1, cellWidth / 2, cellWidth / 2 + 1);
+    //}
+    var x = ri * cellWidth;
+    var y = ci * cellWidth;
+    ctx.beginPath();
+    ctx.strokeStyle = "red";
+    ctx.fillStyle = "red";
+    //ctx.lineJoin = 'round';
+    //ctx.lineCap = 'round';
+    ctx.lineTo(x + MG.cellWidth * 0.4, y + MG.cellWidth * 0.2);
+    ctx.lineTo(x + MG.cellWidth * 0.8, y + MG.cellWidth * 0.4);
+    ctx.lineTo(x + MG.cellWidth * 0.4, y + MG.cellWidth * 0.6);
+    ctx.fill();
+    ctx.moveTo(x + MG.cellWidth * 0.4 + 1, y + MG.cellWidth * 0.8);
+    ctx.lineTo(x + MG.cellWidth * 0.4 + 1, y + MG.cellWidth * 0.6);
+    ctx.stroke();
+    ctx.closePath();
+}
+
+/**
+ * 屏蔽右键事件
+ * @param e
+ */
+function disableRightClick(e) {
+    if (document.all) {
+        window.event.returnValue = false;
+    } else {
+        event.preventDefault();
+    }
+}
+
+var CONFIG = {
+    width: 0,
+    height: 0,
+    cellWidth: 0
+};
+
+function setConfig() {
+    //var msg = "";
+    //if (isPC) {
+    //    msg = ("正在通过PC端访问");
+    //} else {
+    //    msg = ("正在通过移动端访问");
+    //}
+    //if (isWeixin) {
+    //    msg = ("正在通过微信移动端访问");
+    //}
+    //if (isIos) {
+    //    msg = ("正在通过苹果移动端访问");
+    //}
+    //if (isAndroid) {
+    //    msg = ("正在通过安卓移动端访问");
+    //}
+    //
+    //var dh = WH - parseInt($("header").css("height")) - parseInt($("footer").css("height")) - 100;
+    //var gw = (Math.floor((WW < dh ? WW : dh) / 100) * 100);
+    //var cw = Math.floor(gw / MG.levels[MG.currentLevel].range.rows / 10) * 10;
+    //var ch = Math.floor(gw / MG.levels[MG.currentLevel].range.columns / 10) * 10;
+    //CONFIG.cellWidth = cw < ch ? cw : ch;
+    //CONFIG.width = CONFIG.cellWidth * MG.levels[MG.currentLevel].range.rows;
+    //CONFIG.height = CONFIG.cellWidth * MG.levels[MG.currentLevel].range.columns;
+    //
+    //console.log(
+    //    msg + "\n\n浏览器屏幕宽度：" + WW + "\t浏览器屏幕高度：" + WH
+    //    + "\n\ndh:" + dh
+    //    + "\n\n游戏区域宽度：" + gw + "\t\t游戏格子宽度：" + CONFIG.cellWidth
+    //    + "\n\n游戏屏幕宽度：" + CONFIG.width + "\t\t游戏屏幕高度：" + CONFIG.height
+    //);
+    CONFIG.cellWidth = 40;
+    CONFIG.width = 400;
+    CONFIG.height = 400;
+
+    var layers = $("#layers");
+    layers.css("width", CONFIG.width);
+    layers.css("height", CONFIG.height);
+
+    MG.layers = [];
+    var canvas_bg = document.getElementById("bg");
+    canvas_bg.style.border = "1px solid black";
+    canvas_bg.width = CONFIG.width;
+    canvas_bg.height = CONFIG.height;
+    MG.layers[0] = canvas_bg.getContext("2d");
+    canvas_bg.oncontextmenu = disableRightClick;
+    var canvas_game = document.getElementById("game");
+    canvas_game.width = CONFIG.width;
+    canvas_game.height = CONFIG.height;
+    MG.layers[1] = canvas_game.getContext("2d");
+    canvas_game.oncontextmenu = disableRightClick;
+}

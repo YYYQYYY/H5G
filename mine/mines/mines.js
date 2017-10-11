@@ -14,7 +14,7 @@
     var LEVELS = [
         {
             level: 0,
-            mineCount: 30,
+            mineCount: 20,
             range: {
                 rows: 10,
                 columns: 10
@@ -89,7 +89,7 @@
         MG.elapsedTime = 0;
 
         MG.cg = LEVELS[MG.currentLevel];
-        MG.cg.mineCount = Math.ceil(Math.random() * 15 + 20);
+        MG.cg.mineCount = Math.ceil(Math.random() * 15 + MG.cg.mineCount);
         MG.residualMines = MG.cg.mineCount;
 
         for (var r = 0; r < MG.cg.range.rows; r++) {
@@ -207,6 +207,8 @@
             }
         }
 
+        console.log("用户：" + m_Connections[sid].nickname + "：SID：" + sid + "退出了游戏。");
+
         //删除元素
         delete m_Connections[sid];
     };
@@ -238,6 +240,8 @@
                 "room": getRoomList()
             });
 
+            console.log("用户：" + m_Connections[sid].nickname + "：SID：" + sid + "进入了游戏大厅。");
+
             //发送用户加入大厅
             io.sockets.emit("join", getUserInfo(sid));
         } else {
@@ -264,6 +268,7 @@
                     "roomIdx": oldRoomIdx,
                     "posIdx": oldPosIdx
                 });
+                console.log("用户：" + m_Connections[sid].nickname + "：SID：" + sid + "退出了" + oldRoomIdx + "号房间。");
             }
 
             //加入新房间
@@ -275,8 +280,11 @@
                 "roomIdx": data.roomIdx,
                 "posIdx": data.posIdx,
                 "nickname": m_Connections[sid].nickname,
-                "id": sid
+                "id": sid,
+                "mg": m_RoomData[data.roomIdx]
             });
+
+            console.log("用户：" + m_Connections[sid].nickname + "：SID：" + sid + "进入了" + data.roomIdx + "号房间。");
 
             //发送房间内信息
             var info = [0, 0];
@@ -306,6 +314,7 @@
                 "roomIdx": roomIdx,
                 "posIdx": posIdx
             });
+            console.log("用户：" + m_Connections[sid].nickname + "：SID：" + sid + "退出了" + roomIdx + "号房间。");
         }
     };
 
@@ -326,6 +335,7 @@
                 "nickname": m_Connections[sid].nickname,
                 "status": status
             });
+            console.log("用户：" + m_Connections[sid].nickname + "：SID：" + sid + "在" + roomIdx + "号房间做好准备了。");
 
             //发送开始消息
             if (m_Rooms[roomIdx][0] && m_Rooms[roomIdx][1] &&
@@ -351,6 +361,7 @@
                     "player1": m_Rooms[roomIdx][0],
                     "player2": m_Rooms[roomIdx][1]
                 });
+                console.log(roomIdx + "号房间开始游戏了。");
             }
         }
     };
