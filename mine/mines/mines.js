@@ -345,6 +345,7 @@
                 //告诉两名玩家游戏正式开始
                 m_Connections[m_Rooms[roomIdx][0]].status = STAT_START;
                 m_Connections[m_Rooms[roomIdx][1]].status = STAT_START;
+                createMines(roomIdx);
                 m_Connections[m_Rooms[roomIdx][0]].socket.emit("start", {
                     "color": COLOR_BLACK,
                     "allowDraw": true
@@ -521,5 +522,60 @@
      */
     var getRandom = function (seed) {
         return Math.floor(Math.random() * seed);
-    }
+    };
+
+    /**
+     * 随机生成格子地址
+     * @param roomIdx
+     * @returns {{x: number, y: number}}
+     */
+    var getRandomPosition = function (roomIdx) {
+        var MG = m_RoomData[roomIdx];
+        return {
+            x: getRandom(MG.cg.range.rows),
+            y: getRandom(MG.cg.range.columns)
+        };
+    };
+
+    /**
+     * 生成地雷
+     * 扫描地雷周围，生成格子周围地雷数
+     */
+    var createMines = function (roomIdx) {
+        var MG = m_RoomData[roomIdx];
+        var mineCount = MG.cg.mineCount;
+        var tempArr = {};
+        while (mineCount > 0) {
+            var pos = getRandomPosition(roomIdx);
+            var key = pos.x + "=" + pos.y;
+            if (!tempArr[key]) {
+                tempArr[key] = 1;
+                MG.dataMap[pos.x][pos.y].data = -1;
+                scanAroundCell(roomIdx, pos);
+                mineCount--;
+            }
+        }
+        tempArr = null;
+    };
+
+    /**
+     * 扫描当前格子周围8格，更新地雷数
+     * @param pos
+     */
+    var scanAroundCell = function (roomIdx, pos) {
+        var MG = m_RoomData[roomIdx];
+        var rows = MG.cg.range.rows;
+        var columns = MG.cg.range.columns;
+        for (var ri = -1; ri < 2; ri++) {
+            var r = pos.x + ri;
+            if (r > -1 && r < rows) {
+                for (var ci = -1; ci < 2; ci++) {
+                    var c = pos.y + ci;
+                    if (c > -1 && c < columns && !(r == pos.x && c == pos.y) && MG.dataMap[r][c].data > -1) {
+                        MG.dataMap[r][c].data++;
+                    }
+                }
+            }
+        }
+    };
 };

@@ -89,7 +89,7 @@ $(function () {
     });
 
     //昵称输入框事件
-    $('#nickname').val("abc").focus();
+    $('#nickname').val("abc" + Math.ceil(Math.random() * 100 + 10)).focus();
 
     //登录
     $("#loginBtn").click(function () {
@@ -364,9 +364,14 @@ $(function () {
         } else {
             $("div.room_cell").css("cursor", "no-drop");
         }
-        $("div.room_cell div").remove();//清除棋子
+        $("div.room_cell div").remove();//清除桌面
         $("#game_ready").val("游戏中...");
-        alert("开始游戏啦...");
+        if (confirm("开始游戏啦...")) {
+            MG.timer = setInterval(function () {
+                MG.elapsedTime++;
+                $("#elapsed_time").text(MG.elapsedTime);
+            }, 1000);
+        }
     }
 
     //离开房间请求回调
@@ -413,6 +418,12 @@ $(function () {
 //////////////////////////////////////////////////
 //// 画布相关
 //////////////////////////////////////////////////
+var CONFIG = {
+    width: 0,
+    height: 0,
+    cellWidth: 0
+};
+
 var MG = {};
 
 /**
@@ -436,6 +447,7 @@ function initGame(mg) {
     MG.timeout = 0;
     MG.score = mg.score;
 
+    MG.cellWidth = CONFIG.cellWidth;
     MG.dataMap = mg.dataMap;
     MG.cg = mg.cg;
     MG.residualMines = mg.residualMines;
@@ -538,10 +550,6 @@ function initLayers() {
     //);
 
     $("#elapsed_time").text(MG.elapsedTime);
-    MG.timer = setInterval(function () {
-        MG.elapsedTime++;
-        $("#elapsed_time").text(MG.elapsedTime);
-    }, 1000);
     $("#residual_mines").text(MG.residualMines);
 }
 
@@ -834,12 +842,6 @@ function disableRightClick(e) {
         event.preventDefault();
     }
 }
-
-var CONFIG = {
-    width: 0,
-    height: 0,
-    cellWidth: 0
-};
 
 function setConfig() {
     CONFIG.cellWidth = 40;
