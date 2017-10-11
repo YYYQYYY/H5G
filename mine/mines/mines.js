@@ -346,6 +346,7 @@
                 m_Connections[m_Rooms[roomIdx][0]].status = STAT_START;
                 m_Connections[m_Rooms[roomIdx][1]].status = STAT_START;
                 createMines(roomIdx);
+                console.log(m_RoomData[roomIdx].dataMap);
                 m_Connections[m_Rooms[roomIdx][0]].socket.emit("start", {
                     "color": COLOR_BLACK,
                     "allowDraw": true
@@ -375,7 +376,7 @@
             m_Connections[m_Rooms[roomIdx][1]] &&
             m_Connections[m_Rooms[roomIdx][0]].status == STAT_START &&
             m_Connections[m_Rooms[roomIdx][1]].status == STAT_START &&
-            checkValidCell(roomIdx, data.x, data.y) == true) {
+            checkMine(roomIdx, data.x, data.y, data.isFlag) == true) {
             data.id = sid;
             m_RoomData[roomIdx][data.x][data.y] = data.color;
 
@@ -384,7 +385,8 @@
             }
 
             //结束游戏判断
-            if (checkGameOver(roomIdx, data.x, data.y) == true) {
+            //if (checkGameOver(roomIdx, data.x, data.y) == true) {
+            if (m_RoomData[roomIdx].residualMines == 0) {
                 var winer = (sid == m_Rooms[roomIdx][0] ? m_Rooms[roomIdx][0] : m_Rooms[roomIdx][1]);
                 var loser = (sid == m_Rooms[roomIdx][1] ? m_Rooms[roomIdx][0] : m_Rooms[roomIdx][1]);
                 m_Connections[m_Rooms[roomIdx][0]].status = STAT_NORMAL;
@@ -403,82 +405,10 @@
         }
     };
 
-    //检查合法性
-    var checkValidCell = function (roomIdx, x, y) {
-        return m_RoomData[roomIdx][x][y] != 1;
-    };
-
-    //检查游戏是否结束
-    var checkGameOver = function (roomIdx, x, y) {
-        var n;
-        var cur = m_RoomData[roomIdx][x][y];
-
-        //横
-        n = 0;
-        var startX = (x - 4) < 0 ? 0 : x - 4;
-        var endX = (x + 4) > 14 ? 14 : x + 4;
-        for (var xi = startX; xi <= endX; xi++) {
-            if (m_RoomData[roomIdx][xi][y] == cur) {
-                n++;
-            } else {
-                n = 0;
-            }
-            if (n >= 5) return true;
-        }
-
-        //竖
-        n = 0;
-        var startY = (y - 4) < 0 ? 0 : x - 4;
-        var endY = (y + 4) > 14 ? 14 : y + 4;
-        for (var yi = startY; yi <= endY; yi++) {
-            if (m_RoomData[roomIdx][x][yi] == cur) {
-                n++;
-            } else {
-                n = 0;
-            }
-            if (n >= 5) return true;
-        }
-
-        //正斜
-        n = 0;
-        var min = x < y ? (x - 4 < 0 ? x : 4) : (y - 4 < 0 ? y : 4);
-        var max = x > y ? (x + 4 > 14 ? 14 - x : 4) : (y + 4 > 14 ? 14 - y : 4);
-        var p1x = x - min;
-        var p1y = y - min;
-        var p2x = x + max;
-        var p2y = y + max;
-        for (var p1xi = p1x, p1yi = p1y; p1xi <= p2x, p1yi <= p2y; p1xi++, p1yi++) {
-            if (m_RoomData[roomIdx][p1xi][p1yi] == cur) {
-                n++;
-            } else {
-                n = 0;
-            }
-            if (n >= 5) return true;
-        }
-
-        //反斜
-        n = 0;
-        var min = (x + 4 > 14 ? 14 - x : 4) < (y - 4 < 0 ? y : 4) ?
-            (x + 4 > 14 ? 14 - x : 4) : (y - 4 < 0 ? y : 4);
-        var max = (x - 4 < 0 ? x : 4) < (y + 4 > 14 ? 14 - y : 4) ?
-            (x - 4 < 0 ? x : 4) : (y + 4 > 14 ? 14 - y : 4);
-        var p1x = x + min;
-        var p1y = y - min;
-        var p2x = x - max;
-        var p2y = y + max;
-        for (var i = p1x, j = p1y; i >= p2x; i--, j++) {
-            if (m_RoomData[roomIdx][i][j] == cur) {
-                n++;
-            } else {
-                n = 0;
-            }
-            if (n >= 5) return true;
-        }
-
-        return false;
-    };
-
-    //发送消息
+    /**
+     * 发送消息
+     * @param data
+     */
     var onMessage = function (data) {
         var sid = this.id;
         if (!m_Connections[sid]) return;
@@ -515,6 +445,9 @@
         }
     };
 
+    ////////////////////////////////////
+    // 各种判断
+    ////////////////////////////////////
     /**
      * 获取随机数，下标从0开始
      * @param seed
@@ -526,14 +459,14 @@
 
     /**
      * 随机生成格子地址
-     * @param roomIdx
+     * @param rows
+     * @param columns
      * @returns {{x: number, y: number}}
      */
-    var getRandomPosition = function (roomIdx) {
-        var MG = m_RoomData[roomIdx];
+    var getRandomPosition = function (rows, columns) {
         return {
-            x: getRandom(MG.cg.range.rows),
-            y: getRandom(MG.cg.range.columns)
+            x: getRandom(rows),
+            y: getRandom(columns)
         };
     };
 
@@ -546,7 +479,7 @@
         var mineCount = MG.cg.mineCount;
         var tempArr = {};
         while (mineCount > 0) {
-            var pos = getRandomPosition(roomIdx);
+            var pos = getRandomPosition(MG.cg.range.rows, MG.cg.range.columns);
             var key = pos.x + "=" + pos.y;
             if (!tempArr[key]) {
                 tempArr[key] = 1;
@@ -560,6 +493,7 @@
 
     /**
      * 扫描当前格子周围8格，更新地雷数
+     * @param roomIdx
      * @param pos
      */
     var scanAroundCell = function (roomIdx, pos) {
@@ -577,5 +511,107 @@
                 }
             }
         }
+    };
+
+    /**
+     * 判断是否是雷区
+     * @param roomIdx
+     * @param ri
+     * @param ci
+     * @param isFlag
+     */
+    var checkMine = function (roomIdx, ri, ci, isFlag) {
+        if (m_RoomData[roomIdx].dataMap[ri][ci].isFlag || m_RoomData[roomIdx].dataMap[ri][ci].isOpened) {
+            return;
+        }
+
+        // 判断是否是标旗动作
+        if (isFlag) {
+            // 正确标旗
+            if (m_RoomData[roomIdx].dataMap[ri][ci].data < 0) {
+                drawFlag(roomIdx, ri, ci);
+                addScore(roomIdx, true);
+            } else {
+                openCell(roomIdx, ri, ci);
+                drawBoomCell(roomIdx, ri, ci);
+                subtractScore(roomIdx, true);
+            }
+        } else {
+            openCell(roomIdx, ri, ci);
+            // 正确打开格子
+            if (m_RoomData[roomIdx].dataMap[ri][ci].data > -1) {
+                addScore(roomIdx, false);
+            } else {
+                drawBoomCell(roomIdx, ri, ci);
+                subtractScore(roomIdx, false);
+            }
+        }
+    };
+
+    /**
+     * 标记旗子
+     * @param roomIdx
+     * @param ri
+     * @param ci
+     */
+    var drawFlag = function (roomIdx, ri, ci) {
+        if (m_RoomData[roomIdx].dataMap[ri][ci].isOpened) {
+            return;
+        }
+        m_RoomData[roomIdx].dataMap[ri][ci].isFlag = true;
+    };
+
+    /**
+     * 加分数
+     * @param roomIdx
+     * @param isFlag
+     */
+    var addScore = function (roomIdx, isFlag) {
+        if (isFlag) {
+            m_RoomData[roomIdx].residualMines--;
+        }
+        m_RoomData[roomIdx].score++;
+    };
+
+    /**
+     * 打开格子
+     * @param roomIdx
+     * @param ri
+     * @param ci
+     */
+    var openCell = function (roomIdx, ri, ci) {
+        if (!m_RoomData[roomIdx].dataMap[ri][ci].isOpened && !m_RoomData[roomIdx].dataMap[ri][ci].isFlag) {
+            m_RoomData[roomIdx].dataMap[ri][ci].isOpened = true;
+        }
+    };
+
+    /**
+     * 绘制爆炸格子
+     * @param roomIdx
+     * @param ri
+     * @param ci
+     */
+    var drawBoomCell = function (roomIdx, ri, ci) {
+        var msg = "";
+
+        if (m_RoomData[roomIdx].dataMap[ri][ci].data < 0) {
+            msg = "M";
+        } else if (m_RoomData[roomIdx].dataMap[ri][ci].data > 0) {
+            msg = m_RoomData[roomIdx].dataMap[ri][ci].data;
+        }
+        m_RoomData[roomIdx].dataMap[ri][ci].data = msg;
+    };
+
+    /**
+     * 减分数
+     * @param roomIdx
+     * @param isFlag
+     */
+    var subtractScore = function (roomIdx, isFlag) {
+        if (!isFlag) {
+            m_RoomData[roomIdx].residualMines--;
+        }
+        m_RoomData[roomIdx].score--;
+        m_RoomData[roomIdx].score = m_RoomData[roomIdx].score < 0 ? 0 : m_RoomData[roomIdx].score;
     };
 };
