@@ -93,11 +93,12 @@ function MineClient(host, port) {
     };
 
     //点击格子
-    this.drawCell = function (color, x, y) {
+    this.drawCell = function (color, x, y, isFlag) {
         socket.emit("drawCell", {
             "color": color,
             "x": x,
-            "y": y
+            "y": y,
+            "isFlag": isFlag
         });
     };
 
