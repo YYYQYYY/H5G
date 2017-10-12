@@ -367,12 +367,12 @@ $(function () {
         }
         $("div.room_cell div").remove();//清除桌面
         $("#game_ready").val("游戏中...");
-        if (confirm("开始游戏啦...")) {
-            MG.timer = setInterval(function () {
-                MG.elapsedTime++;
-                $("#elapsed_time").text(MG.elapsedTime);
-            }, 1000);
-        }
+        MG.timer = setInterval(function () {
+            MG.elapsedTime++;
+            $("#elapsed_time").text(MG.elapsedTime);
+        }, 1000);
+        //if (confirm("开始游戏啦...")) {
+        //}
     }
 
     //离开房间请求回调
@@ -535,63 +535,63 @@ $(function () {
     function bindEvent() {
         var layers = $("#layers");
         layers.oncontextmenu = disableRightClick;
-        layers.on("click", function () {
-            console.log("this is click event");
-        });
-        layers.on("mousedown", function () {
-            console.log("this is mousedown event");
-        });
-        layers.on("mouseup", function () {
-            console.log("this is mouseup event");
-        });
+        //layers.on("click", function () {
+        //    console.log("this is click event");
+        //});
+        //layers.on("mousedown", function () {
+        //    console.log("this is mousedown event");
+        //});
+        //layers.on("mouseup", function () {
+        //    console.log("this is mouseup event");
+        //});
 
-        //layers.addEventListener("mousedown", function (e) {
-        //    var canvasPosition = $(this).offset();
-        //    dX = (e.pageX - canvasPosition.left) || 0;
-        //    dY = (e.pageY - canvasPosition.top) || 0;
-        //    var ri = Math.floor(dX / MG.cellWidth);
-        //    var ci = Math.floor(dY / MG.cellWidth);
-        //    ri = ri >= MG.cg.range.rows ? MG.cg.range.rows - 1 : ri;
-        //    ci = ci >= MG.cg.range.columns ? MG.cg.range.columns - 1 : ci;
-        //
-        //    MG.timeout = setTimeout(function (e) {
-        //        //checkMine(ri, ci, true);
-        //        MG.timeout = 0;
-        //        if (g_Info.roomIdx == -1 || g_Info.status != STAT_START || MG.dataMap[x][y] != 0 || g_Info.allowDraw == false) {
-        //            return;
-        //        }
-        //        app.drawCell(g_Info.color, ri, ci, true);
-        //    }, 1000);
-        //});
-        //layers.addEventListener("mousemove", function (e) {
-        //    var canvasPosition = $(this).offset();
-        //    var mX = (e.pageX - canvasPosition.left) || 0;
-        //    var mY = (e.pageY - canvasPosition.top) || 0;
-        //
-        //    if ((Math.abs(dX - mX) > MG.cellWidth / 2) ||
-        //        (Math.abs(dY - mY) > MG.cellWidth / 2)) {
-        //        clearTimeout(MG.timeout);
-        //        MG.timeout = 0;
-        //    }
-        //});
-        //layers.addEventListener("mouseup", function (e) {
-        //    clearTimeout(MG.timeout);
-        //    if (MG.timeout != 0) {
-        //        var canvasPosition = $(this).offset();
-        //        var uX = (e.pageX - canvasPosition.left) || 0;
-        //        var uY = (e.pageY - canvasPosition.top) || 0;
-        //        var ri = Math.floor(uX / MG.cellWidth);
-        //        var ci = Math.floor(uY / MG.cellWidth);
-        //        ri = ri >= MG.cg.range.rows ? MG.cg.range.rows - 1 : ri;
-        //        ci = ci >= MG.cg.range.columns ? MG.cg.range.columns - 1 : ci;
-        //
-        //        //checkMine(ri, ci, false);
-        //        if (g_Info.roomIdx == -1 || g_Info.status != STAT_START || MG.dataMap[x][y] != 0 || g_Info.allowDraw == false) {
-        //            return;
-        //        }
-        //        app.drawCell(g_Info.color, ri, ci, false);
-        //    }
-        //});
+        layers.on("mousedown", function (e) {
+            var canvasPosition = $(this).offset();
+            dX = (e.pageX - canvasPosition.left) || 0;
+            dY = (e.pageY - canvasPosition.top) || 0;
+            var ri = Math.floor(dX / MG.cellWidth);
+            var ci = Math.floor(dY / MG.cellWidth);
+            ri = ri >= MG.cg.range.rows ? MG.cg.range.rows - 1 : ri;
+            ci = ci >= MG.cg.range.columns ? MG.cg.range.columns - 1 : ci;
+
+            MG.timeout = setTimeout(function (e) {
+                //checkMine(ri, ci, true);
+                MG.timeout = 0;
+                if (g_Info.roomIdx == -1 || g_Info.status != STAT_START || MG.dataMap[x][y] != 0 || g_Info.allowDraw == false) {
+                    return;
+                }
+                app.drawCell(g_Info.color, ri, ci, true);
+            }, 1000);
+        });
+        layers.on("mousemove", function (e) {
+            var canvasPosition = $(this).offset();
+            var mX = (e.pageX - canvasPosition.left) || 0;
+            var mY = (e.pageY - canvasPosition.top) || 0;
+
+            if ((Math.abs(dX - mX) > MG.cellWidth / 2) ||
+                (Math.abs(dY - mY) > MG.cellWidth / 2)) {
+                clearTimeout(MG.timeout);
+                MG.timeout = 0;
+            }
+        });
+        layers.on("mouseup", function (e) {
+            clearTimeout(MG.timeout);
+            if (MG.timeout != 0) {
+                var canvasPosition = $(this).offset();
+                var uX = (e.pageX - canvasPosition.left) || 0;
+                var uY = (e.pageY - canvasPosition.top) || 0;
+                var ri = Math.floor(uX / MG.cellWidth);
+                var ci = Math.floor(uY / MG.cellWidth);
+                ri = ri >= MG.cg.range.rows ? MG.cg.range.rows - 1 : ri;
+                ci = ci >= MG.cg.range.columns ? MG.cg.range.columns - 1 : ci;
+
+                //checkMine(ri, ci, false);
+                if (g_Info.roomIdx == -1 || g_Info.status != STAT_START || MG.dataMap[x][y] != 0 || g_Info.allowDraw == false) {
+                    return;
+                }
+                app.drawCell(g_Info.color, ri, ci, false);
+            }
+        });
     }
 
     /**

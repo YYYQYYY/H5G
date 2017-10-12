@@ -346,7 +346,7 @@
                 m_Connections[m_Rooms[roomIdx][0]].status = STAT_START;
                 m_Connections[m_Rooms[roomIdx][1]].status = STAT_START;
                 createMines(roomIdx);
-                console.log(m_RoomData[roomIdx].dataMap);
+                //console.log(m_RoomData[roomIdx].dataMap);
                 m_Connections[m_Rooms[roomIdx][0]].socket.emit("start", {
                     "color": COLOR_BLACK,
                     "allowDraw": true
