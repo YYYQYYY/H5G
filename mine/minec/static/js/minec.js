@@ -175,7 +175,7 @@ $(function () {
     //
     //    app.drawCell(g_Info.color, x, y);
     //});
-    bindEvent();
+    bindDrawCellEvent();
 
     //准备
     $("#game_ready").click(function () {
@@ -340,7 +340,7 @@ $(function () {
             data.status = STAT_NORMAL;
             updateRoom(data.posIdx, data);
         }
-        initGame(data.mg);
+        resetGame(data.mg);
     }
 
     //准备请求回调
@@ -421,8 +421,8 @@ $(function () {
         height: 0,
         cellWidth: 0
     };
-
     var MG = {};
+    var dX = 0, dY = 0;
 
     /**
      * 格子
@@ -437,7 +437,7 @@ $(function () {
     /**
      * 初始化游戏
      */
-    function initGame(mg) {
+    function resetGame(mg) {
         setConfig();
 
         MG.masks = [];
@@ -456,10 +456,9 @@ $(function () {
         $("#score").text(MG.score);
         stopInterval();
 
-        //setCurrentGame();
+        initLayers();
         drawGridCells();
-        initMask();
-        drawMask();
+        createMask();
     }
 
     /**
@@ -500,7 +499,7 @@ $(function () {
     /**
      * 生成遮罩地图
      */
-    function initMask() {
+    function createMask() {
         for (var r = 0; r < MG.cg.range.rows; r++) {
             MG.masks[r] = Array.apply(null, Array(MG.cg.range.columns)).map(function (i) {
                 return new Cell();
@@ -509,8 +508,15 @@ $(function () {
         for (var ri = 0; ri < MG.cg.range.rows; ri++) {
             drawBlock(ri, ri, ri % 2);
         }
+        drawMask();
     }
 
+    /**
+     * 生成环路地图
+     * @param ridx
+     * @param cidx
+     * @param num
+     */
     function drawBlock(ridx, cidx, num) {
         for (var ri = ridx; ri < MG.cg.range.rows - ridx; ri++) {
             for (var ci = cidx; ci < MG.cg.range.columns - cidx; ci++) {
@@ -527,12 +533,10 @@ $(function () {
         $("#residual_mines").text(MG.residualMines);
     }
 
-    var dX = 0, dY = 0;
-
     /**
-     * 绑定事件
+     * 绑定点击格子事件
      */
-    function bindEvent() {
+    function bindDrawCellEvent() {
         var layers = $("#layers");
         layers.oncontextmenu = disableRightClick;
         //layers.on("click", function () {
@@ -595,90 +599,6 @@ $(function () {
     }
 
     /**
-     * 生成雷区地图
-     */
-    function createGameData() {
-        initDataMap();
-        createMines();
-    }
-
-    /**
-     * 生成空白地图
-     */
-    function initDataMap() {
-        for (var r = 0; r < MG.cg.range.rows; r++) {
-            MG.dataMap[r] = Array.apply(null, Array(MG.cg.range.columns)).map(function (i) {
-                return new Cell();
-            });
-        }
-    }
-
-    /**
-     * 生成地雷
-     * 扫描地雷周围，生成格子周围地雷数
-     */
-    function createMines() {
-        var mineCount = MG.cg.mineCount;
-        var tempArr = {};
-        while (mineCount > 0) {
-            var pos = getRandomPosition();
-            var key = pos.x + "=" + pos.y;
-            if (!tempArr[key]) {
-                tempArr[key] = 1;
-                MG.dataMap[pos.x][pos.y].data = -1;
-                scanAroundCell(pos);
-                mineCount--;
-            }
-        }
-        tempArr = null;
-    }
-
-    /**
-     * 扫描当前格子周围8格，更新地雷数
-     * @param pos
-     */
-    function scanAroundCell(pos) {
-        var rows = MG.cg.range.rows;
-        var columns = MG.cg.range.columns;
-        for (var ri = -1; ri < 2; ri++) {
-            var r = pos.x + ri;
-            if (r > -1 && r < rows) {
-                for (var ci = -1; ci < 2; ci++) {
-                    var c = pos.y + ci;
-                    if (c > -1 && c < columns && !(r == pos.x && c == pos.y) && MG.dataMap[r][c].data > -1) {
-                        MG.dataMap[r][c].data++;
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * 随机生成格子地址
-     * @returns {*[]}
-     */
-    function getRandomPosition() {
-        return {
-            x: getRandom(MG.cg.range.rows),
-            y: getRandom(MG.cg.range.columns)
-        };
-    }
-
-    /**
-     * 绘制格子
-     */
-    function drawDataMap() {
-        var rows = MG.cg.range.rows;
-        var columns = MG.cg.range.columns;
-
-        for (var ri = 0; ri < rows; ri++) {
-            for (var ci = 0; ci < columns; ci++) {
-                drawCell(ri, ci);
-            }
-        }
-    }
-
-    /**
      * 绘制遮罩
      */
     function drawMask() {
@@ -709,7 +629,7 @@ $(function () {
      * @param ri
      * @param ci
      */
-    function drawCell(ri, ci) {
+    function drawCells(ri, ci) {
         var cellWidth = MG.cellWidth;
         var ctx = MG.layers[0];
         ctx.textAlign = "center";
@@ -857,23 +777,6 @@ $(function () {
         canvas_game.height = CONFIG.height;
         MG.layers[1] = canvas_game.getContext("2d");
         canvas_game.oncontextmenu = disableRightClick;
-    }
-
-    /**
-     * 开始游戏
-     */
-    function startGame() {
-        initLayers();
-        createGameData();
-        drawDataMap();
-    }
-
-    /**
-     * 重置游戏
-     */
-    function resetGame() {
-        initGame();
-        startGame();
     }
 
     /**
