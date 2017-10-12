@@ -16,7 +16,7 @@
         "MaxClientNum": 300
     };
     var m_Connections = [];//用户管理
-    var m_Rooms = [];//房间管理
+    var m_Rooms = [];//房间管理，存放用户SID
     var m_RoomData = [];//房间内游戏数据信息
     var n_Clients = 0;
     var self = this;
