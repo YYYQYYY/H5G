@@ -513,6 +513,7 @@ $(function () {
         height: 0,
         cellWidth: 0
     };
+
     var MG = {};
     var dX = 0, dY = 0;
 
@@ -678,7 +679,7 @@ $(function () {
                 drawBoomCell(ri, ci);
             }
         }
-        clacScore();
+        showScore();
     }
 
     /**
@@ -765,9 +766,9 @@ $(function () {
     }
 
     /**
-     * 计算分数
+     * 显示分数，剩余雷数
      */
-    function clacScore() {
+    function showScore() {
         $("#residual_mines").text(MG.residualMines);
         $("#score").text(MG.score);
     }
