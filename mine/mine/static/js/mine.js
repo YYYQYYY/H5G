@@ -343,6 +343,7 @@ function drawMask() {
                 ctx.fillStyle = "#cff";
             }
             ctx.fillRect(ri * cellWidth + 2, ci * cellWidth + 2, cellWidth - 2, cellWidth - 2);
+            ctx.drawImage(imgBlank, ri * cellWidth + 3, ci * cellWidth + 3, cellWidth - 3, cellWidth - 3);
         }
     }
 }
@@ -622,6 +623,7 @@ function setConfig() {
     MG.layers[1] = canvas_game.getContext("2d");
     canvas_game.oncontextmenu = disableRightClick;
 }
+var imgBlank = new Image();
 
 /**
  * 游戏入口
@@ -630,5 +632,8 @@ $(function () {
     // TODO:长按功能计时器有BUG
     setConfig();
 
-    initGame();
+    imgBlank.onload = function () {
+        initGame();
+    };
+    imgBlank.src = "static/images/blank.bmp";
 });
