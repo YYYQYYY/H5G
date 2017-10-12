@@ -321,8 +321,7 @@ $(function () {
                 MG.timeout = 0;
                 if (
                     g_Info.roomIdx == -1 || g_Info.status != STAT_START ||
-                    MG.dataMap[ri][ci].data != 0 || MG.dataMap[ri][ci].isFlag || MG.dataMap[ri][ci].isOpened ||
-                    !g_Info.allowDraw
+                    MG.dataMap[ri][ci].data != 0 || MG.dataMap[ri][ci].isFlag || MG.dataMap[ri][ci].isOpened || !g_Info.allowDraw
                 ) {
                     return;
                 }
@@ -354,8 +353,7 @@ $(function () {
                 //checkMine(ri, ci, false);
                 if (
                     g_Info.roomIdx == -1 || g_Info.status != STAT_START ||
-                    MG.dataMap[ri][ci].data != 0 || MG.dataMap[ri][ci].isFlag || MG.dataMap[ri][ci].isOpened ||
-                    !g_Info.allowDraw
+                    MG.dataMap[ri][ci].data != 0 || MG.dataMap[ri][ci].isFlag || MG.dataMap[ri][ci].isOpened || !g_Info.allowDraw
                 ) {
                     return;
                 }
@@ -502,6 +500,8 @@ $(function () {
             g_Info.allowDraw = true;
             $("div.room_cell").css("cursor", "pointer");
         }
+        MG.residualMines = data.residualMines;
+        MG.score = data.score;
         drawCells(data);
     }
 
@@ -665,23 +665,20 @@ $(function () {
             // 正确打开格子
             if (MG.dataMap[ri][ci].data > -1) {
                 drawCell(ri, ci);
-                addScore(false);
             } else {
                 drawBoomCell(ri, ci);
-                subtractScore(false);
             }
         }
         if (MG.dataMap[ri][ci].isFlag) {
             // 正确标旗
             if (MG.dataMap[ri][ci].data < 0) {
                 drawFlag(ri, ci);
-                addScore(true);
             } else {
                 openCell(ri, ci);
                 drawBoomCell(ri, ci);
-                subtractScore(true);
             }
         }
+        clacScore();
     }
 
     /**
@@ -706,10 +703,7 @@ $(function () {
         ctx.font = MG.cellWidth / 2 + "px Arial";
         var msg = "";
 
-        if (MG.dataMap[ri][ci].data < 0) {
-            ctx.fillStyle = "lightgray";
-            msg = "M";
-        } else if (MG.dataMap[ri][ci].data > 0) {
+        if (MG.dataMap[ri][ci].data > 0) {
             ctx.fillStyle = "blue";
             msg = MG.dataMap[ri][ci].data;
         } else {
@@ -745,22 +739,6 @@ $(function () {
     }
 
     /**
-     * 打开所有格子
-     */
-    function openAllCell() {
-        var cellWidth = MG.cellWidth;
-        var rows = MG.cg.range.rows;
-        var columns = MG.cg.range.columns;
-        var ctx = MG.layers[1];
-
-        for (var ri = 0; ri < rows; ri++) {
-            for (var ci = 0; ci < columns; ci++) {
-                ctx.clearRect(ri * cellWidth + 1, ci * cellWidth + 1, cellWidth - 1, cellWidth - 1);
-            }
-        }
-    }
-
-    /**
      * 标记旗子
      * @param ri
      * @param ci
@@ -784,6 +762,30 @@ $(function () {
         ctx.lineTo(x + MG.cellWidth * 0.4 + 1, y + MG.cellWidth * 0.6);
         ctx.stroke();
         ctx.closePath();
+    }
+
+    /**
+     * 计算分数
+     */
+    function clacScore() {
+        $("#residual_mines").text(MG.residualMines);
+        $("#score").text(MG.score);
+    }
+
+    /**
+     * 打开所有格子
+     */
+    function openAllCell() {
+        var cellWidth = MG.cellWidth;
+        var rows = MG.cg.range.rows;
+        var columns = MG.cg.range.columns;
+        var ctx = MG.layers[1];
+
+        for (var ri = 0; ri < rows; ri++) {
+            for (var ci = 0; ci < columns; ci++) {
+                ctx.clearRect(ri * cellWidth + 1, ci * cellWidth + 1, cellWidth - 1, cellWidth - 1);
+            }
+        }
     }
 
     /**

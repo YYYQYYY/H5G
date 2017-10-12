@@ -378,10 +378,12 @@
             checkMine(roomIdx, data.x, data.y, data.isFlag)
         ) {
             data.id = sid;
-            m_RoomData[roomIdx][data.x][data.y] = data.color;
+            //m_RoomData[roomIdx][data.x][data.y] = data.color;
 
             console.log("玩家：" + m_Connections[data.id].nickname + "：SID：" + data.id + "在" + roomIdx + "号房间点击了第" + data.x + "行，第" + data.y + "列的格子。");
-            data.cell = m_RoomData[roomIdx][data.x][data.y];
+            data.cell = m_RoomData[roomIdx].dataMap[data.x][data.y];
+            data.residualMines = m_RoomData[roomIdx].residualMines;
+            data.score = m_RoomData[roomIdx].score;
             for (var i = 0; i < 2; i++) {//向房间内所有成员发送游戏信息
                 m_Connections[m_Rooms[roomIdx][i]].socket.emit("drawCell", data);
             }
