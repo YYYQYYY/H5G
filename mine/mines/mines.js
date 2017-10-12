@@ -206,7 +206,7 @@
             }
         }
 
-        console.log("用户：" + m_Connections[sid].nickname + "：SID：" + sid + "退出了游戏。");
+        console.log("玩家：" + m_Connections[sid].nickname + "：SID：" + sid + "退出了游戏。");
 
         //删除元素
         delete m_Connections[sid];
@@ -239,7 +239,7 @@
                 "room": getRoomList()
             });
 
-            console.log("用户：" + m_Connections[sid].nickname + "：SID：" + sid + "进入了游戏大厅。");
+            console.log("玩家：" + m_Connections[sid].nickname + "：SID：" + sid + "进入了游戏大厅。");
 
             //发送用户加入大厅
             io.sockets.emit("join", getUserInfo(sid));
@@ -267,7 +267,7 @@
                     "roomIdx": oldRoomIdx,
                     "posIdx": oldPosIdx
                 });
-                console.log("用户：" + m_Connections[sid].nickname + "：SID：" + sid + "退出了" + oldRoomIdx + "号房间。");
+                console.log("玩家：" + m_Connections[sid].nickname + "：SID：" + sid + "退出了" + oldRoomIdx + "号房间。");
             }
 
             //加入新房间
@@ -283,7 +283,7 @@
                 "mg": m_RoomData[data.roomIdx]
             });
 
-            console.log("用户：" + m_Connections[sid].nickname + "：SID：" + sid + "进入了" + data.roomIdx + "号房间。");
+            console.log("玩家：" + m_Connections[sid].nickname + "：SID：" + sid + "进入了" + data.roomIdx + "号房间。");
 
             //发送房间内信息
             var info = [0, 0];
@@ -313,7 +313,7 @@
                 "roomIdx": roomIdx,
                 "posIdx": posIdx
             });
-            console.log("用户：" + m_Connections[sid].nickname + "：SID：" + sid + "退出了" + roomIdx + "号房间。");
+            console.log("玩家：" + m_Connections[sid].nickname + "：SID：" + sid + "退出了" + roomIdx + "号房间。");
         }
     };
 
@@ -334,14 +334,14 @@
                 "nickname": m_Connections[sid].nickname,
                 "status": status
             });
-            console.log("用户：" + m_Connections[sid].nickname + "：SID：" + sid + "在" + roomIdx + "号房间做好准备了。");
+            console.log("玩家：" + m_Connections[sid].nickname + "：SID：" + sid + "在" + roomIdx + "号房间做好准备了。");
 
             //发送开始消息
-            if (m_Rooms[roomIdx][0] && m_Rooms[roomIdx][1] &&
-                m_Connections[m_Rooms[roomIdx][0]] &&
-                m_Connections[m_Rooms[roomIdx][1]] &&
-                m_Connections[m_Rooms[roomIdx][0]].status == STAT_READY &&
-                m_Connections[m_Rooms[roomIdx][1]].status == STAT_READY) {
+            if (
+                m_Rooms[roomIdx][0] && m_Rooms[roomIdx][1] &&
+                m_Connections[m_Rooms[roomIdx][0]] && m_Connections[m_Rooms[roomIdx][1]] &&
+                m_Connections[m_Rooms[roomIdx][0]].status == STAT_READY && m_Connections[m_Rooms[roomIdx][1]].status == STAT_READY
+            ) {
                 //告诉两名玩家游戏正式开始
                 m_Connections[m_Rooms[roomIdx][0]].status = STAT_START;
                 m_Connections[m_Rooms[roomIdx][1]].status = STAT_START;
@@ -371,21 +371,22 @@
     var onDrawCell = function (data) {
         var sid = this.id;
         var roomIdx = m_Connections[sid].roomIdx;
-        if (m_Rooms[roomIdx][0] && m_Rooms[roomIdx][1] &&
-            m_Connections[m_Rooms[roomIdx][0]] &&
-            m_Connections[m_Rooms[roomIdx][1]] &&
-            m_Connections[m_Rooms[roomIdx][0]].status == STAT_START &&
-            m_Connections[m_Rooms[roomIdx][1]].status == STAT_START &&
-            checkMine(roomIdx, data.x, data.y, data.isFlag) == true) {
+        if (
+            m_Rooms[roomIdx][0] && m_Rooms[roomIdx][1] &&
+            m_Connections[m_Rooms[roomIdx][0]] && m_Connections[m_Rooms[roomIdx][1]] &&
+            m_Connections[m_Rooms[roomIdx][0]].status == STAT_START && m_Connections[m_Rooms[roomIdx][1]].status == STAT_START &&
+            checkMine(roomIdx, data.x, data.y, data.isFlag)
+        ) {
             data.id = sid;
             m_RoomData[roomIdx][data.x][data.y] = data.color;
 
+            console.log("玩家：" + m_Connections[data.id].nickname + "：SID：" + data.id + "在" + roomIdx + "号房间点击了第" + data.x + "行，第" + data.y + "列的格子。");
+            data.cell = m_RoomData[roomIdx][data.x][data.y];
             for (var i = 0; i < 2; i++) {//向房间内所有成员发送游戏信息
                 m_Connections[m_Rooms[roomIdx][i]].socket.emit("drawCell", data);
             }
 
             //结束游戏判断
-            //if (checkGameOver(roomIdx, data.x, data.y) == true) {
             if (m_RoomData[roomIdx].residualMines == 0) {
                 var winer = (sid == m_Rooms[roomIdx][0] ? m_Rooms[roomIdx][0] : m_Rooms[roomIdx][1]);
                 var loser = (sid == m_Rooms[roomIdx][1] ? m_Rooms[roomIdx][0] : m_Rooms[roomIdx][1]);
@@ -522,7 +523,7 @@
      */
     var checkMine = function (roomIdx, ri, ci, isFlag) {
         if (m_RoomData[roomIdx].dataMap[ri][ci].isFlag || m_RoomData[roomIdx].dataMap[ri][ci].isOpened) {
-            return;
+            return false;
         }
 
         // 判断是否是标旗动作
@@ -533,7 +534,6 @@
                 addScore(roomIdx, true);
             } else {
                 openCell(roomIdx, ri, ci);
-                drawBoomCell(roomIdx, ri, ci);
                 subtractScore(roomIdx, true);
             }
         } else {
@@ -542,10 +542,10 @@
             if (m_RoomData[roomIdx].dataMap[ri][ci].data > -1) {
                 addScore(roomIdx, false);
             } else {
-                drawBoomCell(roomIdx, ri, ci);
                 subtractScore(roomIdx, false);
             }
         }
+        return true;
     };
 
     /**
@@ -583,23 +583,6 @@
         if (!m_RoomData[roomIdx].dataMap[ri][ci].isOpened && !m_RoomData[roomIdx].dataMap[ri][ci].isFlag) {
             m_RoomData[roomIdx].dataMap[ri][ci].isOpened = true;
         }
-    };
-
-    /**
-     * 绘制爆炸格子
-     * @param roomIdx
-     * @param ri
-     * @param ci
-     */
-    var drawBoomCell = function (roomIdx, ri, ci) {
-        var msg = "";
-
-        if (m_RoomData[roomIdx].dataMap[ri][ci].data < 0) {
-            msg = "M";
-        } else if (m_RoomData[roomIdx].dataMap[ri][ci].data > 0) {
-            msg = m_RoomData[roomIdx].dataMap[ri][ci].data;
-        }
-        m_RoomData[roomIdx].dataMap[ri][ci].data = msg;
     };
 
     /**

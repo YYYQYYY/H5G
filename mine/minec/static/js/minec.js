@@ -319,7 +319,11 @@ $(function () {
             MG.timeout = setTimeout(function (e) {
                 //checkMine(ri, ci, true);
                 MG.timeout = 0;
-                if (g_Info.roomIdx == -1 || g_Info.status != STAT_START || MG.dataMap[ri][ci] != 0 || g_Info.allowDraw == false) {
+                if (
+                    g_Info.roomIdx == -1 || g_Info.status != STAT_START ||
+                    MG.dataMap[ri][ci].data != 0 || MG.dataMap[ri][ci].isFlag || MG.dataMap[ri][ci].isOpened ||
+                    !g_Info.allowDraw
+                ) {
                     return;
                 }
                 app.drawCell(g_Info.color, ri, ci, true);
@@ -348,7 +352,11 @@ $(function () {
                 ci = ci >= MG.cg.range.columns ? MG.cg.range.columns - 1 : ci;
 
                 //checkMine(ri, ci, false);
-                if (g_Info.roomIdx == -1 || g_Info.status != STAT_START || MG.dataMap[ri][ci] != 0 || g_Info.allowDraw == false) {
+                if (
+                    g_Info.roomIdx == -1 || g_Info.status != STAT_START ||
+                    MG.dataMap[ri][ci].data != 0 || MG.dataMap[ri][ci].isFlag || MG.dataMap[ri][ci].isOpened ||
+                    !g_Info.allowDraw
+                ) {
                     return;
                 }
                 app.drawCell(g_Info.color, ri, ci, false);
@@ -487,18 +495,6 @@ $(function () {
      * @param data
      */
     function onDrawCell(data) {
-        var left = data.x * 35 + 5;
-        var top = data.y * 35 + 5;
-        var css = (data.color == COLOR_BLACK ? "black" : "white");
-        var html = '<div id="cell-' + data.x + '-' + data.y + '" style="left:' + left + 'px;top:' + top + 'px" class="' + css + '"></div>';
-        $("div.room_cell").append(html);
-        if ($("div.room_cell .cur").length == 0) {
-            $("div.room_cell").append('<div class="cur"></div>');
-        }
-        $("div.room_cell .cur").css({
-            left: left,
-            top: top
-        });
         if (data.id == g_Info.id) {
             g_Info.allowDraw = false;
             $("div.room_cell").css("cursor", "no-drop");
@@ -506,6 +502,7 @@ $(function () {
             g_Info.allowDraw = true;
             $("div.room_cell").css("cursor", "pointer");
         }
+        drawCells(data);
     }
 
 //////////////////////////////////////////////////
@@ -656,10 +653,53 @@ $(function () {
 
     /**
      * 绘制格子
+     * @param data
+     */
+    function drawCells(data) {
+        var ri = data.x;
+        var ci = data.y;
+        MG.dataMap[ri][ci] = data.cell;
+
+        if (MG.dataMap[ri][ci].isOpened) {
+            openCell(ri, ci);
+            // 正确打开格子
+            if (MG.dataMap[ri][ci].data > -1) {
+                drawCell(ri, ci);
+                addScore(false);
+            } else {
+                drawBoomCell(ri, ci);
+                subtractScore(false);
+            }
+        }
+        if (MG.dataMap[ri][ci].isFlag) {
+            // 正确标旗
+            if (MG.dataMap[ri][ci].data < 0) {
+                drawFlag(ri, ci);
+                addScore(true);
+            } else {
+                openCell(ri, ci);
+                drawBoomCell(ri, ci);
+                subtractScore(true);
+            }
+        }
+    }
+
+    /**
+     * 打开格子
      * @param ri
      * @param ci
      */
-    function drawCells(ri, ci) {
+    function openCell(ri, ci) {
+        var cellWidth = MG.cellWidth;
+        MG.layers[1].clearRect(ri * cellWidth + 1, ci * cellWidth + 1, cellWidth - 1, cellWidth - 1);
+    }
+
+    /**
+     * 绘制格子
+     * @param ri
+     * @param ci
+     */
+    function drawCell(ri, ci) {
         var cellWidth = MG.cellWidth;
         var ctx = MG.layers[0];
         ctx.textAlign = "center";
@@ -721,44 +761,16 @@ $(function () {
     }
 
     /**
-     * 打开格子
-     * @param ri
-     * @param ci
-     */
-    function openCell(ri, ci) {
-        if (!MG.dataMap[ri][ci].isOpened && !MG.dataMap[ri][ci].isFlag) {
-            var cellWidth = MG.cellWidth;
-            var ctx = MG.layers[1];
-            ctx.clearRect(ri * cellWidth + 1, ci * cellWidth + 1, cellWidth - 1, cellWidth - 1);
-            MG.dataMap[ri][ci].isOpened = true;
-        }
-    }
-
-    /**
      * 标记旗子
      * @param ri
      * @param ci
      */
     function drawFlag(ri, ci) {
         var ctx = MG.layers[1];
-
-        if (MG.dataMap[ri][ci].isOpened) {
-            return;
-        }
-
         var cellWidth = MG.cellWidth;
-
-        MG.dataMap[ri][ci].isFlag = true;//!MG.dataMap[ri][ci].isFlag;
-        //if (MG.dataMap[ri][ci].isFlag) {
-        //    ctx.fillStyle = "#abc";
-        //    ctx.fillRect(ri * cellWidth + cellWidth / 4, ci * cellWidth + cellWidth / 4, cellWidth / 2 - 1, cellWidth / 2 - 1);
-        //} else {
-        //    ctx.clearRect(ri * cellWidth + cellWidth / 4, ci * cellWidth + cellWidth / 4, cellWidth / 2 - 1, cellWidth / 2 - 1);
-        //    ctx.fillStyle = "lightblue";
-        //    ctx.fillRect(ri * cellWidth + cellWidth / 4 - 1, ci * cellWidth + cellWidth / 4 - 1, cellWidth / 2, cellWidth / 2 + 1);
-        //}
         var x = ri * cellWidth;
         var y = ci * cellWidth;
+
         ctx.beginPath();
         ctx.strokeStyle = "red";
         ctx.fillStyle = "red";
