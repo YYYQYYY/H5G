@@ -557,7 +557,7 @@ $(function () {
             MG.timeout = setTimeout(function (e) {
                 //checkMine(ri, ci, true);
                 MG.timeout = 0;
-                if (g_Info.roomIdx == -1 || g_Info.status != STAT_START || MG.dataMap[x][y] != 0 || g_Info.allowDraw == false) {
+                if (g_Info.roomIdx == -1 || g_Info.status != STAT_START || MG.dataMap[ri][ci] != 0 || g_Info.allowDraw == false) {
                     return;
                 }
                 app.drawCell(g_Info.color, ri, ci, true);
@@ -586,7 +586,7 @@ $(function () {
                 ci = ci >= MG.cg.range.columns ? MG.cg.range.columns - 1 : ci;
 
                 //checkMine(ri, ci, false);
-                if (g_Info.roomIdx == -1 || g_Info.status != STAT_START || MG.dataMap[x][y] != 0 || g_Info.allowDraw == false) {
+                if (g_Info.roomIdx == -1 || g_Info.status != STAT_START || MG.dataMap[ri][ci] != 0 || g_Info.allowDraw == false) {
                     return;
                 }
                 app.drawCell(g_Info.color, ri, ci, false);
