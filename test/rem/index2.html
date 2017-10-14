@@ -1,17 +1,26 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <title>sdl</title>
+    <title>调整第一个画面</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport"
           content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="HandheldFriendly" content="true">
-    <link rel="stylesheet" href="static/css/mine.css">
+    <link rel="stylesheet" href="static/css/mine1.css">
 </head>
 <body>
 <div id="main">
-    <div style="display:none" id="room" class="room">
+
+    <!-- 画面切换面板 -->
+    <div id="tag" class="tag">
+        <a id="tag_room_list" href="#room_list" class="on">大厅</a>
+        <a id="tag_room" href="#room">房间</a>
+        <a id="tag_message" href="#piazza_chat">聊天</a>
+    </div>
+
+    <!-- 游戏房间 -->
+    <div id="room" style="display:none" class="room">
         <div class="room_user">
             <div class="u1">
                 <p id="room-p1-img"><img src="static/images/room/no_player.gif"></p>
@@ -62,6 +71,8 @@
             </div>
         </div>
     </div>
+
+    <!-- 房间列表 -->
     <div id="room_list" class="room_all">
         <div class="room_left">
             <div id="room-box" class="room_list">
@@ -967,101 +978,85 @@
                 </div>
             </div>
         </div>
-        <div id="room_message" class="room_right" style="display:none">
-            <div id="list-box" class="list">
-                <li id="user-6xwGhGiNYrI3w7SAAAAJ"><span>无状态</span>abc99</li>
-            </div>
-            <div class="message">
-                <div id="msg-content" class="content"></div>
-                <div class="input">
-                    <label for="send_range"></label>
-                    <select style="width:50px;margin:5px 0 0 8px" id="send_range">
-                        <option value="">所有人</option>
-                    </select>
-                    <input id="msg-input" style="width:125px;margin:5px 0 0 0" type="text" placeholder="点击这里输入消息">
-                    <input id="msg-button" style="width:50px;margin:5px 0 0 0" type="button" value="发送">
-                </div>
+    </div>
+
+    <!-- 聊天室 -->
+    <div id="piazza_chat" style="display:none" class="room_right">
+        <div id="list-box" class="list">
+            <li id="user-6xwGhGiNYrI3w7SAAAAJ"><span>无状态</span>abc99</li>
+        </div>
+        <div class="message">
+            <div id="msg-content" class="content"></div>
+            <div class="input">
+                <label for="send_range"></label>
+                <select style="width:50px;margin:5px 0 0 8px" id="send_range">
+                    <option value="">所有人</option>
+                </select>
+                <input id="msg-input" style="width:125px;margin:5px 0 0 0" type="text" placeholder="点击这里输入消息">
+                <input id="msg-button" style="width:50px;margin:5px 0 0 0" type="button" value="发送">
             </div>
         </div>
     </div>
-    <div id="tag" class="tag">
-        <a id="tag_room_list" href="#room_list" class="on">大厅</a>
-        <a id="tag_room" href="#room">房间</a>
-        <a id="tag_message" href="#room_message">聊天</a>
-    </div>
+
 </div>
 <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
 <script type="text/javascript">
+    /**
+     * 当dom加载完成时，或者 屏幕垂直、水平方向有改变进行html的根元素计算
+     */
+    !function (doc, win) {
+//        const docEl = doc.documentElement,
+//                resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
+//                recalc = function () {
+//                    let clientWidth = docEl.clientWidth;
+//                    if (!clientWidth) return;
+//                    if (clientWidth > 750) clientWidth = 750;
+//                    docEl.style.fontSize = 20 * (clientWidth / 320) + 'px';
+        console.log("clientWidth:" + document.documentElement.clientWidth + "\t\tfontSize:" + document.documentElement.style.fontSize);
+//                };
+//        if (!doc.addEventListener) return;
+//        win.addEventListener(resizeEvt, recalc, false);
+//        doc.addEventListener('DOMContentLoaded', recalc, false);
+    }(document, window);
 
-    (function (doc, win) {
-        const docEl = doc.documentElement,
-                resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
-                recalc = function () {
-                    let clientWidth = docEl.clientWidth;
-                    if (!clientWidth) return;
-                    if (clientWidth > 750) clientWidth = 750;//这里限制最大的宽度尺寸，从而实现PC端的两边留白等
-                    docEl.style.fontSize = 20 * (clientWidth / 320) + 'px';
-                    console.log(docEl.style.fontSize)
-                };
-        if (!doc.addEventListener) return;
-        win.addEventListener(resizeEvt, recalc, false);
-        doc.addEventListener('DOMContentLoaded', recalc, false);
-        //当dom加载完成时，或者 屏幕垂直、水平方向有改变进行html的根元素计算
-    })(document, window);
+    //切换窗口
+    $("#tag a").click(function () {
+        var id = $(this).attr('href').substr(1);
+        if ($(this).hasClass('on')) {
+            return false;
+        }
 
+        //if (g_Info.roomIdx == -1) {
+        //    alert("您还没有加入房间");
+        //    return false;
+        //}
 
-    //    if ('addEventListener' in document) {
-    //        document.addEventListener('DOMContentLoaded', function () {
-    //            FastClick.attach(document.body);
-    //        }, false);
-    //    }
+        changeTag(id);
+        return false;
+    });
 
-    //    !function (x) {
-    //        function w() {
-    //            var a = r.getBoundingClientRect().width;
-    //            a / v > 540 && (a = 540 * v), x.rem = a / 16, r.style.fontSize = x.rem + "px"
-    //        }
-    //
-    //        var v, u, t, s = x.document, r = s.documentElement, q = s.querySelector('meta[name="viewport"]');
-    //        if (q) {
-    //            console.warn("将根据已有的meta标签来设置缩放比例");
-    //            var o = q.getAttribute("content").match(/initial\-scale=(["‘]?)([\d\.]+)\1?/);
-    //            o && (u = parseFloat(o[2]), v = parseInt(1 / u))
-    //        }
-    //        if (!v && !u) {
-    //            var n = (x.navigator.appVersion.match(/android/gi), x.navigator.appVersion.match(/iphone/gi)), v = x.devicePixelRatio;
-    //            v = n ? v >= 3 ? 3 : v >= 2 ? 2 : 1 : 1, u = 1 / v
-    //        }
-    //        if (r.setAttribute("data-dpr", v), !q) {
-    //            if (q = s.createElement("meta"), q.setAttribute("name", "viewport"), q.setAttribute("content", "initial-scale=" + u + ", maximum-scale=" + u + ", minimum-scale=" + u + ", user-scalable=no"), r.firstElementChild) {
-    //                r.firstElementChild.appendChild(q)
-    //            } else {
-    //                var m = s.createElement("div");
-    //                m.appendChild(q), s.write(m.innerHTML)
-    //            }
-    //        }
-    //        x.dpr = v, x.addEventListener("resize", function () {
-    //            clearTimeout(t), t = setTimeout(w, 300)
-    //        }, !1), x.addEventListener("pageshow", function (b) {
-    //            b.persisted && (clearTimeout(t), t = setTimeout(w, 300))
-    //        }, !1), "complete" === s.readyState ? s.body.style.fontSize = 12 * v + "px" : s.addEventListener("DOMContentLoaded", function () {
-    //            s.body.style.fontSize = 12 * v + "px"
-    //        }, !1), w()
-    //    }(window);
-
-    //    (function () {
-    //        var winW = document.documentElement.clientWidth, desW = 640, htmlFont = winW / desW * 100;
-    //        if (winW >= 640) {//当屏幕的宽度大于设计稿的宽度是，整个区域最宽640
-    //            $('#main').css({//可在css中写
-    //                width: desW,
-    //                margin: "0 auto"
-    //            });
-    //            window.htmlFont = 100;
-    //            return;
-    //        }
-    //        window.htmlFont = htmlFont;//将变量转为全局变量传递出函数作用域
-    //        document.documentElement.style.fontSize = htmlFont + "px";//设置html根元素的字体大小
-    //    })();
+    /**
+     * 切换大厅与房间
+     * @param tag
+     */
+    function changeTag(tag) {
+        if (tag == "room_list") {
+            $("#room_list").show();
+            $("#tag_room_list").addClass("on");
+            $("#room").hide();
+            $("#tag_room").removeClass("on");
+        } else if (tag == "room") {
+            $("#room").show();
+            $("#tag_room").addClass("on");
+            $("#room_list").hide();
+            $("#tag_room_list").removeClass("on");
+        } else if (tag == "piazza_chat") {
+            $("#room").show();
+            $("#tag_room").addClass("on");
+            $("#room_list").hide();
+            $("#tag_room_list").removeClass("on");
+        }
+    }
 </script>
 </body>
 </html>
