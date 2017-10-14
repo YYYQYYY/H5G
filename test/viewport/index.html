@@ -1,0 +1,103 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>扫雷</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="HandheldFriendly" content="true">
+    <link rel="stylesheet" href="static/css/mine.css"/>
+</head>
+<body>
+<div id="dlgBg"></div>
+<div id="login">
+    <h1>登陆</h1>
+    <div class="box">
+        <input type="text" id="nickname" maxlength="10" class="in" placeholder="请输入昵称">
+        <input type="button" id="loginBtn" class="go" value="加入游戏">
+    </div>
+</div>
+<div id="main">
+    <div id="tag" class="tag">
+        <a id="tag_room_list" href="#room_list" class="on">大厅</a>
+        <a id="tag_room" href="#room">房间</a>
+    </div>
+    <div style="display:none" id="room" class="room">
+        <div class="room_user">
+            <div class="u1">
+                <p id="room-p1-img"><img src="static/images/room/no_player.gif"></p>
+                <p id="room-p1-nickname"></p>
+                <p id="room-p1-status"></p>
+            </div>
+            <div class="u2">
+                <p id="room-p2-nickname"></p>
+                <p id="room-p2-status"></p>
+                <p id="room-p2-img"><img src="static/images/room/no_player.gif"></p>
+            </div>
+        </div>
+        <div class="room_cell">
+            <section id="page">
+                <header>
+                    <p>使用时间：<span id="elapsed_time"
+                                  style="display: inline-block; width: 30px;text-align: right">0</span>
+                        剩余雷数：<span id="residual_mines"
+                                   style="display: inline-block;width: 30px;text-align: right">0</span>
+                        得分：<span id="score" style="display: inline-block;width: 30px;text-align: right">0</span>
+                    </p>
+                    <div style="text-align: center;width: 100%">
+                        <button onclick="resetGame();">开始游戏</button>
+                    </div>
+                </header>
+                <hr/>
+                <section id="layers">
+                    <canvas id="bg" width="400" height="400">
+                        你的浏览器不支持HTML5。
+                    </canvas>
+                    <canvas id="game" width="400" height="400"></canvas>
+                </section>
+                <hr/>
+                <footer>
+                    <p>扫雷游戏练习。</p>
+                </footer>
+            </section>
+        </div>
+        <div class="room_message">
+            <div class="room_button">
+                <input type="button" id="game_ready" class="btn" value="准备">
+                <input type="button" id="game_leave" class="btn" value="退出">
+            </div>
+            <div id="room-msg-content" class="content"></div>
+            <div class="input">
+                <input id="room-msg-input" style="width:175px;margin:5px 0 0 8px" type="text" placeholder="点击这里输入消息">
+                <input id="room-msg-button" style="width:50px;margin:5px 0 0 0" type="button" value="发送">
+            </div>
+        </div>
+    </div>
+    <div id="room_list" class="room_all">
+        <div class="room_left">
+            <div id="room-box" class="room_list"></div>
+        </div>
+        <div class="room_right">
+            <div id="list-box" class="list"></div>
+            <div class="message">
+                <div id="msg-content" class="content"></div>
+                <div class="input">
+                    <label for="send_range"></label>
+                    <select style="width:50px;margin:5px 0 0 8px" id="send_range">
+                        <option value="">所有人</option>
+                    </select>
+                    <input id="msg-input" style="width:125px;margin:5px 0 0 0" type="text" placeholder="点击这里输入消息">
+                    <input id="msg-button" style="width:50px;margin:5px 0 0 0" type="button" value="发送">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--script type="text/javascript" src="http://fs.chinacloudsites.cn/socket.io/socket.io.js"></script-->
+<script type="text/javascript" src="http://localhost:1337/socket.io/socket.io.js"></script>
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+<script type="text/javascript" src="../../static/js/common.js"></script>
+<script type="text/javascript" src="static/js/mineCore.js"></script>
+<script type="text/javascript" src="static/js/minec.js"></script>
+</body>
+</html>
