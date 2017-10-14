@@ -1,0 +1,400 @@
+﻿<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <title>游戏大厅</title>
+    <style>
+        @charset "utf-8";
+        /***********************************************************************************************************************
+        设计图按640px设计，原始字体大小为100px
+        ***********************************************************************************************************************/
+
+        html {
+            font-size: 100px
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            font-size: 16px;
+        }
+
+        li {
+            list-style: none
+        }
+
+        #main {
+            background: #abc;
+            width: 640px;
+            min-height: 100%;
+            max-height: 100%;
+        }
+
+        /***********************************************************************************************************************
+        大厅
+        ***********************************************************************************************************************/
+
+        /*标签页*/
+        #tab_list {
+            height: 32px;
+            background: #ddd;
+            border-left: 2px solid #00CED1;
+            border-right: 2px solid #00CED1;
+            border-bottom: 2px solid #00CED1;
+            overflow-x: auto;
+            overflow-y: hidden;
+        }
+
+        #tab_list a {
+            width: 160px;
+            float: left;
+            height: 32px;
+            line-height: 32px;
+            text-align: center;
+            background: #F7F7F7;
+            border-right: 1px solid #00CED1;
+        }
+
+        #tab_list a.on {
+            background: #CCC
+        }
+
+        /*用户列表*/
+        .user_list {
+            min-height: 120px;
+            background: #eee;
+            margin: 0 auto;
+            border: 2px solid #00CED1;
+            overflow-x: scroll;
+            overflow-y: hidden;
+        }
+
+        .user_list ul {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+        }
+
+        .user_list ul li {
+            margin: 0;
+            padding: 0;
+        }
+
+        .user_list li {
+            width: 100px;
+            height: 120px;
+            margin: 5px;
+            background: #a55;
+            text-align: center;
+        }
+
+        .user_list li div {
+            width: 90px;
+            height: 110px;
+            margin: 5px;
+            background: #ba7;
+            border: 1px solid;
+        }
+
+        /*房间列表*/
+        .room_list {
+            background: #ccc;
+            margin: 5px 0 5px 5px;
+            overflow-y: scroll;
+        }
+
+        /***********************************************************************************************************************
+        ***********************************************************************************************************************/
+
+        .room_all {
+            background: #5480AD;
+            display: inline-block
+        }
+
+        .room_left {
+            width: 7.50rem;
+            float: left;
+        }
+
+        .room_right {
+            width: 7.50rem;
+            float: left
+        }
+
+        .room_item_start {
+            background: url('static/images/room/room_start.gif') center center no-repeat
+        }
+
+        .room_item {
+            width: 1.35rem;
+            height: 1.35rem;
+            background: url('static/images/room/room.gif') center center no-repeat;
+            float: left;
+        }
+
+        .room_item .players {
+            height: .50rem;
+        }
+
+        .room_item .players .icon1 {
+            width: .40rem;
+            height: .50rem;
+            float: left;
+            cursor: pointer
+        }
+
+        .room_item .players .icon2 {
+            width: .40rem;
+            height: .50rem;
+            float: left;
+            margin-left: .55rem;
+            cursor: pointer
+        }
+
+        .room_item .players .no {
+            background: url('static/images/room/player_no.gif') center center no-repeat
+        }
+
+        .room_item .players .yes {
+            background: url('static/images/room/player_yes.gif') center center no-repeat
+        }
+
+        .room_item .player1 {
+            height: .25rem;
+            line-height: .25rem;
+            text-align: left
+        }
+
+        .room_item .player2 {
+            height: .25rem;
+            line-height: .25rem;
+            text-align: right;
+            margin-top: .20rem;
+        }
+
+        .room_item .roomnum {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div id="main">
+
+    <section id="tab_list">
+        <a id="tab_game_piazza" href="javascript:" class="on">大厅</a>
+        <a id="tab_game_room" href="javascript:">房间</a>
+    </section>
+
+    <section id="game_piazza">
+
+        <div id="user_list" class="user_list">
+            <ul>
+                <li id="room_user-99">
+                    <div>
+                        <span>游戏中</span>
+                        <img style="min-height: 60%;max-height: 60%;" src="static/images/room/player_yes.gif">
+                        <span>abc99</span>
+                    </div>
+                </li>
+                <li id="room_user-91">
+                    <div>
+                        <span>游戏中</span>
+                        <img style="min-height: 60%;max-height: 60%;" src="static/images/room/player_yes.gif">
+                        <span>abc91</span>
+                    </div>
+                </li>
+                <li id="room_user-98">
+                    <div>
+                        <span>游戏中</span>
+                        <img style="min-height: 60%;max-height: 60%;" src="static/images/room/player_yes.gif">
+                        <span>abc98</span>
+                    </div>
+                </li>
+                <li id="room_user-97">
+                    <div>
+                        <span>游戏中</span>
+                        <img style="min-height: 60%;max-height: 60%;" src="static/images/room/player_yes.gif">
+                        <span>abc97</span>
+                    </div>
+                </li>
+                <li id="room_user-96">
+                    <div>
+                        <span>游戏中</span>
+                        <img style="min-height: 60%;max-height: 60%;" src="static/images/room/player_yes.gif">
+                        <span>abc96</span>
+                    </div>
+                </li>
+                <li id="room_user-95">
+                    <div>
+                        <span>游戏中</span>
+                        <img style="min-height: 60%;max-height: 60%;" src="static/images/room/player_yes.gif">
+                        <span>abc95</span>
+                    </div>
+                </li>
+                <li id="room_user-94">
+                    <div>
+                        <span>游戏中</span>
+                        <img style="min-height: 60%;max-height: 60%;" src="static/images/room/player_yes.gif">
+                        <span>abc94</span>
+                    </div>
+                </li>
+                <li id="room_user-93">
+                    <div>
+                        <span>游戏中</span>
+                        <img style="min-height: 60%;max-height: 60%;" src="static/images/room/player_yes.gif">
+                        <span>abc93</span>
+                    </div>
+                </li>
+                <li id="room_user-92">
+                    <div>
+                        <span>游戏中</span>
+                        <img style="min-height: 60%;max-height: 60%;" src="static/images/room/player_yes.gif">
+                        <span>abc92</span>
+                    </div>
+                </li>
+                <li id="room_user-90">
+                    <div>
+                        <span>游戏中</span>
+                        <img style="min-height: 60%;max-height: 60%;" src="static/images/room/player_yes.gif">
+                        <span>abc90</span>
+                    </div>
+                </li>
+                <li id="room_user-89">
+                    <div>
+                        <span>游戏中</span>
+                        <img style="min-height: 60%;max-height: 60%;" src="static/images/room/player_yes.gif">
+                        <span>abc89</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div id="room-box" class="room_list">
+            <ul>
+                <li>
+                    <div id="room-0" value="0" class="room_item">
+                        <div id="room-0-name-1" class="player2"></div>
+                        <div class="players">
+                            <div value="0" id="room-0-icon-0" class="player icon1 no"></div>
+                            <div value="1" id="room-0-icon-1" class="player icon2 no"></div>
+                        </div>
+                        <div id="room-0-name-0" class="player1"></div>
+                        <div class="roomnum">- 1 -</div>
+                    </div>
+                </li>
+            </ul>
+            <ul>
+                <li>
+                    <div id="room-1" value="1" class="room_item">
+                        <div id="room-1-name-1" class="player2"></div>
+                        <div class="players">
+                            <div value="0" id="room-1-icon-0" class="player icon1 no"></div>
+                            <div value="1" id="room-1-icon-1" class="player icon2 no"></div>
+                        </div>
+                        <div id="room-1-name-0" class="player1"></div>
+                        <div class="roomnum">- 2 -</div>
+                    </div>
+                </li>
+            </ul>
+
+        </div>
+
+    </section>
+
+    <section id="game_room" style="display: none;">
+
+        <div id="room_user_list" class="user_list">
+            <ul>
+                <li id="user-99">
+                    <div>
+                        <span>游戏中</span>
+                        <img style="min-height: 60%;max-height: 60%;" src="static/images/room/player_yes.gif">
+                        <span>abc99</span>
+                    </div>
+                </li>
+                <li id="user-89">
+                    <div>
+                        <span>游戏中</span>
+                        <img style="min-height: 60%;max-height: 60%;" src="static/images/room/player_yes.gif">
+                        <span>abc89</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        游戏房间
+    </section>
+
+    <div id="message_list">
+        消息列表
+    </div>
+
+    <div id="chat_input">
+        消息输入框
+    </div>
+
+
+</div>
+<script type="text/javascript" src="../../static/js/common.js"></script>
+<script type="text/javascript">
+    /**
+     * 当dom加载完成时，或者 屏幕垂直、水平方向有改变进行html的根元素计算
+     */
+    !function (doc, win) {
+//        const docEl = doc.documentElement,
+//                resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
+//                recalc = function () {
+//                    let clientWidth = docEl.clientWidth;
+//                    if (!clientWidth) return;
+//                    if (clientWidth > 750) clientWidth = 750;
+//                    docEl.style.fontSize = 20 * (clientWidth / 320) + 'px';
+        console.log(
+                "clientWidth:" + document.documentElement.clientWidth +
+                "\t\tclientHeight:" + document.documentElement.clientHeight +
+                "\t\tfontSize:" + document.documentElement.style.fontSize
+        );
+//                };
+//        if (!doc.addEventListener) return;
+//        win.addEventListener(resizeEvt, recalc, false);
+//        doc.addEventListener('DOMContentLoaded', recalc, false);
+    }(document, window);
+
+    /**
+     * 切换窗口
+     */
+    $("tab_game_piazza").addEventListener("click", onTabClick);
+    $("tab_game_room").addEventListener("click", onTabClick);
+    function onTabClick() {
+        if (hasClass(this, 'on')) {
+            return false;
+        }
+
+        //if (g_Info.roomIdx == -1) {
+        //    alert("您还没有加入房间");
+        //    return false;
+        //}
+
+        changeTab(this.id);
+        return false;
+    }
+
+    /**
+     * 切换大厅与房间
+     * @param id
+     */
+    function changeTab(id) {
+        if (id == "tab_game_piazza") {
+            $("game_piazza").style.display = "";
+            addClass($("tab_game_piazza"), "on");
+            $("game_room").style.display = "none";
+            removeClass($("tab_game_room"), "on");
+        } else if (id == "tab_game_room") {
+            $("game_room").style.display = "";
+            addClass($("tab_game_room"), "on");
+            $("game_piazza").style.display = "none";
+            removeClass($("tab_game_piazza"), "on");
+        }
+    }
+</script>
+</body>
+</html>

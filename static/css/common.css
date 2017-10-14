@@ -10,6 +10,7 @@ div {
     font-size: 36px;
 }
 
+/*
 @mixin font-dpr($font-size) {
     font-size:$font-size;
 
@@ -21,3 +22,4 @@ div {
         font-size: $ font-size *3;
     }
 }
+*/
