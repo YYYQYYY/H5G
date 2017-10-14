@@ -198,6 +198,29 @@
             position: absolute;
         }
 
+        /*大厅消息*/
+        .room_message {
+            border-top: 1px solid #5480AD;
+            min-height: 200px;
+            max-height: 200px;
+            background: #FFF;
+            margin: 0;
+        }
+
+        .room_message .room_message_list {
+            min-height: 200px;
+            max-height: 200px;
+            overflow-y: scroll;
+        }
+
+        .room_message .room_message_list p {
+            padding: 2px 5px 1px 5px;
+        }
+
+        .room_message .input {
+            height: 30px;;
+        }
+
     </style>
 </head>
 <body>
@@ -480,13 +503,13 @@
                 <p>abc98: 54564654</p>
                 <p>abc97: 456456</p>
             </div>
-            <div id="piazza_chat_input" class="input">
-                <label for="send_range"></label>
-                <select id="send_range" style="width:10%;margin:5px 0 0 8px">
+            <div id="piazza_chat" class="input">
+                <label for="piazza_send_range"></label>
+                <select id="piazza_send_range" style="width:10%;margin:5px 0 0 8px">
                     <option value="">所有人</option>
                 </select>
-                <input id="msg-input" style="width:70%;margin:5px 0 0 0" type="text" placeholder="点击这里输入消息">
-                <input id="msg-button" style="width:10%;margin:5px 0 0 0" type="button" value="发送">
+                <input id="piazza_chat_input" style="width:70%;margin:5px 0 0 0" type="text" placeholder="点击这里输入消息">
+                <input id="piazza_chat_button" style="width:10%;margin:5px 0 0 0" type="button" value="发送">
             </div>
         </div>
 
@@ -538,7 +561,21 @@
             </section>
         </div>
 
-        游戏房间
+        <div class="room_message">
+            <div id="room_message_list" class="room_message_list">
+                <p>abc98: 54564654</p>
+                <p>abc97: 456456</p>
+            </div>
+            <div id="room_chat" class="input">
+                <label for="room_send_range"></label>
+                <select id="room_send_range" style="width:10%;margin:5px 0 0 8px">
+                    <option value="">所有人</option>
+                </select>
+                <input id="room_chat_input" style="width:70%;margin:5px 0 0 0" type="text" placeholder="点击这里输入消息">
+                <input id="room_chat_button" style="width:10%;margin:5px 0 0 0" type="button" value="发送">
+            </div>
+        </div>
+
     </section>
 
 </div>
