@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>viewport</title>
+    <!--
+        viewport 可视区域
+        width 宽度，可以理解为设置我们的网页一个屏幕能看到的宽度
+        maximum-scale 放大的最大值(网页能放大几倍)
+        minimum-scale 缩小的倍数(网页最小能缩小多少倍)
+        initial-scale=1.0 页面初始值(一般是1.0)
+        user-scalable=0 是否允许用户缩放(1可以，0不可以)
+        (苹果设备，需要的图片像素一般是物理像素的2倍，或3倍)
+        target-densitydpi  值越高看的越清楚
+        device-dpi  设备原本的dpi
+        high-dpi    高dpi
+        low-dpi     低dpi
+        value 指定一个具体数值，取值范围 70 - 400
+     -->
+    <meta name="viewport"
+          content="width=device-width,maximum-scale=2.0,minimum-scale=1.0,initial-scale=1.0,user-scalable=1,target-densitydpi=high-dpi">
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+
+        .reddiv {
+            width: 210px;
+            height: 80px;
+            background-color: red;
+            border: 1px solid blue;
+        }
+    </style>
+</head>
+<body>
+<label for="name">姓名</label>
+<input type="text" id="name"/>
+<div class="reddiv"></div>
+</body>
+</html>

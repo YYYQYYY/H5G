@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>流式布局</title>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+
+        .reddiv {
+            width: 30%;
+            /*
+            单位
+                vw ViewWidth
+                vh ViewHeight
+            */
+            height: 30vw;
+            background-color: red;
+        }
+
+        .big {
+
+        }
+
+        .big span {
+            font-size: 2em;
+        }
+    </style>
+</head>
+<body>
+<!-- 流式布局
+    百分比布局
+    1、宽高设置百分比
+    2、宽高设置VW VH
+    3、弹性图片(给宽度，高度会自适应，不失真)
+    4、em/rem(都是倍数，em相对于父级，rem相对于html)
+-->
+<!-- <div class="reddiv"></div> -->
+<img src="http://img.taopic.com/uploads/allimg/121009/235045-12100Z31P150.jpg" width="50%" alt="">
+<div class="big">
+    <span>我是span标签</span>
+</div>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>阴影</title>
+    <style type="text/css">
+        .reddiv {
+            width: 200px;
+            height: 200px;
+            background-color: red;
+            /*
+                box-shadow 代表一个容器的阴影：
+                第一个值：阴影X方向的位移
+                第二个值：阴影Y方向的位移
+                第三个值：阴影的模糊程度
+                第四个值：阴影的颜色
+            */
+            box-shadow: 10px 10px 10px green, -10px 10px 10px blue, 10px -10px 10px black;
+            text-shadow: 10px 10px 10px pink;
+            font-size: 30px;
+        }
+    </style>
+</head>
+<body>
+<div class="reddiv">文字文字文字文字文字<span>文字文字文字文字</span></div>
+</body>
+</html>  

@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>扫雷</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <style type="text/css">
+        #layers {
+            position: relative;
+            margin: 0 auto;
+        }
+
+        #layers canvas {
+            position: absolute;
+        }
+    </style>
+</head>
+<body>
+<section id="page">
+    <header>
+        <p>使用时间：<span id="elapsed_time"
+                      style="display: inline-block; width: 30px;text-align: right">0</span>
+            剩余雷数：<span id="residual_mines"
+                       style="display: inline-block;width: 30px;text-align: right">0</span>
+            得分：<span id="score" style="display: inline-block;width: 30px;text-align: right">0</span>
+        </p>
+        <div style="text-align: center;width: 100%">
+            <button onclick="">开始游戏</button>
+        </div>
+    </header>
+    <hr/>
+    <section id="layers">
+        <canvas id="bg" width="400" height="400">
+            你的浏览器不支持HTML5。
+        </canvas>
+        <canvas id="game" width="400" height="400"></canvas>
+    </section>
+    <hr/>
+    <footer>
+        <p>扫雷游戏练习。</p>
+    </footer>
+</section>
+<!--script type="text/javascript" src="http://fs.chinacloudsites.cn/socket.io/socket.io.js"></script-->
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+<script type="text/javascript" src="../../static/js/common.js"></script>
+<script type="text/javascript">
+    $(function () {
+        var canvas = document.getElementById("game");
+        var ctx = canvas.getContext("2d");
+        var imgBlank = new Image();
+        imgBlank.onload = function () {
+            ctx.drawImage(img, 0, 0, 53, 53);
+        };
+        imgBlank.src = "static/images/blank.bmp";
+    });
+</script>
+</body>
+</html>

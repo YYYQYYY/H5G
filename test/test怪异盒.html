@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>怪异盒模型</title>
+    <style type="text/css">
+        .reddiv {
+            width: 200px;
+            height: 200px;
+            background-color: red;
+            box-sizing: border-box;
+            border: 20px blue solid;
+            padding-left: 50px;
+            /*怪异盒模型
+             * box-sizing: border-box
+                和标准盒模型不一样的地方在于 padding 和 border 不会让整体宽度增加
+            */
+        }
+    </style>
+</head>
+<body>
+<div class="reddiv">1</div>
+</body>
+</html>

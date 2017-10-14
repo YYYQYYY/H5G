@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>t1</title>
+    <style type="text/css">
+        .group_wrap {
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .group {
+            width: 1200px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        .col {
+            width: 280px;
+            margin: 10px;
+            float: left;
+        }
+
+        .img_logo {
+            padding: 10px;
+            background: white;
+        }
+
+        /*当页面的宽度在900px ~ 1200px之间的时候*/
+        @media screen and (min-width: 900px) and (max-width: 1200px) {
+            .group {
+                width: 900px;
+            }
+        }
+
+        /*当页面的宽度在600px ~ 900px之间的时候*/
+        @media screen and (min-width: 600px) and (max-width: 900px) {
+            .group {
+                width: 600px;
+            }
+        }
+    </style>
+    <script type="text/javascript">
+        // 动态计算屏幕的宽度，从而得到网页的fontSize大小
+        (function (doc, win) {
+            var docEl = doc.documentElement,
+                    resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
+                    recalc = function () {
+                        var clientWidth = docEl.clientWidth;
+                        if (!clientWidth) return;
+                        if (clientWidth > 750) clientWidth = 750;//这里限制最大的宽度尺寸，从而实现PC端的两边留白等
+                        docEl.style.fontSize = 10 * (clientWidth / 320) + 'px';
+                    };
+
+            if (!doc.addEventListener) return;
+            win.addEventListener(resizeEvt, recalc, false);
+            doc.addEventListener('DOMContentLoaded', recalc, false);
+        })(document, window);
+    </script>
+</head>
+<body>
+
+<div class="one">
+    <span>第一层</span>
+    <div class="two">
+        <span>第二层</span>
+        <div class="three">
+            <span>第三层</span>
+        </div>
+    </div>
+</div>
+
+<div class="group_wrap">
+    <div class="group">
+        <div class="col">
+            <div class="img_logo">
+                <img src="img/8.jpg" alt="">
+            </div>
+        </div>
+        <div class="col">
+            <div class="img_logo">
+                <img src="img/9.jpg" alt="">
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>弹性盒模型</title>
+    <style type="text/css">
+        .bigdiv {
+            width: 600px;
+            height: 400px;
+            border: blue 5px solid;
+            /*
+                可以通过 display: -webkit-box 设置一个容器为弹性盒模型。弹性盒模型里面的元素默认从左往右排列，可以给子元素设置 -webkit-box-flex 来分配这个子元素所占空间的份数(比例)
+            */
+            display: -webkit-box;
+            /*排列顺序
+                reverse 反向
+            */
+            -webkit-box-direction: reverse;
+            /*分配方式
+                vertical 竖直分配
+            */
+            -webkit-box-orient: vertical;
+        }
+
+        .reddiv {
+            background-color: red;
+            -webkit-box-flex: 5;
+        }
+
+        .bluediv {
+            background-color: blue;
+            -webkit-box-flex: 3;
+        }
+    </style>
+</head>
+<body>
+<div class="bigdiv">
+    <div class="reddiv">1</div>
+    <div class="bluediv">2</div>
+</div>
+</body>
+</html>
