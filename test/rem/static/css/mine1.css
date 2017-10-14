@@ -3,38 +3,12 @@
 设计图按750px设计
 ***********************************************************************************************************************/
 
-html {
-    font-size: 100px
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    font-size: .16rem;
-}
-
-li {
-    list-style: none
-}
-
-#main {
-    width: 7.5rem;
-    min-height: 100%;
-    max-height: 100%;
-}
-
 /***********************************************************************************************************************
 大厅
 ***********************************************************************************************************************/
 .room_all {
     background: #5480AD;
     display: inline-block
-}
-
-.room_list {
-    height: 5.00rem;
-    margin: 5px 0 5px 5px;
-    overflow-y: scroll;
 }
 
 .room_left {
@@ -47,80 +21,9 @@ li {
     float: left
 }
 
-.room_item_start {
-    background: url('../images/room/room_start.gif') center center no-repeat
-}
-
-.room_item {
-    width: 1.35rem;
-    height: 1.35rem;
-    background: url('../images/room/room.gif') center center no-repeat;
-    float: left;
-}
-
-.room_item .players {
-    height: .50rem;
-}
-
-.room_item .players .icon1 {
-    width: .40rem;
-    height: .50rem;
-    float: left;
-    cursor: pointer
-}
-
-.room_item .players .icon2 {
-    width: .40rem;
-    height: .50rem;
-    float: left;
-    margin-left: .55rem;
-    cursor: pointer
-}
-
-.room_item .players .no {
-    background: url('../images/room/player_no.gif') center center no-repeat
-}
-
-.room_item .players .yes {
-    background: url('../images/room/player_yes.gif') center center no-repeat
-}
-
-.room_item .player1 {
-    height: .25rem;
-    line-height: .25rem;
-    text-align: left
-}
-
-.room_item .player2 {
-    height: .25rem;
-    line-height: .25rem;
-    text-align: right;
-    margin-top: .20rem;
-}
-
-.room_item .roomnum {
-    text-align: center;
-}
-
 /***********************************************************************************************************************
 标签页
 ***********************************************************************************************************************/
-.tag {
-    height: .30rem;
-}
-
-.tag a {
-    float: left;
-    height: .30rem;
-    line-height: .30rem;
-    text-align: center;
-    width: 1.10rem;
-    background: #F7F7F7
-}
-
-.tag a.on {
-    background: #CCC
-}
 
 /***********************************************************************************************************************
 用户登陆
@@ -180,10 +83,6 @@ li {
 /***********************************************************************************************************************
 房间界面
 ***********************************************************************************************************************/
-.room {
-    background: #5480AD;
-    display: inline-block
-}
 
 .room_user {
     margin: 5px;
@@ -264,47 +163,3 @@ li {
 /***********************************************************************************************************************
 用户列表
 ***********************************************************************************************************************/
-.list {
-    height: 300px;
-    overflow-y: scroll;
-    background: #FFF;
-    margin: 5px;
-    overflow-x: hidden
-}
-
-.list li {
-    padding: 5px
-}
-
-.list li span {
-    float: right;
-}
-
-/*消息*/
-.message {
-    height: 295px;
-    background: #FFF;
-    margin: 5px
-}
-
-.message .content {
-    height: 265px;
-    overflow-y: scroll
-}
-
-.message .content p {
-    padding: 5px
-}
-
-.message .input {
-    height: 30px;
-}
-
-#layers {
-    position: relative;
-    margin: 0 auto;
-}
-
-#layers canvas {
-    position: absolute;
-}
