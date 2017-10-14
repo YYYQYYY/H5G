@@ -1,5 +1,5 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="zh">
 <head>
     <meta charset="utf-8">
     <!--允许全屏-->
@@ -10,160 +10,161 @@
     <link rel="apple-touch-icon" href="static/images/favicon.png">
     <link rel="Shortcut Icon" href="static/images/favicon.png" type="image/x-icon">
     <title>再来一波DEMO页</title>
-    <style>.item-section {
-        min-height: 100%;
-        background-color: #ee0a3b;
-        position: relative;
-        font-size: 12px
-    }
+    <style>
+        .item-section {
+            min-height: 100%;
+            background-color: #ee0a3b;
+            position: relative;
+            font-size: 12px
+        }
 
-    [data-dpr="2"] .item-section {
-        font-size: 24px
-    }
+        [data-dpr="2"] .item-section {
+            font-size: 24px
+        }
 
-    [data-dpr="3"] .item-section {
-        font-size: 36px
-    }
+        [data-dpr="3"] .item-section {
+            font-size: 36px
+        }
 
-    .item-section_header {
-        text-align: center
-    }
+        .item-section_header {
+            text-align: center
+        }
 
-    .item-section_header img {
-        width: 10rem
-    }
+        .item-section_header img {
+            width: 10rem
+        }
 
-    .item-section ul {
-        padding: .133333rem
-    }
+        .item-section ul {
+            padding: .133333rem
+        }
 
-    .flag {
-        display: table;
-        width: 100%;
-        margin-bottom: 1px;
-        background-color: #fff
-    }
+        .flag {
+            display: table;
+            width: 100%;
+            margin-bottom: 1px;
+            background-color: #fff
+        }
 
-    .flag .flag-item {
-        display: table-cell;
-        padding: .16rem 0;
-        vertical-align: top;
-        background-color: #fff
-    }
+        .flag .flag-item {
+            display: table-cell;
+            padding: .16rem 0;
+            vertical-align: top;
+            background-color: #fff
+        }
 
-    .flag .flag-item.figcaption {
-        width: 133.333333rem;
-        padding-left: .2rem;
-        padding-right: .2rem;
-        position: relative
-    }
+        .flag .flag-item.figcaption {
+            width: 133.333333rem;
+            padding-left: .2rem;
+            padding-right: .2rem;
+            position: relative
+        }
 
-    .flag .flag-item.figure {
-        width: 2.4rem;
-        height: 2.4rem
-    }
+        .flag .flag-item.figure {
+            width: 2.4rem;
+            height: 2.4rem
+        }
 
-    .flag .flag-item img {
-        width: 2.4rem;
-        height: 2.4rem;
-        vertical-align: top
-    }
+        .flag .flag-item img {
+            width: 2.4rem;
+            height: 2.4rem;
+            vertical-align: top
+        }
 
-    .flag .flag-title a {
-        color: #333;
-        line-height: 1.25;
-        overflow: hidden;
-        -webkit-line-clamp: 2;
-        line-clamp: 2;
-        -webkit-box-orient: vertical;
-        box-orient: vertical;
-        display: -webkit-box;
-        display: box
-    }
+        .flag .flag-title a {
+            color: #333;
+            line-height: 1.25;
+            overflow: hidden;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            box-orient: vertical;
+            display: -webkit-box;
+            display: box
+        }
 
-    .flag .flag-price {
-        padding: .15rem 0 .2rem
-    }
+        .flag .flag-price {
+            padding: .15rem 0 .2rem
+        }
 
-    .flag .flag-price span {
-        display: inline-block;
-        background-color: #ee0a3b;
-        vertical-align: middle;
-        border-radius: .026667rem;
-        padding: .026667rem .08rem .013333rem;
-        color: #fff;
-        font-weight: 700;
-        margin-right: .066667rem;
-        font-size: 11px
-    }
+        .flag .flag-price span {
+            display: inline-block;
+            background-color: #ee0a3b;
+            vertical-align: middle;
+            border-radius: .026667rem;
+            padding: .026667rem .08rem .013333rem;
+            color: #fff;
+            font-weight: 700;
+            margin-right: .066667rem;
+            font-size: 11px
+        }
 
-    [data-dpr="2"] .flag .flag-price span {
-        font-size: 22px
-    }
+        [data-dpr="2"] .flag .flag-price span {
+            font-size: 22px
+        }
 
-    [data-dpr="3"] .flag .flag-price span {
-        font-size: 33px
-    }
+        [data-dpr="3"] .flag .flag-price span {
+            font-size: 33px
+        }
 
-    .flag .flag-price strong {
-        display: inline-block;
-        vertical-align: middle;
-        font-weight: 700;
-        color: #ee0a3b;
-        font-size: 16px;
-        margin-right: .16rem
-    }
+        .flag .flag-price strong {
+            display: inline-block;
+            vertical-align: middle;
+            font-weight: 700;
+            color: #ee0a3b;
+            font-size: 16px;
+            margin-right: .16rem
+        }
 
-    [data-dpr="2"] .flag .flag-price strong {
-        font-size: 32px
-    }
+        [data-dpr="2"] .flag .flag-price strong {
+            font-size: 32px
+        }
 
-    [data-dpr="3"] .flag .flag-price strong {
-        font-size: 48px
-    }
+        [data-dpr="3"] .flag .flag-price strong {
+            font-size: 48px
+        }
 
-    .flag .flag-price small {
-        display: inline-block;
-        vertical-align: middle;
-        font-weight: 700;
-        color: #ee0a3b;
-        font-size: 12px
-    }
+        .flag .flag-price small {
+            display: inline-block;
+            vertical-align: middle;
+            font-weight: 700;
+            color: #ee0a3b;
+            font-size: 12px
+        }
 
-    [data-dpr="2"] .flag .flag-price small {
-        font-size: 24px
-    }
+        [data-dpr="2"] .flag .flag-price small {
+            font-size: 24px
+        }
 
-    [data-dpr="3"] .flag .flag-price small {
-        font-size: 36px
-    }
+        [data-dpr="3"] .flag .flag-price small {
+            font-size: 36px
+        }
 
-    .flag .flag-type {
-        color: #ff3600
-    }
+        .flag .flag-type {
+            color: #ff3600
+        }
 
-    .flag .flag-btn {
-        position: absolute;
-        width: 2.133333rem;
-        height: .64rem;
-        line-height: .64rem;
-        background-color: #ee0a3b;
-        text-align: center;
-        color: #fff;
-        font-weight: 700;
-        font-size: 14px;
-        bottom: .133333rem;
-        right: .2rem;
-        border-radius: .026667rem
-    }
+        .flag .flag-btn {
+            position: absolute;
+            width: 2.133333rem;
+            height: .64rem;
+            line-height: .64rem;
+            background-color: #ee0a3b;
+            text-align: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 14px;
+            bottom: .133333rem;
+            right: .2rem;
+            border-radius: .026667rem
+        }
 
-    [data-dpr="2"] .flag .flag-btn {
-        font-size: 28px
-    }
+        [data-dpr="2"] .flag .flag-btn {
+            font-size: 28px
+        }
 
-    [data-dpr="3"] .flag .flag-btn {
-        font-size: 42px
-    }
+        [data-dpr="3"] .flag .flag-btn {
+            font-size: 42px
+        }
     </style>
     <script src="static/js/dirty.js"></script>
     <style>
@@ -211,9 +212,7 @@
             this.dom = dom
         };
         module.prototype.init = function () {
-            //var itemList = this.dom.querySelector(".item-section");
-            this.dom.setData(this.data
-            )
+            this.dom.setData(this.data)
         };
         win.itemModule = module;
     }(window));
@@ -283,7 +282,7 @@
     //render
     var renderDom = document.querySelector(".html_content");
     var module = new itemModule(pageData, renderDom);
-    //module.init();
+    module.init();
 </script>
 </body>
 </html>
