@@ -11,6 +11,7 @@ $(function () {
     var COLOR_WHITE = 2;//白色
 
     var g_Connected = false;
+    //var g_Host = "msss.chinacloudsites.cn";
     var g_Host = "localhost";
     var g_Port = 1337;
     var g_Info = {

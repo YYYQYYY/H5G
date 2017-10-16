@@ -31,7 +31,8 @@ function MineClient(host, port) {
             setError("io not defined");
             return false;
         }
-        socket = io.connect('http://' + m_Host + ':' + m_Port);
+        //socket = io.connect('http://' + m_Host);
+        socket = io.connect("http://" + m_Host + ":" + m_Port);
         //TODO: socket = io.connect(m_Host);
 
         /*if(socket.socket.open == false){
