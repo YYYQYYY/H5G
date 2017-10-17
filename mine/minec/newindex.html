@@ -3,12 +3,24 @@
 <head>
     <meta charset="utf-8">
     <title>ABC</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
     <meta name="HandheldFriendly" content="true">
     <link rel="stylesheet" href="static/css/newmine.css"/>
 </head>
 <body>
+
+<div id="dlgBg"></div>
+
+<div id="login">
+    <h1>登陆</h1>
+    <div class="box">
+        <input type="text" id="nickname" maxlength="10" class="in" placeholder="请输入昵称">
+        <input type="button" id="loginBtn" class="go" value="加入游戏">
+    </div>
+</div>
+
 <div id="main">
 
     <section id="tab_list">
@@ -19,7 +31,7 @@
     <section id="game_piazza">
 
         <div id="user_list" class="user_list">
-            <ul>
+            <ul id="user_list_ul">
                 <li id="room_user-99">
                     <div>
                         <span>游戏中</span>
@@ -27,261 +39,10 @@
                         <span>abc99</span>
                     </div>
                 </li>
-                <li id="room_user-91">
-                    <div>
-                        <span>游戏中</span>
-                        <img style="min-height: 60%;max-height: 60%;" src="static/images/room/player_yes.gif">
-                        <span>abc91</span>
-                    </div>
-                </li>
-                <li id="room_user-98">
-                    <div>
-                        <span>游戏中</span>
-                        <img style="min-height: 60%;max-height: 60%;" src="static/images/room/player_yes.gif">
-                        <span>abc98</span>
-                    </div>
-                </li>
-                <li id="room_user-97">
-                    <div>
-                        <span>游戏中</span>
-                        <img style="min-height: 60%;max-height: 60%;" src="static/images/room/player_yes.gif">
-                        <span>abc97</span>
-                    </div>
-                </li>
-                <li id="room_user-96">
-                    <div>
-                        <span>游戏中</span>
-                        <img style="min-height: 60%;max-height: 60%;" src="static/images/room/player_yes.gif">
-                        <span>abc96</span>
-                    </div>
-                </li>
-                <li id="room_user-95">
-                    <div>
-                        <span>游戏中</span>
-                        <img style="min-height: 60%;max-height: 60%;" src="static/images/room/player_yes.gif">
-                        <span>abc95</span>
-                    </div>
-                </li>
-                <li id="room_user-94">
-                    <div>
-                        <span>游戏中</span>
-                        <img style="min-height: 60%;max-height: 60%;" src="static/images/room/player_yes.gif">
-                        <span>abc94</span>
-                    </div>
-                </li>
-                <li id="room_user-93">
-                    <div>
-                        <span>游戏中</span>
-                        <img style="min-height: 60%;max-height: 60%;" src="static/images/room/player_yes.gif">
-                        <span>abc93</span>
-                    </div>
-                </li>
-                <li id="room_user-92">
-                    <div>
-                        <span>游戏中</span>
-                        <img style="min-height: 60%;max-height: 60%;" src="static/images/room/player_yes.gif">
-                        <span>abc92</span>
-                    </div>
-                </li>
-                <li id="room_user-90">
-                    <div>
-                        <span>游戏中</span>
-                        <img style="min-height: 60%;max-height: 60%;" src="static/images/room/player_yes.gif">
-                        <span>abc90</span>
-                    </div>
-                </li>
-                <li id="room_user-89">
-                    <div>
-                        <span>游戏中</span>
-                        <img style="min-height: 60%;max-height: 60%;" src="static/images/room/player_yes.gif">
-                        <span>abc89</span>
-                    </div>
-                </li>
             </ul>
         </div>
 
-        <div id="room_list" class="room_list">
-            <div id="room-0" value="0" class="room_item">
-                <div id="room-0-name-1" class="player2"></div>
-                <div class="players">
-                    <div value="0" id="room-0-icon-0" class="player icon1 no"></div>
-                    <div value="1" id="room-0-icon-1" class="player icon2 yes"></div>
-                </div>
-                <div id="room-0-name-0" class="player1"></div>
-                <div class="roomnum">- 1 -</div>
-            </div>
-            <div id="room-1" value="1" class="room_item room_item_start">
-                <div id="room-1-name-1" class="player2"></div>
-                <div class="players">
-                    <div value="0" id="room-1-icon-0" class="player icon1 yes"></div>
-                    <div value="1" id="room-1-icon-1" class="player icon2 yes"></div>
-                </div>
-                <div id="room-1-name-0" class="player1"></div>
-                <div class="roomnum">- 2 -</div>
-            </div>
-            <div id="room-2" value="2" class="room_item">
-                <div id="room-2-name-1" class="player2"></div>
-                <div class="players">
-                    <div value="0" id="room-2-icon-0" class="player icon1 no"></div>
-                    <div value="1" id="room-2-icon-1" class="player icon2 no"></div>
-                </div>
-                <div id="room-2-name-0" class="player1"></div>
-                <div class="roomnum">- 3 -</div>
-            </div>
-            <div id="room-3" value="3" class="room_item">
-                <div id="room-3-name-1" class="player2"></div>
-                <div class="players">
-                    <div value="0" id="room-3-icon-0" class="player icon1 no"></div>
-                    <div value="1" id="room-3-icon-1" class="player icon2 no"></div>
-                </div>
-                <div id="room-3-name-0" class="player1"></div>
-                <div class="roomnum">- 4 -</div>
-            </div>
-            <div id="room-4" value="4" class="room_item">
-                <div id="room-4-name-1" class="player2"></div>
-                <div class="players">
-                    <div value="0" id="room-4-icon-0" class="player icon1 no"></div>
-                    <div value="1" id="room-4-icon-1" class="player icon2 no"></div>
-                </div>
-                <div id="room-4-name-0" class="player1"></div>
-                <div class="roomnum">- 5 -</div>
-            </div>
-            <div id="room-5" value="5" class="room_item">
-                <div id="room-5-name-1" class="player2"></div>
-                <div class="players">
-                    <div value="0" id="room-5-icon-0" class="player icon1 no"></div>
-                    <div value="1" id="room-5-icon-1" class="player icon2 no"></div>
-                </div>
-                <div id="room-5-name-0" class="player1"></div>
-                <div class="roomnum">- 6 -</div>
-            </div>
-            <div id="room-6" value="6" class="room_item">
-                <div id="room-6-name-1" class="player2"></div>
-                <div class="players">
-                    <div value="0" id="room-6-icon-0" class="player icon1 no"></div>
-                    <div value="1" id="room-6-icon-1" class="player icon2 no"></div>
-                </div>
-                <div id="room-6-name-0" class="player1"></div>
-                <div class="roomnum">- 7 -</div>
-            </div>
-            <div id="room-7" value="7" class="room_item">
-                <div id="room-7-name-1" class="player2"></div>
-                <div class="players">
-                    <div value="0" id="room-7-icon-0" class="player icon1 no"></div>
-                    <div value="1" id="room-7-icon-1" class="player icon2 no"></div>
-                </div>
-                <div id="room-7-name-0" class="player1"></div>
-                <div class="roomnum">- 8 -</div>
-            </div>
-            <div id="room-8" value="8" class="room_item">
-                <div id="room-8-name-1" class="player2"></div>
-                <div class="players">
-                    <div value="0" id="room-8-icon-0" class="player icon1 no"></div>
-                    <div value="1" id="room-8-icon-1" class="player icon2 no"></div>
-                </div>
-                <div id="room-8-name-0" class="player1"></div>
-                <div class="roomnum">- 9 -</div>
-            </div>
-            <div id="room-9" value="9" class="room_item">
-                <div id="room-9-name-1" class="player2"></div>
-                <div class="players">
-                    <div value="0" id="room-9-icon-0" class="player icon1 no"></div>
-                    <div value="1" id="room-9-icon-1" class="player icon2 no"></div>
-                </div>
-                <div id="room-9-name-0" class="player1"></div>
-                <div class="roomnum">- 10 -</div>
-            </div>
-            <div id="room-10" value="10" class="room_item">
-                <div id="room-10-name-1" class="player2"></div>
-                <div class="players">
-                    <div value="0" id="room-10-icon-0" class="player icon1 no"></div>
-                    <div value="1" id="room-10-icon-1" class="player icon2 no"></div>
-                </div>
-                <div id="room-10-name-0" class="player1"></div>
-                <div class="roomnum">- 11 -</div>
-            </div>
-            <div id="room-11" value="11" class="room_item">
-                <div id="room-11-name-1" class="player2"></div>
-                <div class="players">
-                    <div value="0" id="room-11-icon-0" class="player icon1 no"></div>
-                    <div value="1" id="room-11-icon-1" class="player icon2 no"></div>
-                </div>
-                <div id="room-11-name-0" class="player1"></div>
-                <div class="roomnum">- 12 -</div>
-            </div>
-            <div id="room-12" value="12" class="room_item">
-                <div id="room-12-name-1" class="player2"></div>
-                <div class="players">
-                    <div value="0" id="room-12-icon-0" class="player icon1 no"></div>
-                    <div value="1" id="room-12-icon-1" class="player icon2 no"></div>
-                </div>
-                <div id="room-12-name-0" class="player1"></div>
-                <div class="roomnum">- 13 -</div>
-            </div>
-            <div id="room-13" value="13" class="room_item">
-                <div id="room-13-name-1" class="player2"></div>
-                <div class="players">
-                    <div value="0" id="room-13-icon-0" class="player icon1 no"></div>
-                    <div value="1" id="room-13-icon-1" class="player icon2 no"></div>
-                </div>
-                <div id="room-13-name-0" class="player1"></div>
-                <div class="roomnum">- 14 -</div>
-            </div>
-            <div id="room-14" value="14" class="room_item">
-                <div id="room-14-name-1" class="player2"></div>
-                <div class="players">
-                    <div value="0" id="room-14-icon-0" class="player icon1 no"></div>
-                    <div value="1" id="room-14-icon-1" class="player icon2 no"></div>
-                </div>
-                <div id="room-14-name-0" class="player1"></div>
-                <div class="roomnum">- 15 -</div>
-            </div>
-            <div id="room-15" value="15" class="room_item">
-                <div id="room-15-name-1" class="player2"></div>
-                <div class="players">
-                    <div value="0" id="room-15-icon-0" class="player icon1 no"></div>
-                    <div value="1" id="room-15-icon-1" class="player icon2 no"></div>
-                </div>
-                <div id="room-15-name-0" class="player1"></div>
-                <div class="roomnum">- 16 -</div>
-            </div>
-            <div id="room-16" value="16" class="room_item">
-                <div id="room-16-name-1" class="player2"></div>
-                <div class="players">
-                    <div value="0" id="room-16-icon-0" class="player icon1 no"></div>
-                    <div value="1" id="room-16-icon-1" class="player icon2 no"></div>
-                </div>
-                <div id="room-16-name-0" class="player1"></div>
-                <div class="roomnum">- 17 -</div>
-            </div>
-            <div id="room-17" value="17" class="room_item">
-                <div id="room-17-name-1" class="player2"></div>
-                <div class="players">
-                    <div value="0" id="room-17-icon-0" class="player icon1 no"></div>
-                    <div value="1" id="room-17-icon-1" class="player icon2 no"></div>
-                </div>
-                <div id="room-17-name-0" class="player1"></div>
-                <div class="roomnum">- 18 -</div>
-            </div>
-            <div id="room-18" value="18" class="room_item">
-                <div id="room-18-name-1" class="player2"></div>
-                <div class="players">
-                    <div value="0" id="room-18-icon-0" class="player icon1 no"></div>
-                    <div value="1" id="room-18-icon-1" class="player icon2 no"></div>
-                </div>
-                <div id="room-18-name-0" class="player1"></div>
-                <div class="roomnum">- 19 -</div>
-            </div>
-            <div id="room-19" value="19" class="room_item">
-                <div id="room-19-name-1" class="player2"></div>
-                <div class="players">
-                    <div value="0" id="room-19-icon-0" class="player icon1 no"></div>
-                    <div value="1" id="room-19-icon-1" class="player icon2 no"></div>
-                </div>
-                <div id="room-19-name-0" class="player1"></div>
-                <div class="roomnum">- 20 -</div>
-            </div>
-        </div>
+        <div id="room_list" class="room_list"></div>
 
         <div class="piazza_message">
             <div id="piazza_message_list" class="piazza_message_list">
@@ -364,7 +125,10 @@
     </section>
 
 </div>
-<script type="text/javascript" src="../../static/js/common.js"></script>
+<script type="text/javascript" src="http://localhost:1337/socket.io/socket.io.js"></script>
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+<script type="text/javascript" src="static/js/mineCore.js"></script>
+<script type="text/javascript" src="static/js/newminec.js"></script>
 <script type="text/javascript">
     /**
      * 当dom加载完成时，或者 屏幕垂直、水平方向有改变进行html的根元素计算
@@ -388,49 +152,48 @@
 //        doc.addEventListener('DOMContentLoaded', recalc, false);
     }(document, window);
 
-    /**
-     * 切换窗口
-     */
-    $("tab_game_piazza").addEventListener("click", onTabClick);
-    $("tab_game_room").addEventListener("click", onTabClick);
-    function onTabClick() {
-        if (hasClass(this, 'on')) {
-            return false;
-        }
-
-        //if (g_Info.roomIdx == -1) {
-        //    alert("您还没有加入房间");
-        //    return false;
-        //}
-
-        changeTab(this.id);
-        return false;
-    }
-
-    /**
-     * 切换大厅与房间
-     * @param id
-     */
-    function changeTab(id) {
-        if (id == "tab_game_piazza") {
-            $("game_piazza").style.display = "";
-            addClass($("tab_game_piazza"), "on");
-            $("game_room").style.display = "none";
-            removeClass($("tab_game_room"), "on");
-        } else if (id == "tab_game_room") {
-            $("game_room").style.display = "";
-            addClass($("tab_game_room"), "on");
-            $("game_piazza").style.display = "none";
-            removeClass($("tab_game_piazza"), "on");
-        }
-    }
+    //    /**
+    //     * 切换窗口
+    //     */
+    //    $("#tab_list a").click(function () {
+    //        var id = $(this)[0].id;
+    //        if ($(this).hasClass('on')) {
+    //            return false;
+    //        }
+    //
+    //        if (g_Info.roomIdx == -1) {
+    //            alert("您还没有加入房间");
+    //            return false;
+    //        }
+    //
+    //        changeTab(id);
+    //        return false;
+    //    });
+    //
+    //    /**
+    //     * 切换大厅与房间
+    //     * @param id
+    //     */
+    //    function changeTab(id) {
+    //        if (id == "tab_game_piazza") {
+    //            $("#game_piazza").show();
+    //            $("#tab_game_piazza").addClass("on");
+    //            $("#game_room").hide();
+    //            $("#tab_game_room").removeClass("on");
+    //        } else if (id == "tab_game_room") {
+    //            $("#game_room").show();
+    //            $("#tab_game_room").addClass("on");
+    //            $("#game_piazza").hide();
+    //            $("#tab_game_piazza").removeClass("on");
+    //        }
+    //    }
 
     //////////////////////////////////////////
-    var canvas = document.getElementById("game");
-    var ctx = canvas.getContext("2d");
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    $("tab_game_room").click();
+    //    var canvas = document.getElementById("game");
+    //    var ctx = canvas.getContext("2d");
+    //    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    //
+    //    $("tab_game_room").click();
 </script>
 </body>
 </html>
