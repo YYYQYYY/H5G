@@ -58,13 +58,7 @@ $(function () {
     }).on("joinRoomError", function (data) {//加入房间失败
         alert("加入房间失败");
     }).on("message", function (data) {//接受消息
-        if (data.type == MSG_ALL) {
-            $("#msg-content").append("<p>" + data.nickname + ": " + data.body + "</p>");
-        } else if (data.type == MSG_TO) {
-            $("#msg-content").append("<p style=\"color:#339933\">" + data.nickname + ": " + data.body + "</p>");
-        } else if (data.type == MSG_ROOM) {
-            $("#room-msg-content").append("<p>" + data.nickname + ": " + data.body + "</p>");
-        }
+        onMessage(data);
     }).on("drawCell", function (data) {//点击格子
         onDrawCell(data);
     }).on("winer", function (data) {//胜利
@@ -131,27 +125,27 @@ $(function () {
     });
 
     //发送消息
-    $("#msg-button").click(function () {
-        var msg = $("#msg-input").val();
+    $("#piazza_chat_button").click(function () {
+        var msg = $("#piazza_chat_input").val();
         if (msg == "") {
             return;
         }
         app.sendAllMsg(msg);
-        $("#msg-input").val('');
+        $("#piazza_chat_input").val('');
     });
 
     //发送消息到房间内
-    $("#room-msg-button").click(function () {
-        var msg = $("#room-msg-input").val();
+    $("#room_chat_button").click(function () {
+        var msg = $("#room_chat_input").val();
         if (!msg) {
             return;
         }
         app.sendRoomMsg(msg);
-        $("#room-msg-input").val("");
+        $("#room_chat_input").val("");
     });
 
     //切换窗口
-    $("#tag a").click(function () {
+    $("#tab_list a").click(function () {
         var id = $(this)[0].id;
         if ($(this).hasClass('on')) {
             return false;
@@ -216,7 +210,7 @@ $(function () {
         html += '<div>';
         html += '<span>' + stat + '</span>';
         html += '<img style="min-height: 60%;max-height: 60%;" src="static/images/room/player_yes.gif">';
-        html += '<span>'+ data.nickname + '</span>';
+        html += '<span>' + data.nickname + '</span>';
         html += '</div>';
         html += '</li>';
         return html;
@@ -262,10 +256,10 @@ $(function () {
     function initRoom(player1, player2) {
         //清除消息和棋子
         $("div.room_cell div").remove();
-        $("#room-msg-content p").remove();
+        $("#room_message_list p").remove();
 
         //tag样式切换
-        changeTab("room");
+        changeTab("tab_game_room");
 
         //玩家1
         if (player1) {
@@ -512,6 +506,20 @@ $(function () {
         MG.residualMines = data.residualMines;
         MG.score = data.score;
         drawCells(data);
+    }
+
+    /**
+     * 接受消息回调
+     * @param data
+     */
+    function onMessage(data) {
+        if (data.type == MSG_ALL) {
+            $("#piazza_message_list").append("<p>" + data.nickname + ": " + data.body + "</p>");
+        } else if (data.type == MSG_TO) {
+            $("#piazza_message_list").append("<p style=\"color:#339933\">" + data.nickname + ": " + data.body + "</p>");
+        } else if (data.type == MSG_ROOM) {
+            $("#room_message_list").append("<p>" + data.nickname + ": " + data.body + "</p>");
+        }
     }
 
 //////////////////////////////////////////////////
