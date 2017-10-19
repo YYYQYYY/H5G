@@ -45,10 +45,7 @@
         <div id="room_list" class="room_list"></div>
 
         <div class="piazza_message">
-            <div id="piazza_message_list" class="piazza_message_list">
-                <p>abc98: 54564654</p>
-                <p>abc97: 456456</p>
-            </div>
+            <div id="piazza_message_list" class="piazza_message_list"></div>
             <div id="piazza_chat" class="input">
                 <label for="piazza_send_range"></label>
                 <select id="piazza_send_range" style="width:10%;margin:5px 0 0 8px">
@@ -63,23 +60,31 @@
 
     <section id="game_room" style="display: none;">
 
-        <div id="room_user_list" class="user_list">
-            <ul>
-                <li id="user-99">
-                    <div class="u1">
-                        <p id="room-p1-img"><img src="static/images/room/yes_player.gif"></p>
-                        <p id="room-p1-nickname">abc65</p>
-                        <p id="room-p1-status">未准备</p>
-                    </div>
-                </li>
-                <li id="user-89">
-                    <div class="u2">
-                        <p id="room-p2-nickname">&nbsp;</p>
-                        <p id="room-p2-status">&nbsp;</p>
-                        <p id="room-p2-img"><img src="static/images/room/no_player.gif"></p>
-                    </div>
-                </li>
-            </ul>
+        <div class="user_list">
+            <div id="room_user_list" style="float: left;">
+                <ul>
+                    <li>
+                        <div>
+                            <span id="room_p1_status">游戏中</span>
+                            <img id="room_p1_img" style="min-height: 60%;max-height: 60%;"
+                                 src="static/images/room/player_yes.gif">
+                            <span id="room_p1_nickname">abc99</span>
+                        </div>
+                    </li>
+                    <li>
+                        <div>
+                            <span id="room_p2_status">游戏中</span>
+                            <img id="room_p2_img" style="min-height: 60%;max-height: 60%;"
+                                 src="static/images/room/player_yes.gif">
+                            <span id="room_p2_nickname">abc99</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="room_button">
+                <input type="button" id="game_ready" class="btn" value="准备"><br/>
+                <input type="button" id="game_leave" class="btn" value="退出">
+            </div>
         </div>
 
         <div class="room_cell">

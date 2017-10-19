@@ -284,9 +284,9 @@ $(function () {
     function updateRoom(posIdx, player) {
         var p = (posIdx == 0 ? 1 : 2);
         var s = (player.status == STAT_NORMAL ? "未准备" : (player.status == STAT_READY ? "已准备" : "游戏中"));
-        $("#room-p" + p + "-nickname").html(player.nickname);
-        $("#room-p" + p + "-status").html(s);
-        $("#room-p" + p + "-img").html('<img src="static/images/room/yes_player.gif">');
+        $("#room_p" + p + "_nickname").html(player.nickname);
+        $("#room_p" + p + "_status").html(s);
+        $("#room_p" + p + "_img").attr('src', 'static/images/room/player_yes.gif');
         if (g_Info.id == player.id) {
             var b = (player.status == STAT_NORMAL ? "准备" : (player.status == STAT_READY ? "取消" : "游戏中..."));
             $("#game_ready").val(b);
@@ -299,9 +299,9 @@ $(function () {
      */
     function removeRoom(posIdx) {
         var p = (posIdx == 0 ? 1 : 2);
-        $("#room-p" + p + "-nickname").html('&nbsp;');
-        $("#room-p" + p + "-status").html("&nbsp;");
-        $("#room-p" + p + "-img").html('<img src="static/images/room/no_player.gif">');
+        $("#room_p" + p + "_nickname").html('空缺中');
+        $("#room_p" + p + "_status").html("无状态");
+        $("#room_p" + p + "_img").attr('src', 'static/images/room/player_yes.gif');
     }
 
     /**

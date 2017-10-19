@@ -26,7 +26,6 @@ li {
     border: 1px solid #5480AD;
 }
 
-
 /***********************************************************************************************************************
 登录
 ***********************************************************************************************************************/
@@ -248,7 +247,7 @@ li {
     position: absolute;
 }
 
-/*大厅消息*/
+/*房间消息*/
 .room_message {
     border-top: 1px solid #5480AD;
     min-height: 200px;
@@ -269,4 +268,20 @@ li {
 
 .room_message .input {
     height: 30px;;
+}
+
+/*按钮*/
+.room_button {
+    float: right;
+    height: 50px;
+    text-align: center;
+    line-height: 50px;
+}
+
+.room_button .btn {
+    width: 98px;
+    height: 36px;
+    background: #5480AD;
+    border: 1;
+    color: #FFF;
 }

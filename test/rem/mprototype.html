@@ -218,7 +218,22 @@
         }
 
         .room_message .input {
-            height: 30px;;
+            height: 30px;
+        }
+
+        .room_button {
+            float: right;
+            height: 50px;
+            text-align: center;
+            line-height: 50px;
+        }
+
+        .room_button .btn {
+            width: 98px;
+            height: 36px;
+            background: #5480AD;
+            border: 1;
+            color: #FFF;
         }
 
     </style>
@@ -518,22 +533,28 @@
     <section id="game_room" style="display: none;">
 
         <div id="room_user_list" class="user_list">
-            <ul>
-                <li id="user-99">
-                    <div>
-                        <span>游戏中</span>
-                        <img style="min-height: 60%;max-height: 60%;" src="static/images/room/player_yes.gif">
-                        <span>abc99</span>
-                    </div>
-                </li>
-                <li id="user-89">
-                    <div>
-                        <span>游戏中</span>
-                        <img style="min-height: 60%;max-height: 60%;" src="static/images/room/player_yes.gif">
-                        <span>abc89</span>
-                    </div>
-                </li>
-            </ul>
+            <div style="float: left;">
+                <ul>
+                    <li id="user-99">
+                        <div>
+                            <span>游戏中</span>
+                            <img style="min-height: 60%;max-height: 60%;" src="static/images/room/player_yes.gif">
+                            <span>abc99</span>
+                        </div>
+                    </li>
+                    <li id="user-89">
+                        <div>
+                            <span>游戏中</span>
+                            <img style="min-height: 60%;max-height: 60%;" src="static/images/room/player_yes.gif">
+                            <span>abc89</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="room_button">
+                <input type="button" id="game_ready" class="btn" value="准备"><br/>
+                <input type="button" id="game_leave" class="btn" value="退出">
+            </div>
         </div>
 
         <div class="room_cell">
