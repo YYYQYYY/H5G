@@ -42,12 +42,12 @@ $(function () {
         onStart(data);
     }).on("startInfo", function (data) {//有游戏开始了
         $("#room-" + data.roomIdx).addClass("room_item_start");
-        $("#user-" + data.player1 + " span").html("游戏中");
-        $("#user-" + data.player2 + " span").html("游戏中");
+        $("#room_user_" + data.player1 + " span").html("游戏中");
+        $("#room_user_" + data.player2 + " span").html("游戏中");
     }).on("overInfo", function (data) {//游戏结束了
         $("#room-" + data.roomIdx).removeClass("room_item_start");
-        $("#user-" + data.player1 + " span").html("无状态");
-        $("#user-" + data.player2 + " span").html("无状态");
+        $("#room_user_" + data.player1 + " span").html("无状态");
+        $("#room_user_" + data.player2 + " span").html("无状态");
         if (data.roomIdx == g_Info.roomIdx) {
             //更新房间另一个成员的状态
             var p = (data.player1 == g_Info.id ? 2 : 1);
@@ -206,8 +206,8 @@ $(function () {
     function makeHtmlUserList(data) {
         var stat = (data.status == STAT_READY ? "已准备" : (data.status == STAT_START ? "游戏中" : "无状态"));
         var html = '';
-        html += '<li id="room_user-' + data.id + '">';
-        html += '<div>';
+        html += '<li>';
+        html += '<div id="room_user_' + data.id + '">';
         html += '<span>' + stat + '</span>';
         html += '<img style="min-height: 60%;max-height: 60%;" src="static/images/room/player_yes.gif">';
         html += '<span>' + data.nickname + '</span>';
@@ -447,7 +447,7 @@ $(function () {
         //大厅有人准备
         var stat = (data.status == STAT_NORMAL ?
             "无状态" : (data.status == STAT_READY ? "已准备" : "游戏中"));
-        $("#user-" + data.id + " span").html(stat);
+        $("#room_user_" + data.id + " span").html(stat);
     }
 
     /**
