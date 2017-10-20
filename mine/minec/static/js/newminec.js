@@ -41,18 +41,9 @@ $(function () {
     }).on("start", function (data) {//开始游戏
         onStart(data);
     }).on("startInfo", function (data) {//有游戏开始了
-        $("#room-" + data.roomIdx).addClass("room_item_start");
-        $("#room_user_" + data.player1 + " span").html("游戏中");
-        $("#room_user_" + data.player2 + " span").html("游戏中");
+        onStarted(data);
     }).on("overInfo", function (data) {//游戏结束了
-        $("#room-" + data.roomIdx).removeClass("room_item_start");
-        $("#room_user_" + data.player1 + " span").html("无状态");
-        $("#room_user_" + data.player2 + " span").html("无状态");
-        if (data.roomIdx == g_Info.roomIdx) {
-            //更新房间另一个成员的状态
-            var p = (data.player1 == g_Info.id ? 2 : 1);
-            $("#room-p" + p + "-status").html("未准备");
-        }
+        onOvered(data);
     }).on("leaveRoom", function (data) {//离开房间
         onLeaveRoom(data);
     }).on("joinRoomError", function (data) {//加入房间失败
@@ -210,7 +201,7 @@ $(function () {
         html += '<div id="room_user_' + data.id + '">';
         html += '<span>' + stat + '</span>';
         html += '<img style="min-height: 60%;max-height: 60%;" src="static/images/room/player_yes.gif">';
-        html += '<span>' + data.nickname + '</span>';
+        html += '<p>' + data.nickname + '</p>';
         html += '</div>';
         html += '</li>';
         return html;
@@ -301,7 +292,7 @@ $(function () {
         var p = (posIdx == 0 ? 1 : 2);
         $("#room_p" + p + "_nickname").html('空缺中');
         $("#room_p" + p + "_status").html("无状态");
-        $("#room_p" + p + "_img").attr('src', 'static/images/room/player_yes.gif');
+        $("#room_p" + p + "_img").attr('src', 'static/images/room/player_no.gif');
     }
 
     /**
@@ -392,7 +383,7 @@ $(function () {
      * @param data
      */
     function onClose(data) {
-        $("#user-" + data.id).remove();
+        $("#room_user_" + data.id).parent().remove();
 
         //本房间有人退出
         if (data.roomIdx == g_Info.roomIdx) {
@@ -485,7 +476,7 @@ $(function () {
         if (data.id == g_Info.id) {//更新自己的信息
             g_Info.roomIdx = -1;
             g_Info.posIdx = -1;
-            changeTab("room_list");
+            changeTab("tab_game_piazza");
         } else if (data.roomIdx == g_Info.roomIdx) {//本房间有人退出
             removeRoom(data.posIdx);
         }
@@ -519,6 +510,31 @@ $(function () {
             $("#piazza_message_list").append("<p style=\"color:#339933\">" + data.nickname + ": " + data.body + "</p>");
         } else if (data.type == MSG_ROOM) {
             $("#room_message_list").append("<p>" + data.nickname + ": " + data.body + "</p>");
+        }
+    }
+
+    /**
+     * 游戏开始回调（更新大厅状态）
+     * @param data
+     */
+    function onStarted(data) {
+        $("#room-" + data.roomIdx).addClass("room_item_start");
+        $("#room_user_" + data.player1 + " span").html("游戏中");
+        $("#room_user_" + data.player2 + " span").html("游戏中");
+    }
+
+    /**
+     * 游戏结束回调（更新大厅状态）
+     * @param data
+     */
+    function onOvered(data) {
+        $("#room-" + data.roomIdx).removeClass("room_item_start");
+        $("#room_user_" + data.player1 + " span").html("无状态");
+        $("#room_user_" + data.player2 + " span").html("无状态");
+        if (data.roomIdx == g_Info.roomIdx) {
+            //更新房间另一个成员的状态
+            var p = (data.player1 == g_Info.id ? 2 : 1);
+            $("#room-p" + p + "-status").html("未准备");
         }
     }
 
