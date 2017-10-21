@@ -283,8 +283,7 @@
                 "roomIdx": data.roomIdx,
                 "posIdx": data.posIdx,
                 "nickname": m_Connections[sid].nickname,
-                "id": sid,
-                "mg": m_RoomData[data.roomIdx]
+                "id": sid
             });
 
             console.log("玩家：" + m_Connections[sid].nickname + "：SID：" + sid + "进入了" + data.roomIdx + "号房间。");
@@ -336,7 +335,8 @@
                 "roomIdx": roomIdx,
                 "posIdx": m_Connections[sid].posIdx,
                 "nickname": m_Connections[sid].nickname,
-                "status": status
+                "status": status,
+                "mg": m_RoomData[roomIdx]
             });
             console.log("玩家：" + m_Connections[sid].nickname + "：SID：" + sid + "在" + roomIdx + "号房间做好准备了。");
 

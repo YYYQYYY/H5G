@@ -424,7 +424,7 @@ $(function () {
             data.status = STAT_NORMAL;
             updateRoom(data.posIdx, data);
         }
-        resetGame(data.mg);
+        initGame();
     }
 
     /**
@@ -439,6 +439,7 @@ $(function () {
         //大厅有人准备
         var stat = (data.status == STAT_NORMAL ? "无状态" : (data.status == STAT_READY ? "已准备" : "游戏中"));
         $("#room_user_" + data.id + " span").html(stat);
+        resetGame(data.mg);
     }
 
     /**
@@ -560,6 +561,18 @@ $(function () {
         this.isOpened = false;
         this.isFlag = false;
     };
+
+    /**
+     * 进房间时，画游戏面板
+     */
+    function initGame() {
+        var canvas_game = document.getElementById("game");
+        canvas_game.width = canvas_game.height = 400;
+        var ctx = canvas_game.getContext("2d");
+
+        ctx.fillStyle = "lightblue";
+        ctx.fillRect(2, 2, ctx.canvas.width - 2, ctx.canvas.height - 2);
+    }
 
     /**
      * 初始化游戏
@@ -843,6 +856,9 @@ $(function () {
         }
     }
 
+    /**
+     * 初期设置
+     */
     function setConfig() {
         CONFIG.cellWidth = 40;
         CONFIG.width = 400;
@@ -876,5 +892,6 @@ $(function () {
         $("#elapsed_time").text(MG.elapsedTime);
     }
 
+    // TODO:::::
     $("#loginBtn").click();
 });
