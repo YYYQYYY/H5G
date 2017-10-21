@@ -30,7 +30,7 @@ $(function () {
         onClose(data);
     }).on("join", function (data) {//新用户加入大厅
         if (g_Info.id != data.id) {
-            $("#list-box").append(makeHtmlUserList(data));
+            $("#user_list_ul").append(makeHtmlUserList(data));
         }
     }).on("joinRoom", function (data) {//用户加入房间
         onJoinRoom(data);
@@ -41,30 +41,15 @@ $(function () {
     }).on("start", function (data) {//开始游戏
         onStart(data);
     }).on("startInfo", function (data) {//有游戏开始了
-        $("#room-" + data.roomIdx).addClass("room_item_start");
-        $("#user-" + data.player1 + " span").html("游戏中");
-        $("#user-" + data.player2 + " span").html("游戏中");
+        onStarted(data);
     }).on("overInfo", function (data) {//游戏结束了
-        $("#room-" + data.roomIdx).removeClass("room_item_start");
-        $("#user-" + data.player1 + " span").html("无状态");
-        $("#user-" + data.player2 + " span").html("无状态");
-        if (data.roomIdx == g_Info.roomIdx) {
-            //更新房间另一个成员的状态
-            var p = (data.player1 == g_Info.id ? 2 : 1);
-            $("#room-p" + p + "-status").html("未准备");
-        }
+        onOvered(data);
     }).on("leaveRoom", function (data) {//离开房间
         onLeaveRoom(data);
     }).on("joinRoomError", function (data) {//加入房间失败
         alert("加入房间失败");
     }).on("message", function (data) {//接受消息
-        if (data.type == MSG_ALL) {
-            $("#msg-content").append("<p>" + data.nickname + ": " + data.body + "</p>");
-        } else if (data.type == MSG_TO) {
-            $("#msg-content").append("<p style=\"color:#339933\">" + data.nickname + ": " + data.body + "</p>");
-        } else if (data.type == MSG_ROOM) {
-            $("#room-msg-content").append("<p>" + data.nickname + ": " + data.body + "</p>");
-        }
+        onMessage(data);
     }).on("drawCell", function (data) {//点击格子
         onDrawCell(data);
     }).on("winer", function (data) {//胜利
@@ -115,7 +100,7 @@ $(function () {
     });
 
     //加入房间
-    $(document).on("click", "#room-box .player", function () {
+    $(document).on("click", "#room_list .player", function () {
         var roomIdx = $(this).closest('.room_item').attr('value');
         var posIdx = $(this).attr('value');
         if ($("#room-" + roomIdx + "-icon-" + posIdx).hasClass("yes")) {
@@ -131,28 +116,28 @@ $(function () {
     });
 
     //发送消息
-    $("#msg-button").click(function () {
-        var msg = $("#msg-input").val();
+    $("#piazza_chat_button").click(function () {
+        var msg = $("#piazza_chat_input").val();
         if (msg == "") {
             return;
         }
         app.sendAllMsg(msg);
-        $("#msg-input").val('');
+        $("#piazza_chat_input").val('');
     });
 
     //发送消息到房间内
-    $("#room-msg-button").click(function () {
-        var msg = $("#room-msg-input").val();
+    $("#room_chat_button").click(function () {
+        var msg = $("#room_chat_input").val();
         if (!msg) {
             return;
         }
         app.sendRoomMsg(msg);
-        $("#room-msg-input").val("");
+        $("#room_chat_input").val("");
     });
 
     //切换窗口
-    $("#tag a").click(function () {
-        var id = $(this).attr('href').substr(1);
+    $("#tab_list a").click(function () {
+        var id = $(this)[0].id;
         if ($(this).hasClass('on')) {
             return false;
         }
@@ -162,7 +147,7 @@ $(function () {
             return false;
         }
 
-        changeTag(id);
+        changeTab(id);
         return false;
     });
 
@@ -188,19 +173,19 @@ $(function () {
 
     /**
      * 切换大厅与房间
-     * @param tag
+     * @param id
      */
-    function changeTag(tag) {
-        if (tag == "room_list") {
-            $("#room_list").show();
-            $("#tag_room_list").addClass("on");
-            $("#room").hide();
-            $("#tag_room").removeClass("on");
-        } else {
-            $("#room").show();
-            $("#tag_room").addClass("on");
-            $("#room_list").hide();
-            $("#tag_room_list").removeClass("on");
+    function changeTab(id) {
+        if (id == "tab_game_piazza") {
+            $("#game_piazza").show();
+            $("#tab_game_piazza").addClass("on");
+            $("#game_room").hide();
+            $("#tab_game_room").removeClass("on");
+        } else if (id == "tab_game_room") {
+            $("#game_room").show();
+            $("#tab_game_room").addClass("on");
+            $("#game_piazza").hide();
+            $("#tab_game_piazza").removeClass("on");
         }
     }
 
@@ -211,7 +196,15 @@ $(function () {
      */
     function makeHtmlUserList(data) {
         var stat = (data.status == STAT_READY ? "已准备" : (data.status == STAT_START ? "游戏中" : "无状态"));
-        return ('<li id="user-' + data.id + '"><span>' + stat + "</span>" + data.nickname + "</li>");
+        var html = '';
+        html += '<li>';
+        html += '<div id="room_user_' + data.id + '">';
+        html += '<span>' + stat + '</span>';
+        html += '<img style="min-height: 60%;max-height: 60%;" src="static/images/room/player_yes.gif">';
+        html += '<p>' + data.nickname + '</p>';
+        html += '</div>';
+        html += '</li>';
+        return html;
     }
 
     /**
@@ -223,7 +216,7 @@ $(function () {
         for (var i = 0; i < data.length; i++) {
             html += makeHtmlUserList(data[i]);
         }
-        $("#list-box").html(html);
+        $("#user_list_ul").html(html);
     }
 
     /**
@@ -243,7 +236,7 @@ $(function () {
             html += '<div class="roomnum">- ' + (parseInt(idx) + 1) + ' -</div>';
             html += '</div>';
         }
-        $("#room-box").html(html);
+        $("#room_list").html(html);
     }
 
     /**
@@ -254,10 +247,10 @@ $(function () {
     function initRoom(player1, player2) {
         //清除消息和棋子
         $("div.room_cell div").remove();
-        $("#room-msg-content p").remove();
+        $("#room_message_list p").remove();
 
         //tag样式切换
-        changeTag("room");
+        changeTab("tab_game_room");
 
         //玩家1
         if (player1) {
@@ -282,9 +275,9 @@ $(function () {
     function updateRoom(posIdx, player) {
         var p = (posIdx == 0 ? 1 : 2);
         var s = (player.status == STAT_NORMAL ? "未准备" : (player.status == STAT_READY ? "已准备" : "游戏中"));
-        $("#room-p" + p + "-nickname").html(player.nickname);
-        $("#room-p" + p + "-status").html(s);
-        $("#room-p" + p + "-img").html('<img src="static/images/room/yes_player.gif">');
+        $("#room_p" + p + "_nickname").html(player.nickname);
+        $("#room_p" + p + "_status").html(s);
+        $("#room_p" + p + "_img").attr('src', 'static/images/room/player_yes.gif');
         if (g_Info.id == player.id) {
             var b = (player.status == STAT_NORMAL ? "准备" : (player.status == STAT_READY ? "取消" : "游戏中..."));
             $("#game_ready").val(b);
@@ -297,9 +290,9 @@ $(function () {
      */
     function removeRoom(posIdx) {
         var p = (posIdx == 0 ? 1 : 2);
-        $("#room-p" + p + "-nickname").html('&nbsp;');
-        $("#room-p" + p + "-status").html("&nbsp;");
-        $("#room-p" + p + "-img").html('<img src="static/images/room/no_player.gif">');
+        $("#room_p" + p + "_nickname").html('空缺中');
+        $("#room_p" + p + "_status").html("无状态");
+        $("#room_p" + p + "_img").attr('src', 'static/images/room/player_no.gif');
     }
 
     /**
@@ -390,7 +383,7 @@ $(function () {
      * @param data
      */
     function onClose(data) {
-        $("#user-" + data.id).remove();
+        $("#room_user_" + data.id).parent().remove();
 
         //本房间有人退出
         if (data.roomIdx == g_Info.roomIdx) {
@@ -445,7 +438,7 @@ $(function () {
         //大厅有人准备
         var stat = (data.status == STAT_NORMAL ?
             "无状态" : (data.status == STAT_READY ? "已准备" : "游戏中"));
-        $("#user-" + data.id + " span").html(stat);
+        $("#room_user_" + data.id + " span").html(stat);
     }
 
     /**
@@ -483,7 +476,7 @@ $(function () {
         if (data.id == g_Info.id) {//更新自己的信息
             g_Info.roomIdx = -1;
             g_Info.posIdx = -1;
-            changeTag("room_list");
+            changeTab("tab_game_piazza");
         } else if (data.roomIdx == g_Info.roomIdx) {//本房间有人退出
             removeRoom(data.posIdx);
         }
@@ -504,6 +497,45 @@ $(function () {
         MG.residualMines = data.residualMines;
         MG.score = data.score;
         drawCells(data);
+    }
+
+    /**
+     * 接受消息回调
+     * @param data
+     */
+    function onMessage(data) {
+        if (data.type == MSG_ALL) {
+            $("#piazza_message_list").append("<p>" + data.nickname + ": " + data.body + "</p>");
+        } else if (data.type == MSG_TO) {
+            $("#piazza_message_list").append("<p style=\"color:#339933\">" + data.nickname + ": " + data.body + "</p>");
+        } else if (data.type == MSG_ROOM) {
+            $("#room_message_list").append("<p>" + data.nickname + ": " + data.body + "</p>");
+        }
+    }
+
+    /**
+     * 游戏开始回调（更新大厅状态）
+     * @param data
+     */
+    function onStarted(data) {
+        $("#room-" + data.roomIdx).addClass("room_item_start");
+        $("#room_user_" + data.player1 + " span").html("游戏中");
+        $("#room_user_" + data.player2 + " span").html("游戏中");
+    }
+
+    /**
+     * 游戏结束回调（更新大厅状态）
+     * @param data
+     */
+    function onOvered(data) {
+        $("#room-" + data.roomIdx).removeClass("room_item_start");
+        $("#room_user_" + data.player1 + " span").html("无状态");
+        $("#room_user_" + data.player2 + " span").html("无状态");
+        if (data.roomIdx == g_Info.roomIdx) {
+            //更新房间另一个成员的状态
+            var p = (data.player1 == g_Info.id ? 2 : 1);
+            $("#room-p" + p + "-status").html("未准备");
+        }
     }
 
 //////////////////////////////////////////////////

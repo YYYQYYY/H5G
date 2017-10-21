@@ -1,19 +1,36 @@
+@charset "utf-8";
+/***********************************************************************************************************************
+设计图按640px设计，原始字体大小为100px
+***********************************************************************************************************************/
+
+html {
+    font-size: 100px;
+}
+
 * {
     margin: 0;
     padding: 0;
-    font-size: 14px
+    font-size: 14px;
 }
 
 li {
-    list-style: none
+    list-style: none;
 }
 
 #main {
-    width: 1000px;
-    margin: 10px auto;
+    background: #5480AD;
+    display: inline-block;
+    width: 640px;
+    min-height: 100%;
+    max-height: 100%;
+    border: 1px solid #5480AD;
 }
 
-/*用户登陆*/
+/***********************************************************************************************************************
+登录
+***********************************************************************************************************************/
+
+/*用户登录*/
 #login {
     width: 350px;
     border: 1px solid #CCC;
@@ -64,72 +81,101 @@ li {
     opacity: 0.5;
 }
 
-/*大厅*/
-.room_all {
-    background: #5480AD;
-    display: inline-block
+/***********************************************************************************************************************
+大厅
+***********************************************************************************************************************/
+
+/*标签页*/
+#tab_list {
+    height: 32px;
+    background: #ddd;
+    overflow-x: auto;
+    overflow-y: hidden;
 }
 
-.tag {
-    height: 30px;
-}
-
-.tag a {
+#tab_list a {
+    width: 160px;
     float: left;
-    height: 30px;
-    line-height: 30px;
+    height: 32px;
+    line-height: 32px;
     text-align: center;
-    width: 110px;
-    background: #F7F7F7
+    border-right: 1px solid #5480AD;
 }
 
-.tag a.on {
-    background: #CCC
+#tab_list a.on {
+    background: #CCC;
 }
 
-.room_left {
-    width: 720px;
-    float: left;
+/*用户列表*/
+.user_list {
+    min-height: 120px;
+    margin: 0 auto;
+    overflow-x: scroll;
+    overflow-y: hidden;
 }
 
-.room_right {
-    width: 280px;
-    float: left
+.user_list ul {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
 }
 
+.user_list ul li {
+    margin: 0;
+    padding: 0;
+}
+
+.user_list li {
+    width: 100px;
+    height: 120px;
+    margin: 5px;
+    text-align: center;
+}
+
+.user_list li div {
+    width: 90px;
+    height: 110px;
+    margin: 5px;
+    background: #5480AD;
+    border: 1px solid;
+    border-radius: 5px;
+}
+
+/*房间列表*/
 .room_list {
-    height: 600px;
-    margin: 5px 0 5px 5px;
+    border-top: 1px solid #5480AD;
+    margin-left: 5px;
     overflow-y: scroll;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    min-height: 435px;
+    max-height: 435px;
 }
 
 .room_item {
-    width: 135px;
-    height: 135px;
-    background: url('../images/room/room.gif') center center no-repeat;
-    float: left;
+    flex: auto;
+    margin: 5px;
+    min-width: 135px;
+    max-width: 135px;
+    min-height: 135px;
+    max-height: 135px;
+    background: url('../../static/images/room/room.gif') center center no-repeat;
 }
 
 .room_item_start {
-    background: url('../images/room/room_start.gif') center center no-repeat
-}
-
-.room_item .player2 {
-    height: 25px;
-    line-height: 25px;
-    text-align: right;
-    margin-top: 20px
+    background: url('../../static/images/room/room_start.gif') center center no-repeat;
 }
 
 .room_item .players {
-    height: 50px
+    height: 50px;
 }
 
 .room_item .players .icon1 {
     width: 40px;
     height: 50px;
     float: left;
-    cursor: pointer
+    cursor: pointer;
 }
 
 .room_item .players .icon2 {
@@ -137,161 +183,60 @@ li {
     height: 50px;
     float: left;
     margin-left: 55px;
-    cursor: pointer
+    cursor: pointer;
 }
 
 .room_item .players .no {
-    background: url('../images/room/player_no.gif') center center no-repeat
+    background: url('../../static/images/room/player_no.gif') center center no-repeat;
 }
 
 .room_item .players .yes {
-    background: url('../images/room/player_yes.gif') center center no-repeat
+    background: url('../../static/images/room/player_yes.gif') center center no-repeat;
 }
 
 .room_item .player1 {
     height: 25px;
     line-height: 25px;
-    text-align: left
+    text-align: left;
+}
+
+.room_item .player2 {
+    height: 25px;
+    line-height: 25px;
+    text-align: right;
+    margin-top: 20px;
 }
 
 .room_item .roomnum {
-    text-align: center
-}
-
-/*房间界面*/
-.room {
-    background: #5480AD;
-    display: inline-block
-}
-
-.room_user {
-    margin: 5px;
-    width: 190px;
-    height: 500px;
-    float: left;
-    background: #DCC09C;
-    text-align: center
-}
-
-.room_user p {
-    line-height: 22px
-}
-
-.room_user .u1 {
-    margin-top: 65px;
-}
-
-.room_user .u2 {
-    margin-top: 40px
-}
-
-.room_cell {
-    margin-top: 5px;
-    width: 500px;
-    height: 500px;
-    float: left;
-    /*background: url('../images/room/bg.jpg');*/
-    position: relative;
-    cursor: no-drop
-}
-
-.room_cell .black {
-    background: url('../images/room/b.png') center center no-repeat;
-    width: 35px;
-    height: 33px;
-    position: absolute;
-    z-index: 888
-}
-
-.room_cell .white {
-    background: url('../images/room/w.png') center center no-repeat;
-    width: 35px;
-    height: 33px;
-    position: absolute;
-    z-index: 888
-}
-
-.room_cell .cur {
-    background: url('../images/room/cur.png') center center no-repeat;
-    width: 35px;
-    height: 33px;
-    position: absolute;
-    z-index: 999
-}
-
-.room_message {
-    margin: 5px;
-    width: 255px;
-    float: left;
-}
-
-.room_message .room_button {
-    height: 50px;
-    background: #FFF;
     text-align: center;
-    line-height: 50px
 }
 
-.room_message .room_button .btn {
-    width: 98px;
-    height: 36px;
-    background: url('../images/room/btn.gif');
-    border: 0;
-    color: #FFF
-}
-
-.room_message .content {
+/*大厅消息*/
+.piazza_message {
+    border-top: 1px solid #5480AD;
+    min-height: 200px;
+    max-height: 200px;
     background: #FFF;
-    height: 415px;
+    margin: 0;
+}
+
+.piazza_message .piazza_message_list {
+    min-height: 200px;
+    max-height: 200px;
     overflow-y: scroll;
-    margin-top: 5px
 }
 
-.room_message .content p {
-    padding: 5px
+.piazza_message .piazza_message_list p {
+    padding: 2px 5px 1px 5px;
 }
 
-.room_message .input {
-    height: 30px;
-    background: #FFF;
+.piazza_message .input {
+    height: 30px;;
 }
 
-/*用户列表*/
-.list {
-    height: 300px;
-    overflow-y: scroll;
-    background: #FFF;
-    margin: 5px;
-    overflow-x: hidden
-}
-
-.list li {
-    padding: 5px
-}
-
-.list li span {
-    float: right;
-}
-
-/*消息*/
-.message {
-    height: 295px;
-    background: #FFF;
-    margin: 5px
-}
-
-.message .content {
-    height: 265px;
-    overflow-y: scroll
-}
-
-.message .content p {
-    padding: 5px
-}
-
-.message .input {
-    height: 30px;
-}
+/***********************************************************************************************************************
+房间
+***********************************************************************************************************************/
 
 #layers {
     position: relative;
@@ -300,4 +245,43 @@ li {
 
 #layers canvas {
     position: absolute;
+}
+
+/*房间消息*/
+.room_message {
+    border-top: 1px solid #5480AD;
+    min-height: 200px;
+    max-height: 200px;
+    background: #FFF;
+    margin: 0;
+}
+
+.room_message .room_message_list {
+    min-height: 200px;
+    max-height: 200px;
+    overflow-y: scroll;
+}
+
+.room_message .room_message_list p {
+    padding: 2px 5px 1px 5px;
+}
+
+.room_message .input {
+    height: 30px;;
+}
+
+/*按钮*/
+.room_button {
+    float: right;
+    height: 50px;
+    text-align: center;
+    line-height: 50px;
+}
+
+.room_button .btn {
+    width: 98px;
+    height: 36px;
+    background: #5480AD;
+    border: 1;
+    color: #FFF;
 }
