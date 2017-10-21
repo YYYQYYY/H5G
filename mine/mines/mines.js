@@ -47,7 +47,7 @@
         this.levels = [
             {
                 level: 0,
-                mineCount: 20,
+                mineCount: 40,
                 range: {
                     rows: 10,
                     columns: 10
@@ -88,7 +88,7 @@
         MG.elapsedTime = 0;
 
         MG.cg = MG.levels[MG.currentLevel];
-        MG.cg.mineCount = Math.ceil(Math.random() * 15 + MG.cg.mineCount);
+        MG.cg.mineCount = Math.ceil(Math.random() * 20 + MG.cg.mineCount);
         MG.residualMines = MG.cg.mineCount;
 
         for (var r = 0; r < MG.cg.range.rows; r++) {
