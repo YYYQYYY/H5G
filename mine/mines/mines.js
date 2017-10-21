@@ -42,7 +42,7 @@
         ///* 计时器句柄 */
         //this.timeout = 0;
         /* 得分 */
-        this.score = 0;
+        this.score = {};
         /* 游戏级别 */
         this.levels = [
             {
@@ -76,13 +76,13 @@
     };
 
     //重置游戏数据
-    var resetGameData = function (roomIdx) {//todo:需要把积分归到玩家名下
+    var resetGameData = function (roomIdx) {//todo:需要把得分归到玩家名下
         var MG = m_RoomData[roomIdx];
         MG.timeout = 0;
         MG.dataMap = [];
         MG.currentLevel = 0;
         MG.residualMines = 0;
-        MG.score = 0;
+        MG.score = {};
 
         MG.timer = 0;
         MG.elapsedTime = 0;
@@ -349,14 +349,20 @@
                 //告诉两名玩家游戏正式开始
                 m_Connections[m_Rooms[roomIdx][0]].status = STAT_START;
                 m_Connections[m_Rooms[roomIdx][1]].status = STAT_START;
+                //玩家本局得分清零
+                m_RoomData[roomIdx].score[m_Rooms[roomIdx][0]] = 0;
+                m_RoomData[roomIdx].score[m_Rooms[roomIdx][1]] = 0;
+                //生成雷图
                 createMines(roomIdx);
                 //console.log(m_RoomData[roomIdx].dataMap);
                 m_Connections[m_Rooms[roomIdx][0]].socket.emit("start", {
                     "color": COLOR_BLACK,
+                    "score": m_RoomData[roomIdx].score,
                     "allowDraw": true
                 });
                 m_Connections[m_Rooms[roomIdx][1]].socket.emit("start", {
                     "color": COLOR_WHITE,
+                    "score": m_RoomData[roomIdx].score,
                     "allowDraw": false
                 });
 
@@ -379,17 +385,22 @@
             m_Rooms[roomIdx][0] && m_Rooms[roomIdx][1] &&
             m_Connections[m_Rooms[roomIdx][0]] && m_Connections[m_Rooms[roomIdx][1]] &&
             m_Connections[m_Rooms[roomIdx][0]].status == STAT_START && m_Connections[m_Rooms[roomIdx][1]].status == STAT_START &&
-            checkMine(roomIdx, data.x, data.y, data.isFlag)
+            checkMine(roomIdx, sid, data.x, data.y, data.isFlag)
         ) {
-            data.id = sid;
-            //m_RoomData[roomIdx][data.x][data.y] = data.color;
-
-            console.log("玩家：" + m_Connections[data.id].nickname + "：SID：" + data.id + "在" + roomIdx + "号房间点击了第" + data.x + "行，第" + data.y + "列的格子。");
-            data.cell = m_RoomData[roomIdx].dataMap[data.x][data.y];
-            data.residualMines = m_RoomData[roomIdx].residualMines;
-            data.score = m_RoomData[roomIdx].score;
+            console.log("玩家：" + m_Connections[sid].nickname + "：SID：" + sid + "在" + roomIdx + "号房间点击了第" + data.x + "行，第" + data.y + "列的格子。数据如下：");
+            var resultData = {
+                id: sid,
+                cell: m_RoomData[roomIdx].dataMap[data.x][data.y],
+                color: data.color,
+                isFlag: data.isFlag,
+                x: data.x,
+                y: data.y,
+                residualMines: m_RoomData[roomIdx].residualMines,
+                score: m_RoomData[roomIdx].score
+            };
+            console.log(resultData);
             for (var i = 0; i < 2; i++) {//向房间内所有成员发送游戏信息
-                m_Connections[m_Rooms[roomIdx][i]].socket.emit("drawCell", data);
+                m_Connections[m_Rooms[roomIdx][i]].socket.emit("drawCell", resultData);
             }
 
             //结束游戏判断
@@ -523,11 +534,12 @@
     /**
      * 判断是否是雷区
      * @param roomIdx
+     * @param sid
      * @param ri
      * @param ci
      * @param isFlag
      */
-    var checkMine = function (roomIdx, ri, ci, isFlag) {
+    var checkMine = function (roomIdx, sid, ri, ci, isFlag) {
         if (m_RoomData[roomIdx].dataMap[ri][ci].isFlag || m_RoomData[roomIdx].dataMap[ri][ci].isOpened) {
             return false;
         }
@@ -537,18 +549,18 @@
             // 正确标旗
             if (m_RoomData[roomIdx].dataMap[ri][ci].data < 0) {
                 drawFlag(roomIdx, ri, ci);
-                addScore(roomIdx, true);
+                addScore(roomIdx, sid, true);
             } else {
                 openCell(roomIdx, ri, ci);
-                subtractScore(roomIdx, true);
+                subtractScore(roomIdx, sid, true);
             }
         } else {
             openCell(roomIdx, ri, ci);
             // 正确打开格子
             if (m_RoomData[roomIdx].dataMap[ri][ci].data > -1) {
-                addScore(roomIdx, false);
+                addScore(roomIdx, sid, false);
             } else {
-                subtractScore(roomIdx, false);
+                subtractScore(roomIdx, sid, false);
             }
         }
         return true;
@@ -570,13 +582,14 @@
     /**
      * 加分数
      * @param roomIdx
+     * @param sid
      * @param isFlag
      */
-    var addScore = function (roomIdx, isFlag) {
+    var addScore = function (roomIdx, sid, isFlag) {
         if (isFlag) {
             m_RoomData[roomIdx].residualMines--;
         }
-        m_RoomData[roomIdx].score++;
+        m_RoomData[roomIdx].score[sid]++;
     };
 
     /**
@@ -594,13 +607,15 @@
     /**
      * 减分数
      * @param roomIdx
+     * @param sid
      * @param isFlag
      */
-    var subtractScore = function (roomIdx, isFlag) {
+    var subtractScore = function (roomIdx, sid, isFlag) {
         if (!isFlag) {
             m_RoomData[roomIdx].residualMines--;
         }
-        m_RoomData[roomIdx].score--;
-        m_RoomData[roomIdx].score = m_RoomData[roomIdx].score < 0 ? 0 : m_RoomData[roomIdx].score;
+        //var score = m_RoomData[roomIdx].score[sid]--;
+        //score = score < 0 ? 0 : score; //todo:允许负分
+        m_RoomData[roomIdx].score[sid]--;
     };
 };

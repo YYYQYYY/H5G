@@ -277,6 +277,7 @@ $(function () {
         var s = (player.status == STAT_NORMAL ? "未准备" : (player.status == STAT_READY ? "已准备" : "游戏中"));
         $("#room_p" + p + "_nickname").html(player.nickname);
         $("#room_p" + p + "_status").html(s);
+        $("#room_p" + p + "_score").html('0');
         $("#room_p" + p + "_img").attr('src', 'static/images/room/player_yes.gif');
         if (g_Info.id == player.id) {
             var b = (player.status == STAT_NORMAL ? "准备" : (player.status == STAT_READY ? "取消" : "游戏中..."));
@@ -436,8 +437,7 @@ $(function () {
             updateRoom(data.posIdx, data);
         }
         //大厅有人准备
-        var stat = (data.status == STAT_NORMAL ?
-            "无状态" : (data.status == STAT_READY ? "已准备" : "游戏中"));
+        var stat = (data.status == STAT_NORMAL ? "无状态" : (data.status == STAT_READY ? "已准备" : "游戏中"));
         $("#room_user_" + data.id + " span").html(stat);
     }
 
@@ -449,6 +449,7 @@ $(function () {
         g_Info.status = STAT_START;
         g_Info.color = data.color;
         g_Info.allowDraw = data.allowDraw;
+        MG.score = data.score;
         if (g_Info.allowDraw) {
             $("div.room_cell").css("cursor", "pointer");
         } else {
@@ -569,17 +570,18 @@ $(function () {
         MG.masks = [];
         MG.timer = 0;
         MG.timeout = 0;
-        MG.score = mg.score;
 
         MG.cellWidth = CONFIG.cellWidth;
         MG.dataMap = mg.dataMap;
         MG.cg = mg.cg;
         MG.residualMines = mg.residualMines;
         MG.elapsedTime = mg.elapsedTime;
-
+        MG.score = {};
 
         $("#residual_mines").text(0);
-        $("#score").text(MG.score);
+        $("#room_p1_score").html(0);
+        $("#room_p2_score").html(0);
+
         stopInterval();
 
         initLayers();
@@ -712,7 +714,7 @@ $(function () {
                 drawBoomCell(ri, ci);
             }
         }
-        showScore();
+        showScore(data.id);
     }
 
     /**
@@ -801,9 +803,16 @@ $(function () {
     /**
      * 显示分数，剩余雷数
      */
-    function showScore() {
+    function showScore(id) {
         $("#residual_mines").text(MG.residualMines);
-        $("#score").text(MG.score);
+
+        var sp = (g_Info.posIdx == 0 ? 1 : 2);
+        if (g_Info.id == id) {
+            $("#room_p" + sp + "_score").html(MG.score[id]);
+        } else {
+            var op = (sp == 1 ? 2 : 1);
+            $("#room_p" + op + "_score").html(MG.score[id]);
+        }
     }
 
     /**
