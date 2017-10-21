@@ -155,6 +155,12 @@
 //        if (!doc.addEventListener) return;
 //        win.addEventListener(resizeEvt, recalc, false);
 //        doc.addEventListener('DOMContentLoaded', recalc, false);
+//        var phoneScale = parseInt(window.screen.width) / 320;
+        var phoneScale = parseInt(document.documentElement.clientWidth) / 640;
+//        document.write('<meta name="viewport" content="width=640, initial-scale = ' + phoneScale + ', maximum-scale = ' + phoneScale + ', maximum-scale = ' + phoneScale + ', target-densitydpi=device-dpi">');
+//        var aaa = '<meta name="viewport" content="width=640, initial-scale = ' + phoneScale + ', maximum-scale = ' + phoneScale + ', maximum-scale = ' + phoneScale + ', user-scalable=no">';
+//        console.log(aaa);
+        document.write('<meta name="viewport" content="width=640, initial-scale = ' + phoneScale + ', maximum-scale = ' + phoneScale + ', maximum-scale = ' + phoneScale + ', user-scalable=no">');
     }(document, window);
 
     //    /**
