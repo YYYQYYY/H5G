@@ -76,7 +76,7 @@
     };
 
     //重置游戏数据
-    var resetGameData = function (roomIdx) {
+    var resetGameData = function (roomIdx) {//todo:需要把积分归到玩家名下
         var MG = m_RoomData[roomIdx];
         MG.timeout = 0;
         MG.dataMap = [];
