@@ -206,7 +206,10 @@
             }
         }
 
-        console.log("玩家：" + m_Connections[sid].nickname + "：SID：" + sid + "退出了游戏。");
+        console.log("玩家：" + m_Connections[sid].nickname + "：SID：" + sid + "退出了游戏。");// todo:TEST
+
+        //初始化房间信息
+        resetGameData(roomIdx);
 
         //删除元素
         delete m_Connections[sid];
@@ -275,6 +278,7 @@
             m_Connections[sid].posIdx = data.posIdx;
             m_Connections[sid].status = STAT_NORMAL;
             m_Rooms[data.roomIdx][data.posIdx] = sid;
+            //console.log(m_RoomData[data.roomIdx].dataMap);// TODO:TEST
             io.sockets.emit("joinRoom", {
                 "roomIdx": data.roomIdx,
                 "posIdx": data.posIdx,

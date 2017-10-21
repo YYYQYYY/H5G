@@ -33,7 +33,6 @@ function MineClient(host, port) {
         }
         //socket = io.connect('http://' + m_Host);
         socket = io.connect("http://" + m_Host + ":" + m_Port);
-        //TODO: socket = io.connect(m_Host);
 
         /*if(socket.socket.open == false){
          setError("connect http://" + m_Host + ":" + m_Port + " failed");
